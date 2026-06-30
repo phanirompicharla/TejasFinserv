@@ -177,7 +177,7 @@ app.delete('/api/admin/insights/:id', authenticateToken, async (req, res) => {
 });
 
 // --- CATCH ALL FOR REACT ROUTER ---
-app.get('*', (req, res) => {
+app.get('(.*)', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
 });
 
