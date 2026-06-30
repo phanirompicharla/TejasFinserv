@@ -233,10 +233,12 @@ export function calcIncomeTax(annualIncome: number, regime: 'old' | 'new'): Calc
     if (annualIncome > 900000) tax += Math.min(annualIncome - 900000, 300000) * 0.15
     if (annualIncome > 1200000) tax += Math.min(annualIncome - 1200000, 300000) * 0.2
     if (annualIncome > 1500000) tax += (annualIncome - 1500000) * 0.3
+    if (annualIncome <= 700000) tax = 0
   } else {
     if (annualIncome > 250000) tax += Math.min(annualIncome - 250000, 250000) * 0.05
-    if (annualIncome > 500000) tax += Math.min(annualIncome - 500000, 250000) * 0.2
+    if (annualIncome > 500000) tax += Math.min(annualIncome - 500000, 500000) * 0.2
     if (annualIncome > 1000000) tax += (annualIncome - 1000000) * 0.3
+    if (annualIncome <= 500000) tax = 0
   }
   tax *= 1.04
   return baseResult(annualIncome, annualIncome - tax, { tax: Math.round(tax) })

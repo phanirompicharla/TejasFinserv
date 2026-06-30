@@ -17,7 +17,7 @@ function CalcGrid({ items, title }: { items: typeof calculators; title: string }
       <h2 className="font-display text-xl font-semibold text-navy">{title}</h2>
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((calc, i) => (
-          <SectionReveal key={calc.slug} delay={i * 50}>
+          <SectionReveal key={calc.slug} delay={i * 50} className="h-full">
             <Link
               to={`/calculators/${calc.slug}`}
               className="group flex h-full flex-col rounded-2xl border border-line bg-cream p-6 transition-all hover:-translate-y-1 hover:border-brass/40 hover:shadow-card"

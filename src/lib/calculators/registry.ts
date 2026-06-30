@@ -374,7 +374,6 @@ export const calculators: CalculatorDef[] = [
     intro: 'Compare estimated income tax under India\'s old and new tax regimes. Slabs are configurable and should be updated each financial year.',
     seoTitle: 'Income Tax Calculator — Old vs New Regime | TejasFinserv',
     seoDescription: 'Compare old and new tax regime liability for FY 2025-26. Estimate income tax with updated slabs.',
-    stub: true,
     fields: [
       { id: 'annualIncome', label: 'Annual Income', min: 250000, max: 10000000, step: 50000, defaultValue: 1200000, prefix: '₹' },
       { id: 'regime', label: 'Regime (0=New, 1=Old)', min: 0, max: 1, step: 1, defaultValue: 0 },

@@ -11,7 +11,7 @@ interface HomeHeroProps {
 export function HomeHero({ onDiscover }: HomeHeroProps) {
   return (
     <>
-      <section className="hero-home bg-navy bg-gradient-to-b from-navy to-navy-deep grain-overlay relative flex min-h-[92vh] items-center overflow-hidden text-ivory">
+      <section className="hero-home w-full bg-navy grain-overlay relative flex min-h-[92vh] items-center overflow-hidden text-ivory">
         <HeroDecorations />
 
         <div className="hero-grid container-main relative z-10 py-28 pb-20 min-[900px]:py-32 min-[900px]:pb-24">

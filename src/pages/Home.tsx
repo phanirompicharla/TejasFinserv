@@ -88,13 +88,13 @@ export function Home() {
           </SectionReveal>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {tier1Calculators.map((calc, i) => (
-              <SectionReveal key={calc.slug} delay={i * 60}>
+              <SectionReveal key={calc.slug} delay={i * 60} className="h-full">
                 <Link
                   to={`/calculators/${calc.slug}`}
-                  className="block rounded-2xl border border-line bg-ivory p-5 transition-all hover:-translate-y-1 hover:border-brass/40 hover:shadow-card"
+                  className="group flex h-full flex-col rounded-2xl border border-line bg-ivory p-5 transition-all hover:-translate-y-1 hover:border-brass/40 hover:shadow-card"
                 >
-                  <h3 className="font-display font-semibold text-navy">{calc.title}</h3>
-                  <p className="mt-1 text-sm text-muted">{calc.description}</p>
+                  <h3 className="font-display font-semibold text-navy group-hover:text-brass">{calc.title}</h3>
+                  <p className="mt-1 flex-1 text-sm text-muted">{calc.description}</p>
                 </Link>
               </SectionReveal>
             ))}
