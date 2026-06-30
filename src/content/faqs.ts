@@ -1,0 +1,34 @@
+export const globalFaqs = [
+  {
+    question: 'Is TejasFinserv AMFI registered?',
+    answer: 'Yes. TejasFinserv is an AMFI-registered Mutual Fund Distributor bearing ARN-251896. We are authorised to distribute mutual fund schemes from Asset Management Companies across India.',
+  },
+  {
+    question: 'How do I start a SIP with TejasFinserv?',
+    answer: 'Open your account through our online onboarding platform, complete KYC with PAN and bank details, set your risk profile, and choose a mutual fund scheme. You can start a SIP with as little as ₹500 per month in most schemes.',
+  },
+  {
+    question: 'Is mutual fund investment safe?',
+    answer: 'Mutual funds are regulated by SEBI and offer professional management and diversification. However, they are subject to market risks — values can go up or down. Debt funds are lower risk than equity funds. Past performance is not indicative of future returns.',
+  },
+  {
+    question: 'What is ELSS lock-in period?',
+    answer: 'ELSS (Equity Linked Savings Scheme) has a mandatory 3-year lock-in period — the shortest among Section 80C tax-saving instruments. You cannot redeem units before 3 years from the date of investment.',
+  },
+  {
+    question: 'How much should I invest to reach ₹1 crore?',
+    answer: 'At an assumed 12% annual return, investing approximately ₹10,000 per month for 20 years or ₹43,000 per month for 10 years can accumulate ₹1 crore. Use our Goal SIP Calculator for personalised estimates based on your timeline and return assumption.',
+  },
+  {
+    question: 'Is SIP better than fixed deposit?',
+    answer: 'SIPs in equity mutual funds target higher long-term growth but carry market risk and no guaranteed returns. Fixed deposits offer predictable, guaranteed interest suitable for short-term safety. Many investors use both as part of a diversified plan.',
+  },
+  {
+    question: 'Where is TejasFinserv located?',
+    answer: 'TejasFinserv is located at 23-221, Near Old Water Tank, Yanamalakuduru, Vijayawada – 520007, Andhra Pradesh. We serve investors across Vijayawada and Andhra Pradesh online and in person.',
+  },
+  {
+    question: 'What services does TejasFinserv offer?',
+    answer: 'We offer mutual fund distribution across 5,000+ schemes and 40+ AMCs, goal-based financial planning, retirement planning, and insurance advisory for individuals and businesses in Vijayawada.',
+  },
+]
