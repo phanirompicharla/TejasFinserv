@@ -11,10 +11,10 @@ interface HomeHeroProps {
 export function HomeHero({ onDiscover }: HomeHeroProps) {
   return (
     <>
-      <section className="hero-home w-full bg-navy grain-overlay relative flex min-h-[92vh] items-center overflow-hidden text-ivory">
+      <section className="hero-home w-full bg-gradient-to-b from-navy to-navy-deep grain-overlay relative flex lg:min-h-[92vh] lg:items-center overflow-hidden text-ivory">
         <HeroDecorations />
 
-        <div className="hero-grid container-main relative z-10 py-28 pb-20 min-[900px]:py-32 min-[900px]:pb-24">
+        <div className="hero-grid container-main relative z-10 pt-32 pb-24 lg:py-0">
           <div className="hero-copy min-w-0">
             <p className="hero-reveal hero-reveal-1 mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-brass">
               Trusted mutual fund guidance in Vijayawada

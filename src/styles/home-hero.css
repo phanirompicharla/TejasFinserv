@@ -1,9 +1,5 @@
 /* Home hero — scoped styles only */
 
-.hero-home {
-  background: linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
-}
-
 .hero-home::before {
   content: "";
   position: absolute;

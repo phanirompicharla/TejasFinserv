@@ -189,8 +189,8 @@ h3 {
 
 /* Section spacing */
 .section-padding {
-  padding-top: clamp(80px, 10vw, 140px);
-  padding-bottom: clamp(80px, 10vw, 140px);
+  padding-top: clamp(48px, 8vw, 120px);
+  padding-bottom: clamp(48px, 8vw, 120px);
 }
 
 .container-main {

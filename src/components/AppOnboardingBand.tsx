@@ -21,7 +21,7 @@ export function AppOnboardingBand() {
     <section className="grain-overlay section-padding bg-navy text-ivory">
       <script type="application/ld+json">{JSON.stringify(howTo)}</script>
       <div className="container-main">
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
           <SectionReveal>
             <p className="mb-3 text-sm font-semibold tracking-widest text-brass-soft uppercase">
               Start Investing
@@ -61,7 +61,7 @@ export function AppOnboardingBand() {
           </SectionReveal>
         </div>
 
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 grid gap-6 md:grid-cols-3 lg:mt-14">
           {steps.map((step, i) => (
             <SectionReveal key={step} delay={i * 100}>
               <div className="flex h-full gap-4 rounded-2xl border border-ivory/10 bg-navy-deep/50 p-6">

@@ -26,4 +26,4 @@ CREATE TABLE IF NOT EXISTS insights (
 
 -- Insert a default admin user (username: admin, password: password)
 -- NOTE: You should change this password immediately in production!
-INSERT IGNORE INTO admins (username, password_hash) VALUES ('admin', '$2a$10$X8O.P/Wn9R1v/gD60uA0XOTu4HXZD2.M/3DqX/H7qgN6D0QjF90hK');
+INSERT IGNORE INTO admins (username, password_hash) VALUES ('admin', '$2b$10$Ld649l/t3gF29gTj8GvzWOr/BxhdnxhBSW2QqcbFRpsfGPZjPMVeG');

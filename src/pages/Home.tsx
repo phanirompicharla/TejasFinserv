@@ -124,7 +124,7 @@ export function Home() {
       <AppOnboardingBand />
 
       <section className="section-padding bg-ivory">
-        <div className="container-main grid gap-12 lg:grid-cols-2">
+        <div className="container-main grid gap-8 lg:grid-cols-2 lg:gap-12">
           <SectionReveal>
             <h2 className="font-display text-2xl font-semibold text-navy">Common questions</h2>
             <p className="mt-4 text-muted">Quick answers about SIP, safety, and getting started.</p>
@@ -135,7 +135,7 @@ export function Home() {
       </section>
 
       <section className="section-padding bg-cream">
-        <div className="container-main grid items-center gap-12 lg:grid-cols-2">
+        <div className="container-main grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <SectionReveal>
             <h2 className="font-display text-2xl font-semibold text-navy">Stay informed</h2>
             <p className="mt-4 text-muted">Get investment insights and planning tips delivered to your inbox.</p>
