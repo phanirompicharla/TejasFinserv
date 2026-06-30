@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 40" fill="none">
+  <path d="M10 20 C10 12 18 10 22 16 C26 22 34 22 34 20 C34 14 26 10 22 14" stroke="#003974" stroke-width="3" fill="none"/>
+  <path d="M22 14 C26 10 34 14 34 20 C34 26 26 30 22 26 C18 22 10 22 10 20" stroke="#ED1C24" stroke-width="3" fill="none"/>
+  <text x="42" y="25" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#003974">Kotak MF</text>
+</svg>

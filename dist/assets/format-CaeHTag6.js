@@ -1,0 +1,1 @@
+function e(e,t=!1){let n=Math.round(e);if(t){if(Math.abs(n)>=1e7)return`₹${(n/1e7).toFixed(2)} Cr`;if(Math.abs(n)>=1e5)return`₹${(n/1e5).toFixed(2)} L`}return`₹${n.toLocaleString(`en-IN`)}`}function t(e,t,n){return Math.min(n,Math.max(t,e))}var n=`Illustrative only. Returns assumed, not guaranteed. Mutual Funds are subject to market risks.`;export{t as n,e as r,n as t};
