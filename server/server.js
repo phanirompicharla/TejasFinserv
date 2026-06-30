@@ -34,7 +34,13 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use(express.static(distPath));
+app.use(express.static(distPath, {
+    setHeaders: (res, filePath) => {
+        if (filePath.endsWith('index.html')) {
+            res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+        }
+    }
+}));
 
 // Health Check
 app.get('/api/health', (req, res) => {
@@ -178,6 +184,7 @@ app.delete('/api/admin/insights/:id', authenticateToken, async (req, res) => {
 
 // --- CATCH ALL FOR REACT ROUTER ---
 app.get(/.*/, (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     res.sendFile(path.join(distPath, 'index.html'));
 });
 
