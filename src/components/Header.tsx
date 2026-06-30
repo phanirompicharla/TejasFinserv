@@ -33,7 +33,8 @@ export function Header() {
   }, [menuOpen])
 
   return (
-    <header
+    <>
+      <header
       className={`fixed inset-x-0 top-0 z-50 border-b border-line bg-ivory/95 backdrop-blur-md transition-all duration-300 ${
         scrolled ? 'shadow-sm' : 'shadow-none'
       }`}
@@ -117,17 +118,18 @@ export function Header() {
           </svg>
         </button>
       </div>
+    </header>
 
       <div
         id="mobile-menu"
-        className={`fixed inset-0 z-40 flex flex-col overflow-y-auto bg-navy grain-overlay transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-[60] flex flex-col overflow-y-auto bg-navy grain-overlay transition-opacity duration-300 lg:hidden ${
           menuOpen ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'
         }`}
         aria-hidden={!menuOpen}
       >
-        <div className="flex h-20 items-center justify-between border-b border-ivory/10 bg-ivory px-5 py-4">
+        <div className="flex h-20 shrink-0 items-center justify-between border-b border-ivory/10 bg-ivory px-5 py-4">
           <Logo />
-          <button type="button" className="flex h-10 w-10 items-center justify-center text-navy" onClick={() => setMenuOpen(false)} aria-label="Close menu">
+          <button type="button" className="flex h-10 w-10 items-center justify-center text-navy focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brass" onClick={() => setMenuOpen(false)} aria-label="Close menu">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
             </svg>
@@ -169,6 +171,6 @@ export function Header() {
           </div>
         </nav>
       </div>
-    </header>
+    </>
   )
 }
