@@ -369,7 +369,7 @@ export const calculators: CalculatorDef[] = [
   {
     slug: 'income-tax',
     title: 'Income Tax Calculator',
-    tier: 3,
+    tier: 1,
     description: 'Old vs new tax regime comparison (FY 2025-26).',
     intro: 'Compare estimated income tax under India\'s old and new tax regimes. Slabs are configurable and should be updated each financial year.',
     seoTitle: 'Income Tax Calculator — Old vs New Regime | TejasFinserv',
