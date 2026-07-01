@@ -18,7 +18,7 @@ export function AppOnboardingBand() {
   )
 
   return (
-    <section className="grain-overlay section-padding bg-navy text-ivory">
+    <section className="grain-overlay section-padding bg-navy text-ivory relative overflow-hidden">
       <script type="application/ld+json">{JSON.stringify(howTo)}</script>
       <div className="container-main">
         <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
