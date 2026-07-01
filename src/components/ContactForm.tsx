@@ -32,7 +32,6 @@ function validate(data: FormData): FormErrors {
   } else if (!/^[\d\s+\-()]{10,}$/.test(data.phone)) {
     errors.phone = 'Please enter a valid phone number'
   }
-  if (!data.message.trim()) errors.message = 'Message is required'
 
   return errors
 }
@@ -113,9 +112,9 @@ export function ContactForm() {
             />
           </svg>
         </div>
-        <h3 className="font-display text-xl font-semibold text-navy">Message sent</h3>
-        <p className="mt-2 text-muted">
-          Thank you for reaching out. We will get back to you shortly.
+        <h3 className="font-display text-2xl font-semibold text-navy">Message Received!</h3>
+        <p className="mt-2 text-base text-muted font-medium">
+          Thanks! We'll get back to you within 24 hours.
         </p>
         <button
           type="button"
@@ -131,12 +130,13 @@ export function ContactForm() {
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <div>
-        <label htmlFor="name" className="mb-1.5 block text-sm font-medium text-ink">
-          Name <span className="text-brass">*</span>
+        <label htmlFor="name" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
+          Your Full Name <span className="text-brass">*</span>
         </label>
         <input
           id="name"
           type="text"
+          placeholder="e.g. Ramesh Kumar"
           value={form.name}
           onChange={(e) => handleChange('name', e.target.value)}
           className={inputClass('name')}
@@ -152,12 +152,13 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
-          Email <span className="text-brass">*</span>
+        <label htmlFor="email" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
+          Email Address <span className="text-brass">*</span>
         </label>
         <input
           id="email"
           type="email"
+          placeholder="e.g. ramesh@example.com"
           value={form.email}
           onChange={(e) => handleChange('email', e.target.value)}
           className={inputClass('email')}
@@ -173,12 +174,13 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="phone" className="mb-1.5 block text-sm font-medium text-ink">
-          Phone <span className="text-brass">*</span>
+        <label htmlFor="phone" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
+          Phone Number / WhatsApp <span className="text-brass">*</span>
         </label>
         <input
           id="phone"
           type="tel"
+          placeholder="+91 98765 43210"
           value={form.phone}
           onChange={(e) => handleChange('phone', e.target.value)}
           className={inputClass('phone')}
@@ -194,12 +196,13 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label htmlFor="message" className="mb-1.5 block text-sm font-medium text-ink">
-          Message <span className="text-brass">*</span>
+        <label htmlFor="message" className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-navy">
+          How Can We Help You? (Optional)
         </label>
         <textarea
           id="message"
-          rows={5}
+          rows={4}
+          placeholder="e.g. I want to start a monthly SIP for retirement. Please let me know the required documents."
           value={form.message}
           onChange={(e) => handleChange('message', e.target.value)}
           className={`${inputClass('message')} resize-y`}

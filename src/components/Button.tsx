@@ -47,7 +47,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 }
 
 const baseStyles =
-  'group inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold tracking-wide transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass disabled:opacity-50 disabled:pointer-events-none'
+  'group inline-flex items-center justify-center gap-2 rounded-full px-7 py-3 text-sm font-semibold tracking-wide transition-all duration-300 active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-brass disabled:opacity-50 disabled:pointer-events-none'
 
 function ArrowIcon() {
   return (
@@ -86,7 +86,7 @@ export function Button({
   )
 
   if ('href' in props && props.href) {
-    const { href, external } = props
+    const { href, external } = props as ButtonAsLink
     return (
       <a
         href={href}

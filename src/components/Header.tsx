@@ -50,33 +50,50 @@ export function Header() {
               return (
                 <div 
                   key={item.label} 
-                  className="relative group"
+                  className="relative group py-2"
                   onMouseEnter={() => setDropdownOpen(true)}
                   onMouseLeave={() => setDropdownOpen(false)}
                 >
-                  <button
-                    className={`flex items-center gap-1 link-underline text-sm font-medium transition-colors ${
-                      dropdownOpen || item.children.some(child => isNavActive(location.pathname, child.path)) ? 'text-brass' : 'text-ink hover:text-brass'
-                    }`}
-                  >
-                    {item.label}
-                    <svg className="w-4 h-4 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <Link
+                      to={item.path}
+                      onClick={() => setDropdownOpen(false)}
+                      className={`link-underline text-sm font-medium transition-colors ${
+                        dropdownOpen || item.children.some(child => isNavActive(location.pathname, child.path)) ? 'text-brass' : 'text-ink hover:text-brass'
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setDropdownOpen(!dropdownOpen)}
+                      aria-expanded={dropdownOpen}
+                      aria-label="Toggle services dropdown"
+                      className={`p-1 rounded transition-transform duration-200 ${
+                        dropdownOpen ? 'rotate-180 text-brass' : 'text-ink hover:text-brass'
+                      }`}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  </div>
                   {dropdownOpen && (
-                    <div className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-card bg-ivory border border-line py-2 z-50">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.path}
-                          to={child.path}
-                          className={`block px-4 py-2 text-sm font-medium transition-colors hover:bg-cream hover:text-brass ${
-                            isNavActive(location.pathname, child.path) ? 'text-brass bg-cream' : 'text-ink'
-                          }`}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
+                    <div className="absolute top-full left-0 pt-1 w-56 z-50 animate-fade-in">
+                      <div className="rounded-xl shadow-card bg-ivory border border-line py-2 overflow-hidden backdrop-blur-md">
+                        {item.children.map((child) => (
+                          <Link
+                            key={child.path}
+                            to={child.path}
+                            onClick={() => setDropdownOpen(false)}
+                            className={`block px-4 py-2.5 text-sm font-medium transition-all duration-200 hover:bg-cream hover:text-brass hover:pl-5 ${
+                              isNavActive(location.pathname, child.path) ? 'text-brass bg-cream font-semibold' : 'text-ink'
+                            }`}
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -139,14 +156,21 @@ export function Header() {
           {siteConfig.nav.map((item, i) => {
             if ('children' in item && item.children) {
               return (
-                <div key={item.label} className="flex flex-col items-center gap-4 w-full" style={{ animation: menuOpen ? `fade-up 0.5s ease ${i * 80}ms forwards` : undefined, opacity: menuOpen ? undefined : 0 }}>
-                  <span className="font-display text-2xl text-ivory">{item.label}</span>
-                  <div className="flex flex-col items-center gap-3">
+                <div key={item.label} className="flex flex-col items-center gap-3 w-full" style={{ animation: menuOpen ? `fade-up 0.5s ease ${i * 80}ms forwards` : undefined, opacity: menuOpen ? undefined : 0 }}>
+                  <Link
+                    to={item.path}
+                    onClick={() => setMenuOpen(false)}
+                    className="font-display text-2xl font-semibold text-ivory transition-colors hover:text-brass-soft"
+                  >
+                    {item.label}
+                  </Link>
+                  <div className="flex flex-col items-center gap-2.5 bg-ivory/5 rounded-2xl py-3 px-6 w-full max-w-xs border border-ivory/10">
                     {item.children.map((child) => (
                       <Link
                         key={child.path}
                         to={child.path}
-                        className="font-display text-xl text-ivory/70 transition-colors hover:text-brass-soft"
+                        onClick={() => setMenuOpen(false)}
+                        className="font-display text-lg text-ivory/80 transition-colors hover:text-brass-soft"
                       >
                         {child.label}
                       </Link>

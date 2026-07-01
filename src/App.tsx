@@ -7,6 +7,7 @@ const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About
 const Contact = lazy(() => import('./pages/Contact').then((m) => ({ default: m.Contact })))
 const FinancialPlanning = lazy(() => import('./pages/FinancialPlanning').then((m) => ({ default: m.FinancialPlanning })))
 const MutualFunds = lazy(() => import('./pages/MutualFunds').then((m) => ({ default: m.MutualFunds })))
+const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
 const Insurance = lazy(() => import('./pages/Insurance').then((m) => ({ default: m.Insurance })))
 const CalculatorsHub = lazy(() => import('./pages/calculators/CalculatorsHub').then((m) => ({ default: m.CalculatorsHub })))
 const CalculatorPage = lazy(() => import('./pages/calculators/CalculatorPage').then((m) => ({ default: m.CalculatorPage })))
@@ -35,6 +36,7 @@ export default function App() {
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="about" element={<About />} />
+            <Route path="services" element={<Services />} />
             <Route path="financial-planning" element={<FinancialPlanning />} />
             <Route path="mutual-funds" element={<MutualFunds />} />
             <Route path="insurance" element={<Insurance />} />
