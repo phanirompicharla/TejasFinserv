@@ -110,7 +110,7 @@ h3 {
 }
 
 /* Grain overlay for navy sections */
-.grain-overlay {
+.grain-overlay:not(.fixed):not(.absolute) {
   position: relative;
 }
 
