@@ -88,6 +88,11 @@ export function Insurance() {
     return `₹${val.toLocaleString('en-IN')}`
   }
 
+  const whatsappMsg = encodeURIComponent(
+    `Hi Phani, I checked my insurance cover requirements on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Current Age: ${age} Years\n• Dependents: ${dependents}\n• Recommended Term Life Cover: ${formatINR(recommendedTermCover)}\n• Recommended Family Health Cover: ${formatINR(recommendedHealthCover)}\n\nPlease review these figures and share suitable policy options.`
+  )
+  const whatsappUrl = `https://wa.me/919848512345?text=${whatsappMsg}`
+
   return (
     <>
       <Seo
@@ -201,7 +206,7 @@ export function Insurance() {
             </div>
 
             <div className="md:col-span-6 bg-navy text-ivory p-8 rounded-2xl relative overflow-hidden flex flex-col justify-between h-full">
-              <div className="pointer-events-none absolute top-0 right-0 w-40 h-40 bg-brass/20 rounded-full blur-2xl -mr-10 -mt-10" />
+              <div className="pointer-events-none absolute top-0 right-0 w-40 h-40 bg-brass/20 rounded-full blur-2xl -mr-10 -mt-10 animate-slow-pulse" />
 
               <div className="space-y-6 relative z-10">
                 <div>
@@ -229,9 +234,12 @@ export function Insurance() {
                 </div>
               </div>
 
-              <div className="pt-6 relative z-10">
-                <Button to="/contact" className="w-full shadow-lg">
-                  Request Free Policy Review & Quotes →
+              <div className="pt-6 relative z-10 space-y-3">
+                <Button href={whatsappUrl} external className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600">
+                  💬 Send My Calculation to WhatsApp →
+                </Button>
+                <Button to="/contact" variant="ghost-light" className="w-full text-xs">
+                  Request Free Policy Review & Quotes
                 </Button>
               </div>
             </div>

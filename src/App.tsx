@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
+import { ScrollToTop } from './components/ScrollToTop'
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
@@ -9,6 +10,8 @@ const FinancialPlanning = lazy(() => import('./pages/FinancialPlanning').then((m
 const MutualFunds = lazy(() => import('./pages/MutualFunds').then((m) => ({ default: m.MutualFunds })))
 const Services = lazy(() => import('./pages/Services').then((m) => ({ default: m.Services })))
 const Insurance = lazy(() => import('./pages/Insurance').then((m) => ({ default: m.Insurance })))
+const TermInsurance = lazy(() => import('./pages/TermInsurance').then((m) => ({ default: m.TermInsurance })))
+const HealthInsurance = lazy(() => import('./pages/HealthInsurance').then((m) => ({ default: m.HealthInsurance })))
 const CalculatorsHub = lazy(() => import('./pages/calculators/CalculatorsHub').then((m) => ({ default: m.CalculatorsHub })))
 const CalculatorPage = lazy(() => import('./pages/calculators/CalculatorPage').then((m) => ({ default: m.CalculatorPage })))
 const Insights = lazy(() => import('./pages/Insights').then((m) => ({ default: m.Insights })))
@@ -30,6 +33,7 @@ function PageLoader() {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/admin/*" element={<AdminDashboard />} />
@@ -40,8 +44,8 @@ export default function App() {
             <Route path="financial-planning" element={<FinancialPlanning />} />
             <Route path="mutual-funds" element={<MutualFunds />} />
             <Route path="insurance" element={<Insurance />} />
-            <Route path="term-insurance" element={<Insurance />} />
-            <Route path="health-insurance" element={<Insurance />} />
+            <Route path="term-insurance" element={<TermInsurance />} />
+            <Route path="health-insurance" element={<HealthInsurance />} />
             <Route path="savings-plans" element={<FinancialPlanning />} />
             <Route path="calculators" element={<CalculatorsHub />} />
             <Route path="calculators/:slug" element={<CalculatorPage />} />

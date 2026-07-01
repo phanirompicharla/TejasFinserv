@@ -36,7 +36,7 @@ export function InsightPost() {
           ]),
         ]}
       />
-      <article className="section-padding bg-ivory pt-32">
+      <article className="section-padding bg-ivory pt-36 sm:pt-40">
         <div className="container-main max-w-3xl">
           <Breadcrumbs items={[
             { name: 'Home', path: '/' },

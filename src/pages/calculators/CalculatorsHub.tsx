@@ -46,7 +46,7 @@ export function CalculatorsHub() {
           { name: 'Calculators', path: '/calculators' },
         ]), faqPageSchema(hubFaqs)]}
       />
-      <section className="grain-overlay bg-navy pt-32 pb-16 text-ivory">
+      <section className="grain-overlay bg-navy pt-36 sm:pt-40 pb-16 text-ivory">
         <div className="container-main">
           <Breadcrumbs variant="light" items={[{ name: 'Home', path: '/' }, { name: 'Calculators' }]} />
           <h1 className="font-display font-semibold">Financial Calculators</h1>

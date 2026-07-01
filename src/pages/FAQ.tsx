@@ -18,7 +18,7 @@ export function FAQ() {
           speakableSchema('/faq', ['.speakable-answer']),
         ]}
       />
-      <section className="grain-overlay bg-navy pt-32 pb-16 text-ivory">
+      <section className="grain-overlay bg-navy pt-36 sm:pt-40 pb-16 text-ivory">
         <div className="container-main">
           <Breadcrumbs variant="light" items={[{ name: 'Home', path: '/' }, { name: 'FAQ' }]} />
           <h1 className="font-display font-semibold">Frequently Asked Questions</h1>

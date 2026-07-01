@@ -262,7 +262,7 @@ export function AdminDashboard() {
         
         <div className="sm:mx-auto sm:w-full sm:max-w-md text-center px-4">
           <div className="inline-block p-4 rounded-3xl bg-ivory/10 backdrop-blur-md shadow-2xl mb-6 border border-white/15 animate-fade-in">
-            <Logo />
+            <Logo imgClassName="h-12 sm:h-14 w-auto" />
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-semibold tracking-tight">
             Advisor Management Portal
@@ -348,8 +348,8 @@ export function AdminDashboard() {
       <header className="sticky top-0 z-40 bg-navy text-ivory border-b border-ivory/10 shadow-xl backdrop-blur-md">
         <div className="container-main flex h-20 items-center justify-between py-4">
           <div className="flex items-center gap-6 sm:gap-10">
-            <a href="/" className="bg-ivory py-2 px-3.5 rounded-2xl shadow-md hover:opacity-95 transition-opacity" title="Visit public site">
-              <Logo />
+            <a href="/" className="bg-ivory py-1.5 px-3 rounded-xl shadow-md hover:opacity-95 transition-opacity flex items-center" title="Visit public site">
+              <Logo imgClassName="h-8 w-auto" />
             </a>
             <div className="hidden md:block h-8 w-px bg-ivory/15" />
             <div className="hidden md:block">
@@ -362,9 +362,9 @@ export function AdminDashboard() {
                   Live
                 </span>
               </div>
-              <h1 className="font-display text-base font-semibold text-ivory tracking-wide mt-0.5">
+              <div className="font-display text-base font-semibold text-ivory tracking-wide mt-0.5">
                 Phani Rompicharla <span className="text-ivory/40 font-normal">|</span> <span className="text-brass">ARN-251896</span>
-              </h1>
+              </div>
             </div>
           </div>
 

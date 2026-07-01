@@ -2,9 +2,10 @@ import logoImg from '../assets/images/TEJAS SVG.svg'
 
 interface LogoProps {
   className?: string
+  imgClassName?: string
 }
 
-export function Logo({ className = '' }: LogoProps) {
+export function Logo({ className = '', imgClassName = 'h-12 w-auto' }: LogoProps) {
   return (
     <span className={`inline-flex items-center leading-none ${className}`}>
       <img
@@ -14,7 +15,7 @@ export function Logo({ className = '' }: LogoProps) {
         height={60}
         loading="eager"
         decoding="async"
-        className="block h-12 w-auto object-contain object-left"
+        className={`block object-contain object-left ${imgClassName}`}
       />
     </span>
   )

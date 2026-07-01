@@ -9,6 +9,7 @@
   --color-cream: #fbf9f3;
   --color-brass: #C79D5F;
   --color-brass-soft: #dcb881;
+  --color-brass-dark: #8C6225;
   --color-ink: #1e241f;
   --color-muted: #5c6b60;
   --color-line: #e3dccb;
@@ -28,6 +29,7 @@
   --cream: #fbf9f3;
   --brass: #C79D5F;
   --brass-soft: #dcb881;
+  --brass-dark: #8C6225;
   --ink: #1e241f;
   --muted: #5c6b60;
   --line: #e3dccb;
@@ -77,25 +79,27 @@ body {
   overflow-x: hidden;
 }
 
-h1,
-h2,
-h3,
-h4 {
-  font-family: var(--font-display);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-}
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
 
-h1 {
-  font-size: clamp(2.6rem, 6vw, 5rem);
-}
+  h1 {
+    font-size: clamp(2.6rem, 6vw, 5rem);
+  }
 
-h2 {
-  font-size: clamp(2rem, 4vw, 3.2rem);
-}
+  h2 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
 
-h3 {
-  font-size: 1.5rem;
+  h3 {
+    font-size: 1.5rem;
+  }
 }
 
 .font-display {
@@ -196,17 +200,44 @@ h3 {
   outline-offset: 3px;
 }
 
-/* Section spacing */
-.section-padding {
-  padding-top: clamp(36px, 5vw, 72px);
-  padding-bottom: clamp(36px, 5vw, 72px);
+input[type="range"]:focus-visible {
+  outline: 2px solid var(--brass);
+  outline-offset: 4px;
 }
 
-.container-main {
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: clamp(20px, 5vw, 64px);
+/* Animations */
+@keyframes slow-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.15;
+  }
+  50% {
+    transform: scale(1.12) translate(15px, -15px);
+    opacity: 0.28;
+  }
+}
+
+.animate-slow-pulse {
+  animation: slow-pulse 8s infinite ease-in-out;
+}
+
+.text-brass-dark {
+  color: var(--brass-dark);
+}
+
+@layer components {
+  /* Section spacing */
+  .section-padding {
+    padding-top: clamp(36px, 5vw, 72px);
+    padding-bottom: clamp(36px, 5vw, 72px);
+  }
+
+  .container-main {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: clamp(20px, 5vw, 64px);
+  }
 }
 
 /* Hairline divider */

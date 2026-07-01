@@ -27,10 +27,11 @@ function validate(data: FormData): FormErrors {
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
     errors.email = 'Please enter a valid email address'
   }
+  const cleanPhone = data.phone.replace(/[\s+\-()]/g, '')
   if (!data.phone.trim()) {
     errors.phone = 'Phone number is required'
-  } else if (!/^[\d\s+\-()]{10,}$/.test(data.phone)) {
-    errors.phone = 'Please enter a valid phone number'
+  } else if (!/^(?:91|0)?[6-9]\d{9}$/.test(cleanPhone)) {
+    errors.phone = 'Please enter a valid 10-digit Indian mobile number (starting with 6, 7, 8, or 9)'
   }
 
   return errors

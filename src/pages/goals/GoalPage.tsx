@@ -74,7 +74,7 @@ export function GoalPage() {
   return (
     <>
       <Seo title={`${goal.title} | TejasFinserv`} description={goal.description} path={path} />
-      <section className="grain-overlay bg-navy pt-32 pb-16 text-ivory">
+      <section className="grain-overlay bg-navy pt-36 sm:pt-40 pb-16 text-ivory">
         <div className="container-main">
           <Breadcrumbs variant="light" items={[{ name: 'Home', path: '/' }, { name: goal.title }]} />
           <h1 className="font-display font-semibold">{goal.h1}</h1>

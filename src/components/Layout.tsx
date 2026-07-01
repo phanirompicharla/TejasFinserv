@@ -4,6 +4,8 @@ import { Footer } from './Footer'
 import { Header } from './Header'
 import { StickyInvestCTA } from './StickyInvestCTA'
 import { WhatsAppFloat } from './WhatsAppFloat'
+import { MobileActionBar } from './MobileActionBar'
+import { CommandPalette } from './CommandPalette'
 
 export function Layout() {
   return (
@@ -15,13 +17,15 @@ export function Layout() {
         Skip to main content
       </a>
       <Header />
-      <main id="main-content">
+      <main id="main-content" className="pb-14 md:pb-0">
         <Outlet />
       </main>
       <Footer />
       <WhatsAppFloat />
       <StickyInvestCTA />
       <CookieConsent />
+      <MobileActionBar />
+      <CommandPalette />
     </>
   )
 }

@@ -115,25 +115,44 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+            className="flex items-center gap-2 bg-cream text-muted hover:text-navy px-3 py-1.5 rounded-xl border border-line text-xs font-medium transition-all shadow-sm hover:border-brass/50 cursor-pointer"
+            title="Search site (Ctrl+K or Cmd+K)"
+          >
+            <span>🔍 Search</span>
+            <kbd className="bg-line/40 text-navy px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold">⌘K</kbd>
+          </button>
           <Button href={siteConfig.onboardingUrl} external>Invest Now</Button>
         </div>
 
-        <button
-          type="button"
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-navy lg:hidden"
-          onClick={() => setMenuOpen(!menuOpen)}
-          aria-expanded={menuOpen}
-          aria-controls="mobile-menu"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            {menuOpen ? (
-              <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            ) : (
-              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            )}
-          </svg>
-        </button>
+        <div className="flex items-center gap-1 lg:hidden">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-navy cursor-pointer"
+            aria-label="Open search palette"
+          >
+            <span className="text-lg">🔍</span>
+          </button>
+          <button
+            type="button"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-navy cursor-pointer"
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              {menuOpen ? (
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+              )}
+            </svg>
+          </button>
+        </div>
       </div>
     </header>
 

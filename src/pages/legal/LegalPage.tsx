@@ -54,7 +54,7 @@ export function LegalPage({ type }: { type: LegalPageProps['type'] }) {
   return (
     <>
       <Seo title={seo.title} description={seo.description} path={`/${type}`} />
-      <section className="grain-overlay bg-navy pt-32 pb-12 text-ivory">
+      <section className="grain-overlay bg-navy pt-36 sm:pt-40 pb-12 text-ivory">
         <div className="container-main">
           <Breadcrumbs variant="light" items={[{ name: 'Home', path: '/' }, { name: pageTitle }]} />
           <h1 className="font-display font-semibold">{pageTitle}</h1>

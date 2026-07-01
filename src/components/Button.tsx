@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 
-type ButtonVariant = 'primary' | 'ghost' | 'ghost-light'
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'ghost-light'
 
 interface ButtonBaseProps {
   variant?: ButtonVariant
@@ -40,6 +40,8 @@ type ButtonProps = ButtonAsButton | ButtonAsLink | ButtonAsRouterLink
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
     'bg-brass text-navy hover:bg-brass-soft hover:-translate-y-0.5 hover:shadow-[0_8px_24px_-4px_rgba(194,145,63,0.5)]',
+  secondary:
+    'border-2 border-brass text-brass bg-transparent hover:bg-brass hover:text-navy hover:-translate-y-0.5 shadow-sm',
   ghost:
     'border-2 border-navy text-navy bg-transparent hover:bg-navy hover:text-ivory hover:-translate-y-0.5',
   'ghost-light':

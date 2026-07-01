@@ -13,7 +13,7 @@ export function Contact() {
         path="/contact"
       />
 
-      <section className="grain-overlay bg-navy pt-32 pb-20 text-ivory">
+      <section className="grain-overlay bg-navy pt-36 sm:pt-40 pb-20 text-ivory">
         <div className="container-main">
           <p className="mb-3 text-sm font-semibold tracking-widest text-brass-soft uppercase">
             Contact
