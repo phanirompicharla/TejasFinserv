@@ -44,6 +44,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
+                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
                     />
                   </div>
                 ))}
@@ -62,6 +63,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
+                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
                     />
                   </div>
                 ))}
@@ -84,6 +86,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
+                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
                     />
                   </div>
                 ))}
@@ -102,6 +105,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
+                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
                     />
                   </div>
                 ))}
@@ -113,4 +117,3 @@ export function AmcStrip() {
     </section>
   )
 }
-

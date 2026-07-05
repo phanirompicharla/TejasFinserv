@@ -339,10 +339,10 @@ input[type="range"]:focus-visible {
 
 /* Image shown in full color and full opacity by default */
 .amc-carousel-item img {
-  max-height: 2.75rem;
-  width: auto;
-  max-width: 100%;
+  width: 85%;
+  height: 85%;
   object-fit: contain;
+  object-position: center;
   transition: all 0.3s ease;
 }
 

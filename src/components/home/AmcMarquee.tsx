@@ -29,6 +29,7 @@ export function AmcMarquee() {
                   height={60}
                   loading="lazy"
                   decoding="async"
+                  style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
                 />
               </div>
             ))}
@@ -47,6 +48,7 @@ export function AmcMarquee() {
                   height={60}
                   loading="lazy"
                   decoding="async"
+                  style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
                 />
               </div>
             ))}
@@ -56,4 +58,3 @@ export function AmcMarquee() {
     </section>
   )
 }
-
