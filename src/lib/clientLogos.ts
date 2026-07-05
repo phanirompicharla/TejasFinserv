@@ -16,6 +16,13 @@ const insuranceOnlySlugs = new Set([
   'indiafirst', 'ageas-federal', 'aviva', 'edelweiss-tokio', 'bandhan-life',
   'bharti-axa', 'future-generali', 'pramerica', 'sud-life', 'shriram-life',
   'reliance-nippon',
+  
+  // New health insurance slugs
+  'hdfc-ergo', 'niva-bupa', 'icici-lombard', 'tata-aig', 'star-health',
+  'bajaj-allianz-gi', 'sbi-general', 'reliance-general', 'manipalcigna',
+  'acko', 'digit', 'go-digit', 'future-generali-gi', 'kotak-general',
+  'liberty-general', 'royal-sundaram', 'national-insurance', 'new-india',
+  'oriental', 'united-india', 'iffco-tokio', 'chola-ms', 'shriram-gi',
 ])
 
 function fileNameFromPath(path: string) {
@@ -36,7 +43,7 @@ for (const [file, url] of Object.entries(logosByFile)) {
   }
 }
 
-const insurancePartnerMeta = [
+const termInsurancePartnerMeta = [
   { name: 'Tata AIA Life Insurance', slug: 'tata-aia', file: 'tata-aia' },
   { name: 'HDFC Life Insurance', slug: 'hdfc-life', file: 'hdfc-life' },
   { name: 'ICICI Prudential Life Insurance', slug: 'icici-pru', file: 'icici-pru' },
@@ -61,9 +68,45 @@ const insurancePartnerMeta = [
   { name: 'Reliance Nippon Life Insurance', slug: 'reliance-nippon', file: 'reliance-nippon' },
 ] as const
 
-export const insurancePartners = insurancePartnerMeta
+const healthInsurancePartnerMeta = [
+  { name: 'Care Health Insurance', slug: 'care', file: 'care' },
+  { name: 'HDFC ERGO', slug: 'hdfc-ergo', file: 'hdfc-ergo' },
+  { name: 'Niva Bupa Health Insurance', slug: 'niva-bupa', file: 'niva-bupa' },
+  { name: 'ICICI Lombard', slug: 'icici-lombard', file: 'icici-lombard' },
+  { name: 'Tata AIG', slug: 'tata-aig', file: 'tata-aig' },
+  { name: 'Star Health Insurance', slug: 'star-health', file: 'star-health' },
+  { name: 'Bajaj Allianz General Insurance', slug: 'bajaj-allianz-gi', file: 'bajaj-allianz-gi' },
+  { name: 'SBI General Insurance', slug: 'sbi-general', file: 'sbi-general' },
+  { name: 'Reliance General Insurance', slug: 'reliance-general', file: 'reliance-general' },
+  { name: 'ManipalCigna Health Insurance', slug: 'manipalcigna', file: 'manipalcigna' },
+  { name: 'ACKO General Insurance', slug: 'acko', file: 'acko' },
+  { name: 'Digit Insurance', slug: 'digit', file: 'digit' },
+  { name: 'Go Digit General Insurance', slug: 'go-digit', file: 'go-digit' },
+  { name: 'Future Generali General Insurance', slug: 'future-generali-gi', file: 'future-generali-gi' },
+  { name: 'Kotak General Insurance', slug: 'kotak-general', file: 'kotak-general' },
+  { name: 'Liberty General Insurance', slug: 'liberty-general', file: 'liberty-general' },
+  { name: 'Royal Sundaram', slug: 'royal-sundaram', file: 'royal-sundaram' },
+  { name: 'National Insurance', slug: 'national-insurance', file: 'national-insurance' },
+  { name: 'New India Assurance', slug: 'new-india', file: 'new-india' },
+  { name: 'Oriental Insurance', slug: 'oriental', file: 'oriental' },
+  { name: 'United India Insurance', slug: 'united-india', file: 'united-india' },
+  { name: 'IFFCO Tokio General Insurance', slug: 'iffco-tokio', file: 'iffco-tokio' },
+  { name: 'Cholamandalam MS General Insurance', slug: 'chola-ms', file: 'chola-ms' },
+  { name: 'Shriram General Insurance', slug: 'shriram-gi', file: 'shriram-gi' },
+] as const
+
+export const termInsurancePartners = termInsurancePartnerMeta
   .filter((p) => logosByFile[p.file])
   .map((p) => ({ name: p.name, slug: p.slug, logo: logosByFile[p.file] }))
+
+export const healthInsurancePartners = healthInsurancePartnerMeta
+  .filter((p) => logosByFile[p.file])
+  .map((p) => ({ name: p.name, slug: p.slug, logo: logosByFile[p.file] }))
+
+// For the generic insurance page, we combine both lists, keeping unique ones.
+export const insurancePartners = [...termInsurancePartners, ...healthInsurancePartners].filter(
+  (partner, index, self) => index === self.findIndex((p) => p.slug === partner.slug)
+)
 
 export function resolvePartnerLogo(slug: string): string {
   return clientLogoBySlug[slug] ?? `/amc/${slug}.svg`

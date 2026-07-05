@@ -1,1 +1,0 @@
-import{d as e}from"./index-BBxdymBm.js";var t=e();function n({children:e,className:n=``}){return(0,t.jsx)(`div`,{className:`border-l-4 border-brass bg-cream px-6 py-5 text-muted speakable-answer ${n}`,children:e})}export{n as t};

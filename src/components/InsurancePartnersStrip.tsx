@@ -1,7 +1,11 @@
-import { insurancePartners } from '../lib/clientLogos'
+import { insurancePartners as defaultInsurancePartners } from '../lib/clientLogos'
 import { SectionReveal } from './SectionReveal'
 
-export function InsurancePartnersStrip() {
+interface InsurancePartnersStripProps {
+  partners?: { name: string; slug: string; logo: string }[]
+}
+
+export function InsurancePartnersStrip({ partners = defaultInsurancePartners }: InsurancePartnersStripProps) {
   return (
     <section className="section-padding bg-ivory" aria-label="Trusted insurance partners">
       <div className="container-main text-center">
@@ -27,7 +31,7 @@ export function InsurancePartnersStrip() {
         <div className="amc-carousel-track amc-carousel-track-left">
           {/* First set */}
           <div className="flex shrink-0 gap-6 pr-6">
-            {insurancePartners.map((partner, i) => (
+            {partners.map((partner, i) => (
               <div
                 key={`${partner.slug}-${i}`}
                 className="amc-carousel-item"
@@ -46,7 +50,7 @@ export function InsurancePartnersStrip() {
           </div>
           {/* Duplicate set for seamless infinite loop */}
           <div className="flex shrink-0 gap-6 pr-6">
-            {insurancePartners.map((partner, i) => (
+            {partners.map((partner, i) => (
               <div
                 key={`${partner.slug}-dup-${i}`}
                 className="amc-carousel-item"

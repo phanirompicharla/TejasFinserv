@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
 import { InsurancePartnersStrip } from '../components/InsurancePartnersStrip'
+import { termInsurancePartners } from '../lib/clientLogos'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
 
@@ -331,7 +332,7 @@ export function TermInsurance() {
       </section>
 
       {/* Partners Strip */}
-      <InsurancePartnersStrip />
+      <InsurancePartnersStrip partners={termInsurancePartners} />
 
       {/* CTA Section */}
       <section className="section-padding bg-navy text-ivory relative overflow-hidden">
