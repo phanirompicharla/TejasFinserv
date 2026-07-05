@@ -353,4 +353,12 @@ input[type="range"]:focus-visible {
   transform: translateY(-3px) scale(1.03);
 }
 
+/* Respect prefers-reduced-motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .amc-carousel-track-left,
+  .amc-carousel-track-right {
+    animation: none;
+  }
+}
+
 
