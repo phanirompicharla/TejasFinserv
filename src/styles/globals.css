@@ -337,14 +337,12 @@ input[type="range"]:focus-visible {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-/* Image grayscale by default, colored on hover */
+/* Image shown in full color and full opacity by default */
 .amc-carousel-item img {
   max-height: 2.75rem;
   width: auto;
   max-width: 100%;
   object-fit: contain;
-  filter: grayscale(100%);
-  opacity: 0.55;
   transition: all 0.3s ease;
 }
 
@@ -352,11 +350,7 @@ input[type="range"]:focus-visible {
   background-color: #ffffff;
   border-color: var(--brass-soft);
   box-shadow: var(--shadow-card);
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.03);
 }
 
-.amc-carousel-item:hover img {
-  filter: grayscale(0%);
-  opacity: 1;
-}
 
