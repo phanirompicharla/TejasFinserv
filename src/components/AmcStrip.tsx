@@ -1,11 +1,14 @@
-import { resolvePartnerLogo } from '../lib/clientLogos'
+import { ALL_AMCS } from '../lib/amcData'
 import { siteConfig } from '../lib/siteConfig'
-import { AmcLogo } from './AmcLogo'
 import { SectionReveal } from './SectionReveal'
 
 export function AmcStrip() {
+  // Split the 46 AMCs into two rows of 23 each
+  const row1 = ALL_AMCS.slice(0, 23)
+  const row2 = ALL_AMCS.slice(23)
+
   return (
-    <section className="section-padding bg-cream">
+    <section className="section-padding bg-cream overflow-hidden">
       <div className="container-main text-center">
         <SectionReveal>
           <p className="mb-3 text-sm font-semibold tracking-widest text-brass uppercase">
@@ -18,14 +21,96 @@ export function AmcStrip() {
             Invest across India's leading mutual fund houses through a single, AMFI-registered distributor.
           </p>
         </SectionReveal>
-        <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {siteConfig.amcPartners.map((amc, i) => (
-            <SectionReveal key={amc.slug} delay={i * 40}>
-              <AmcLogo name={amc.name} logo={resolvePartnerLogo(amc.slug)} />
-            </SectionReveal>
-          ))}
-        </div>
+
+        <SectionReveal delay={100}>
+          <div className="amc-carousel-container mt-10">
+            {/* Smooth Edge Gradients */}
+            <div className="amc-carousel-fade-left" />
+            <div className="amc-carousel-fade-right" />
+
+            {/* Row 1: Scrolling Left */}
+            <div className="amc-carousel-track amc-carousel-track-left mb-6">
+              <div className="flex shrink-0 gap-6 pr-6">
+                {row1.map((amc, i) => (
+                  <div
+                    key={`${amc.name}-${i}`}
+                    className="amc-carousel-item"
+                    title={amc.name}
+                  >
+                    <img
+                      src={amc.logo}
+                      alt={`${amc.name} logo`}
+                      width={160}
+                      height={60}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex shrink-0 gap-6 pr-6">
+                {row1.map((amc, i) => (
+                  <div
+                    key={`${amc.name}-dup-${i}`}
+                    className="amc-carousel-item"
+                    title={amc.name}
+                  >
+                    <img
+                      src={amc.logo}
+                      alt={`${amc.name} logo`}
+                      width={160}
+                      height={60}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Row 2: Scrolling Right */}
+            <div className="amc-carousel-track amc-carousel-track-right">
+              <div className="flex shrink-0 gap-6 pr-6">
+                {row2.map((amc, i) => (
+                  <div
+                    key={`${amc.name}-${i}`}
+                    className="amc-carousel-item"
+                    title={amc.name}
+                  >
+                    <img
+                      src={amc.logo}
+                      alt={`${amc.name} logo`}
+                      width={160}
+                      height={60}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
+              <div className="flex shrink-0 gap-6 pr-6">
+                {row2.map((amc, i) => (
+                  <div
+                    key={`${amc.name}-dup-${i}`}
+                    className="amc-carousel-item"
+                    title={amc.name}
+                  >
+                    <img
+                      src={amc.logo}
+                      alt={`${amc.name} logo`}
+                      width={160}
+                      height={60}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </SectionReveal>
       </div>
     </section>
   )
 }
+

@@ -1,32 +1,59 @@
-import { resolvePartnerLogo } from '../../lib/clientLogos'
-import { siteConfig } from '../../lib/siteConfig'
-import { AmcLogo } from '../AmcLogo'
+import { ALL_AMCS } from '../../lib/amcData'
 
 export function AmcMarquee() {
-  const items = [...siteConfig.amcPartners, ...siteConfig.amcPartners]
-
   return (
-    <section className="border-y border-line bg-ivory py-8" aria-label="Trusted AMC partners">
+    <section className="border-y border-line bg-ivory py-8 overflow-hidden" aria-label="Trusted AMC partners">
       <div className="container-main mb-5 text-center">
         <p className="text-sm font-medium text-muted">
           Distributing <span className="font-semibold text-navy">5,000+ schemes</span> across{' '}
-          <span className="font-semibold text-navy">40+ AMCs</span>
+          <span className="font-semibold text-navy">46 Asset Management Companies</span>
         </p>
       </div>
       <div className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ivory to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ivory to-transparent" />
-        <div className="hero-marquee-track flex w-max items-center gap-4 px-4">
-          {items.map((amc, i) => (
-            <AmcLogo
-              key={`${amc.slug}-${i}`}
-              name={amc.name}
-              logo={resolvePartnerLogo(amc.slug)}
-              variant="marquee"
-            />
-          ))}
+        {/* Fade gradients blending into the ivory background */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-gradient-to-r from-ivory to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-gradient-to-l from-ivory to-transparent" />
+        
+        <div className="amc-carousel-track amc-carousel-track-left">
+          <div className="flex shrink-0 gap-6 pr-6">
+            {ALL_AMCS.map((amc, i) => (
+              <div
+                key={`${amc.name}-${i}`}
+                className="amc-carousel-item"
+                title={amc.name}
+              >
+                <img
+                  src={amc.logo}
+                  alt={`${amc.name} logo`}
+                  width={160}
+                  height={60}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex shrink-0 gap-6 pr-6">
+            {ALL_AMCS.map((amc, i) => (
+              <div
+                key={`${amc.name}-dup-${i}`}
+                className="amc-carousel-item"
+                title={amc.name}
+              >
+                <img
+                  src={amc.logo}
+                  alt={`${amc.name} logo`}
+                  width={160}
+                  height={60}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
   )
 }
+

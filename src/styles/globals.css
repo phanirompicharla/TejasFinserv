@@ -252,3 +252,111 @@ input[type="range"]:focus-visible {
     transparent
   );
 }
+
+/* AMC Premium Infinite Scrolling Carousel */
+.amc-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 1.5rem 0;
+}
+
+.amc-carousel-fade-left,
+.amc-carousel-fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(30px, 8vw, 120px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.amc-carousel-fade-left {
+  left: 0;
+  background: linear-gradient(to right, var(--cream), transparent);
+}
+
+.amc-carousel-fade-right {
+  right: 0;
+  background: linear-gradient(to left, var(--cream), transparent);
+}
+
+/* Track container holding both duplicated sets */
+.amc-carousel-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.amc-carousel-track-left {
+  animation: marquee-left 70s linear infinite;
+}
+
+.amc-carousel-track-right {
+  animation: marquee-right 70s linear infinite;
+}
+
+/* Pause scroll animation on hover */
+.amc-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-left {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes marquee-right {
+  0% {
+    transform: translate3d(-50%, 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Individual AMC Logo Card */
+.amc-carousel-item {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4.5rem;
+  width: 10.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background-color: var(--ivory);
+  padding: 0.75rem 1.25rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Image grayscale by default, colored on hover */
+.amc-carousel-item img {
+  max-height: 2.75rem;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: grayscale(100%);
+  opacity: 0.55;
+  transition: all 0.3s ease;
+}
+
+.amc-carousel-item:hover {
+  background-color: #ffffff;
+  border-color: var(--brass-soft);
+  box-shadow: var(--shadow-card);
+  transform: translateY(-3px);
+}
+
+.amc-carousel-item:hover img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
