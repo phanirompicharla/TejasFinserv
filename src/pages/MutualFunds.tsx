@@ -106,7 +106,7 @@ export function MutualFunds() {
               Mutual funds, matched to your life goals.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-ivory/80 leading-relaxed">
-              Access to 5,000+ schemes across 40+ top AMCs in India, rigorously selected based on risk-adjusted returns, portfolio overlap, and expense ratios.
+              Access to 6,000+ schemes across 40+ top AMCs in India, rigorously selected based on risk-adjusted returns, portfolio overlap, and expense ratios.
             </p>
           </SectionReveal>
         </div>

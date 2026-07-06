@@ -47,7 +47,7 @@ const milestones = [
   {
     year: '2025+',
     title: 'Trusted by 5,000+ Investors',
-    desc: 'Milestone reached: distributing over 5,000 schemes across retirement, education, and wealth creation portfolios.',
+    desc: 'Milestone reached: distributing over 6,000 schemes across retirement, education, and wealth creation portfolios.',
   },
 ]
 

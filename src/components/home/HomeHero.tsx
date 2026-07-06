@@ -42,7 +42,7 @@ export function HomeHero({ onDiscover }: HomeHeroProps) {
           <div className="hero-visual">
             <span className="hero-chip-schemes-wrap hidden min-[480px]:block">
               <span className="hero-chip hero-float-delayed inline-block rounded-full px-3 py-1.5 text-xs font-medium whitespace-nowrap text-ivory/80">
-                5,000+ schemes
+                6,000+ schemes
               </span>
             </span>
             <span className="hero-chip-amcs-wrap">

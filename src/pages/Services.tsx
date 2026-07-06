@@ -11,7 +11,7 @@ const serviceLines = [
     title: 'Mutual Funds & SIPs',
     tagline: 'Wealth creation tailored to your life goals',
     description:
-      'Access 5,000+ schemes across 40+ top AMCs in India. We analyze risk-adjusted returns, expense ratios, and portfolio overlap to construct a diversified portfolio for long-term growth.',
+      'Access 6,000+ schemes across 40+ top AMCs in India. We analyze risk-adjusted returns, expense ratios, and portfolio overlap to construct a diversified portfolio for long-term growth.',
     features: [
       'Goal-based SIP & Lump Sum recommendations',
       'Portfolio rebalancing & tax-harvesting strategies',

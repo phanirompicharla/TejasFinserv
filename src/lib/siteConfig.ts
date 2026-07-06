@@ -50,7 +50,7 @@ export const siteConfig = {
   },
 
   stats: {
-    schemes: 5000,
+    schemes: 6000,
     amcs: 40,
     serviceLines: 3,
   },
@@ -146,7 +146,7 @@ export const siteConfig = {
     {
       title: 'Mutual Funds',
       description:
-        'Access 5,000+ schemes across 40+ AMCs, matched to your risk profile.',
+        'Access 6,000+ schemes across 40+ AMCs, matched to your risk profile.',
       path: '/mutual-funds',
     },
     {
@@ -193,9 +193,9 @@ export const siteConfig = {
         'Goal-based financial planning, retirement strategies, and portfolio reviews tailored to your life and goals in Vijayawada.',
     },
     mutualFunds: {
-      title: 'Mutual Funds Vijayawada — 5000+ Schemes',
+      title: 'Mutual Funds Vijayawada — 6000+ Schemes',
       description:
-        'Start SIP online with an AMFI-registered distributor. Access 5,000+ mutual fund schemes across 40+ AMCs in Vijayawada.',
+        'Start SIP online with an AMFI-registered distributor. Access 6,000+ mutual fund schemes across 40+ AMCs in Vijayawada.',
     },
     insurance: {
       title: 'Insurance Advisory — TejasFinserv Vijayawada',

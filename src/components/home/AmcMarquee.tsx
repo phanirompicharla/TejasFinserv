@@ -5,7 +5,7 @@ export function AmcMarquee() {
     <section className="border-y border-line bg-ivory py-8 overflow-hidden" aria-label="Trusted AMC partners">
       <div className="container-main mb-5 text-center">
         <p className="text-sm font-medium text-muted">
-          Distributing <span className="font-semibold text-navy">5,000+ schemes</span> across{' '}
+          Distributing <span className="font-semibold text-navy">6,000+ schemes</span> across{' '}
           <span className="font-semibold text-navy">46 Asset Management Companies</span>
         </p>
       </div>

@@ -29,6 +29,6 @@ export const globalFaqs = [
   },
   {
     question: 'What services does TejasFinserv offer?',
-    answer: 'We offer mutual fund distribution across 5,000+ schemes and 40+ AMCs, goal-based financial planning, retirement planning, and insurance advisory for individuals and businesses in Vijayawada.',
+    answer: 'We offer mutual fund distribution across 6,000+ schemes and 40+ AMCs, goal-based financial planning, retirement planning, and insurance advisory for individuals and businesses in Vijayawada.',
   },
 ]
