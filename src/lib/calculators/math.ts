@@ -121,18 +121,35 @@ export function calcRetirement(
   })
 }
 
-export function calcEmi(principal: number, annualRate: number, years: number): CalcResult {
-  const r = annualRate / 12 / 100
-  const n = years * 12
-  const emi =
-    r === 0
-      ? principal / n
-      : (principal * r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1)
-  const total = emi * n
-  return baseResult(principal, total, {
-    emi: Math.round(emi),
-    totalInterest: Math.round(total - principal),
-  })
+export function calcSipDelay(
+  monthly: number,
+  annualReturn: number,
+  years: number,
+  delayMonths: number
+): CalcResult {
+  const actualDelayMonths = Math.min(delayMonths, years * 12 - 1)
+  
+  // Normal SIP if started today
+  const normalSip = calcSip(monthly, annualReturn, years)
+  
+  // Delayed SIP
+  const delayedYears = Math.max(0.083, years - actualDelayMonths / 12)
+  const delayedSip = calcSip(monthly, annualReturn, delayedYears)
+  
+  // Wealth lost by delaying
+  const wealthLost = Math.max(0, normalSip.total - delayedSip.total)
+  
+  return {
+    invested: normalSip.invested,
+    total: normalSip.total,
+    returns: normalSip.returns,
+    extra: {
+      delayPeriodMonths: actualDelayMonths,
+      delayedSipInvested: Math.round(delayedSip.invested),
+      delayedSipTotal: Math.round(delayedSip.total),
+      wealthLostByDelaying: Math.round(wealthLost),
+    }
+  }
 }
 
 export function calcLumpsumVsSip(

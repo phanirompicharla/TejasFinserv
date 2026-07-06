@@ -44,7 +44,7 @@ export const calculators: CalculatorDef[] = [
     seoDescription:
       'Free SIP calculator for mutual fund investors in Vijayawada. Estimate returns from monthly SIP with expected return and tenure.',
     fields: [
-      { id: 'monthly', label: 'Monthly Investment', min: 500, max: 500000, step: 500, defaultValue: 10000, prefix: '₹' },
+      { id: 'monthly', label: 'Monthly Investment', min: 5000, max: 500000, step: 500, defaultValue: 10000, prefix: '₹' },
       { id: 'annualReturn', label: 'Expected Return (p.a.)', min: 1, max: 30, step: 0.5, defaultValue: 12, suffix: '%' },
       { id: 'years', label: 'Investment Period', min: 1, max: 40, step: 1, defaultValue: 10, suffix: 'yrs' },
     ],
@@ -83,7 +83,7 @@ export const calculators: CalculatorDef[] = [
     seoTitle: 'Step-up SIP Calculator | TejasFinserv',
     seoDescription: 'Calculate returns from a step-up SIP with annual increase. Plan growing monthly investments in mutual funds.',
     fields: [
-      { id: 'monthly', label: 'Starting Monthly SIP', min: 500, max: 500000, step: 500, defaultValue: 10000, prefix: '₹' },
+      { id: 'monthly', label: 'Starting Monthly SIP', min: 5000, max: 500000, step: 500, defaultValue: 10000, prefix: '₹' },
       { id: 'stepUpPct', label: 'Annual Step-up', min: 0, max: 50, step: 1, defaultValue: 10, suffix: '%' },
       { id: 'annualReturn', label: 'Expected Return (p.a.)', min: 1, max: 30, step: 0.5, defaultValue: 12, suffix: '%' },
       { id: 'years', label: 'Investment Period', min: 1, max: 40, step: 1, defaultValue: 15, suffix: 'yrs' },
@@ -160,22 +160,23 @@ export const calculators: CalculatorDef[] = [
     ],
   },
   {
-    slug: 'emi',
-    title: 'EMI Calculator',
+    slug: 'sip-delay',
+    title: 'SIP Delay Calculator',
     tier: 1,
-    description: 'Calculate loan EMI, total interest, and repayment.',
-    intro: 'Know your Equated Monthly Instalment before taking a home, car, or personal loan. See total interest payable over the loan tenure.',
-    seoTitle: 'EMI Calculator — Loan EMI Planner | TejasFinserv',
-    seoDescription: 'Calculate loan EMI, total interest, and repayment schedule. Free EMI calculator for home and personal loans.',
+    description: 'Calculate wealth lost by delaying your monthly SIP.',
+    intro: 'Delaying your Systematic Investment Plan, even by a few months, can cost you lakhs in long-term compounded wealth. See the cost of delay now.',
+    seoTitle: 'SIP Delay Calculator — Cost of Delay Planner | TejasFinserv',
+    seoDescription: 'Calculate estimated wealth lost by delaying your mutual fund SIP. Plan investments early with TejasFinserv.',
     fields: [
-      { id: 'principal', label: 'Loan Amount', min: 100000, max: 50000000, step: 100000, defaultValue: 3000000, prefix: '₹' },
-      { id: 'annualRate', label: 'Interest Rate (p.a.)', min: 1, max: 24, step: 0.1, defaultValue: 9, suffix: '%' },
-      { id: 'years', label: 'Loan Tenure', min: 1, max: 30, step: 1, defaultValue: 20, suffix: 'yrs' },
+      { id: 'monthly', label: 'Monthly SIP Amount', min: 5000, max: 500000, step: 500, defaultValue: 10000, prefix: '₹' },
+      { id: 'annualReturn', label: 'Expected Return (p.a.)', min: 1, max: 30, step: 0.5, defaultValue: 12, suffix: '%' },
+      { id: 'years', label: 'Total Investment Period', min: 1, max: 40, step: 1, defaultValue: 10, suffix: 'yrs' },
+      { id: 'delayMonths', label: 'Delay Period', min: 1, max: 120, step: 1, defaultValue: 12, suffix: 'months' },
     ],
-    compute: (v) => math.calcEmi(v.principal, v.annualRate, v.years),
-    resultLabels: { invested: 'Principal', returns: 'Total Interest', total: 'Total Payment' },
+    compute: (v) => math.calcSipDelay(v.monthly, v.annualReturn, v.years, v.delayMonths),
+    resultLabels: { invested: 'Investment (Start Today)', returns: 'Est. Returns (Start Today)', total: 'Future Value (Start Today)' },
     faqs: [
-      { question: 'How is EMI calculated?', answer: 'EMI uses the reducing-balance method: EMI = P × r × (1+r)^n / ((1+r)^n − 1), where P is principal, r is monthly interest rate, and n is tenure in months.' },
+      { question: 'What is the cost of delaying a SIP?', answer: 'When you delay starting a SIP, you lose the compounding benefit on your earliest contributions. Over 10–20 years, even a 1-year delay can reduce your final corpus by lakhs of rupees.' },
     ],
   },
   {
@@ -187,7 +188,7 @@ export const calculators: CalculatorDef[] = [
     seoTitle: 'Lumpsum vs SIP Comparison Calculator | TejasFinserv',
     seoDescription: 'Compare lumpsum and SIP returns for the same investment amount. Make informed mutual fund investment decisions.',
     fields: [
-      { id: 'monthly', label: 'Monthly SIP Amount', min: 500, max: 100000, step: 500, defaultValue: 10000, prefix: '₹' },
+      { id: 'monthly', label: 'Monthly SIP Amount', min: 5000, max: 100000, step: 500, defaultValue: 10000, prefix: '₹' },
       { id: 'annualReturn', label: 'Expected Return (p.a.)', min: 1, max: 30, step: 0.5, defaultValue: 12, suffix: '%' },
       { id: 'years', label: 'Investment Period', min: 1, max: 30, step: 1, defaultValue: 10, suffix: 'yrs' },
     ],

@@ -83,7 +83,7 @@ export function Home() {
             <p className="mb-3 text-sm font-semibold tracking-widest text-brass uppercase">Free Tools</p>
             <h2 className="font-display font-semibold text-navy">Financial calculators</h2>
             <p className="mt-4 max-w-2xl text-muted">
-              Plan your SIP, retirement, EMI, and goals with live-updating calculators — free for every investor.
+              Plan your SIP, retirement, SIP delay, and goals with live-updating calculators — free for every investor.
             </p>
           </SectionReveal>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

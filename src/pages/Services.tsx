@@ -8,7 +8,7 @@ import { Seo } from '../components/Seo'
 const serviceLines = [
   {
     id: 'mutual-funds',
-    title: 'Mutual Funds & SIPs',
+    title: 'Systematic Investments',
     tagline: 'Wealth creation tailored to your life goals',
     description:
       'Access 6,000+ schemes across 40+ top AMCs in India. We analyze risk-adjusted returns, expense ratios, and portfolio overlap to construct a diversified portfolio for long-term growth.',

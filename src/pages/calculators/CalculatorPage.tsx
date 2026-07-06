@@ -9,7 +9,8 @@ import { breadcrumbSchema, faqPageSchema, speakableSchema } from '../../schema'
 
 export function CalculatorPage() {
   const { slug } = useParams<{ slug: string }>()
-  const calculator = slug ? getCalculator(slug) : undefined
+  const resolvedSlug = slug === 'emi' ? 'sip-delay' : slug
+  const calculator = resolvedSlug ? getCalculator(resolvedSlug) : undefined
 
   if (!calculator) {
     return (

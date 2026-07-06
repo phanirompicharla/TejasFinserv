@@ -156,7 +156,7 @@ export const siteConfig = {
     },
     {
       title: 'Calculators',
-      description: 'SIP, retirement, EMI, and 15+ free financial calculators.',
+      description: 'SIP, retirement, SIP delay, and 15+ free financial calculators.',
       path: '/calculators',
     },
   ],
@@ -203,9 +203,9 @@ export const siteConfig = {
         'Life, health, and business insurance advisory to protect what matters most. Personalized cover in Vijayawada.',
     },
     calculators: {
-      title: 'Free Financial Calculators — SIP, EMI, Retirement',
+      title: 'Free Financial Calculators — SIP, SIP Delay, Retirement',
       description:
-        '15+ free calculators: SIP, lumpsum, retirement, EMI, SWP, FD, PPF, and more. Plan investments with TejasFinserv Vijayawada.',
+        '15+ free calculators: SIP, lumpsum, retirement, SIP delay, SWP, FD, PPF, and more. Plan investments with TejasFinserv Vijayawada.',
     },
     insights: {
       title: 'Investment Insights & Guides — TejasFinserv',

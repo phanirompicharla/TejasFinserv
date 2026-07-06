@@ -7,7 +7,7 @@ import { siteConfig } from '../../lib/siteConfig'
 import { breadcrumbSchema, faqPageSchema, financialServiceSchema, websiteSchema } from '../../schema'
 
 const hubFaqs = [
-  { question: 'Are these calculators free?', answer: 'Yes, all calculators on TejasFinserv are completely free. Use them to plan SIP amounts, retirement corpus, EMI, and more before you start investing.' },
+  { question: 'Are these calculators free?', answer: 'Yes, all calculators on TejasFinserv are completely free. Use them to plan SIP amounts, retirement corpus, SIP delay, and more before you start investing.' },
   { question: 'How accurate are the results?', answer: 'Results are illustrative based on assumed returns you enter. Actual mutual fund returns vary with market conditions. Mutual fund investments are subject to market risks.' },
 ]
 
@@ -51,7 +51,7 @@ export function CalculatorsHub() {
           <Breadcrumbs variant="light" items={[{ name: 'Home', path: '/' }, { name: 'Calculators' }]} />
           <h1 className="font-display font-semibold">Financial Calculators</h1>
           <p className="mt-4 max-w-2xl text-ivory/80">
-            Plan your SIP, retirement, EMI, and investment goals with free, live-updating calculators. All results in Indian Rupees.
+            Plan your SIP, retirement, SIP delay, and investment goals with free, live-updating calculators. All results in Indian Rupees.
           </p>
         </div>
       </section>
