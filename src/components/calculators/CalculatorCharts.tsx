@@ -228,7 +228,7 @@ export function CalculatorCharts({
                   dataKey="year"
                   tickLine={false}
                   axisLine={{ stroke: '#e5e1d8' }}
-                  tickFormatter={(val) => `Year ${val}`}
+                  tickFormatter={(val: any) => `Year ${val}`}
                   tick={{ fontSize: 11, fill: '#888' }}
                   interval={labelInterval - 1}
                   dy={10}
