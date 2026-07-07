@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { ScrollToTop } from './components/ScrollToTop'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
@@ -32,35 +33,37 @@ function PageLoader() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Suspense fallback={<PageLoader />}>
-        <Routes>
-          <Route path="/admin/*" element={<AdminDashboard />} />
-          <Route element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="about" element={<About />} />
-            <Route path="services" element={<Services />} />
-            <Route path="financial-planning" element={<FinancialPlanning />} />
-            <Route path="mutual-funds" element={<MutualFunds />} />
-            <Route path="insurance" element={<Insurance />} />
-            <Route path="term-insurance" element={<TermInsurance />} />
-            <Route path="health-insurance" element={<HealthInsurance />} />
-            <Route path="savings-plans" element={<FinancialPlanning />} />
-            <Route path="calculators" element={<CalculatorsHub />} />
-            <Route path="calculators/:slug" element={<CalculatorPage />} />
-            <Route path="insights" element={<Insights />} />
-            <Route path="insights/:slug" element={<InsightPost />} />
-            <Route path="faq" element={<FAQ />} />
-            <Route path="goals/:slug" element={<GoalPage />} />
-            <Route path="privacy" element={<LegalPage type="privacy" />} />
-            <Route path="terms" element={<LegalPage type="terms" />} />
-            <Route path="disclaimer" element={<LegalPage type="disclaimer" />} />
-            <Route path="contact" element={<Contact />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ScrollToTop />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            <Route path="/admin/*" element={<AdminDashboard />} />
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="about" element={<About />} />
+              <Route path="services" element={<Services />} />
+              <Route path="financial-planning" element={<FinancialPlanning />} />
+              <Route path="mutual-funds" element={<MutualFunds />} />
+              <Route path="insurance" element={<Insurance />} />
+              <Route path="term-insurance" element={<TermInsurance />} />
+              <Route path="health-insurance" element={<HealthInsurance />} />
+              <Route path="savings-plans" element={<FinancialPlanning />} />
+              <Route path="calculators" element={<CalculatorsHub />} />
+              <Route path="calculators/:slug" element={<CalculatorPage />} />
+              <Route path="insights" element={<Insights />} />
+              <Route path="insights/:slug" element={<InsightPost />} />
+              <Route path="faq" element={<FAQ />} />
+              <Route path="goals/:slug" element={<GoalPage />} />
+              <Route path="privacy" element={<LegalPage type="privacy" />} />
+              <Route path="terms" element={<LegalPage type="terms" />} />
+              <Route path="disclaimer" element={<LegalPage type="disclaimer" />} />
+              <Route path="contact" element={<Contact />} />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </BrowserRouter>
+    </ErrorBoundary>
   )
 }
