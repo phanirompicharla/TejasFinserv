@@ -10,8 +10,6 @@ const YEARS = 10
 export function HeroSipPreview() {
   const result = calcSip(MONTHLY, RATE, YEARS)
   const targetTotal = Math.round(result.total)
-  const investedPct = (result.invested / result.total) * 100
-  const returnsPct = 100 - investedPct
 
   const [displayTotal, setDisplayTotal] = useState(0)
   const hasAnimated = useRef(false)
@@ -66,7 +64,7 @@ export function HeroSipPreview() {
         <div className="flex flex-col items-center gap-1">
           <div
             className="hero-bar-invested w-10 rounded-t bg-navy-deep/90"
-            style={{ height: `${Math.max(12, (investedPct / 100) * 56)}px` }}
+            style={{ height: `30px` }}
             aria-hidden="true"
           />
           <span className="text-[10px] text-ivory/50">Invested</span>
@@ -74,7 +72,7 @@ export function HeroSipPreview() {
         <div className="flex flex-col items-center gap-1">
           <div
             className="hero-bar-returns w-10 rounded-t bg-brass/85"
-            style={{ height: `${Math.max(12, (returnsPct / 100) * 56)}px` }}
+            style={{ height: `40px` }}
             aria-hidden="true"
           />
           <span className="text-[10px] text-ivory/50">Returns</span>

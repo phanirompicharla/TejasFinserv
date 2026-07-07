@@ -30,6 +30,7 @@ const COMMAND_ITEMS: CommandItem[] = [
   { id: '16', title: 'Chat Directly on WhatsApp', category: 'Contact', url: siteConfig.contact.whatsappUrl, external: true, icon: '💬' },
   { id: '17', title: 'Contact Phani Rompicharla (Vijayawada Office)', category: 'Contact', url: '/contact', icon: '📞' },
   { id: '18', title: 'Legal, Privacy & AMFI ARN Disclaimers', category: 'Compliance', url: '/legal', icon: '📜' },
+  { id: '19', title: 'Sitemap — Complete Page Directory', category: 'Navigation', url: '/sitemap', icon: '🗺️' },
 ]
 
 export function CommandPalette() {
@@ -100,10 +101,14 @@ export function CommandPalette() {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 sm:pt-28 px-4 bg-navy/80 backdrop-blur-md animate-fade-in">
+    <div
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-20 sm:pt-28 px-4 bg-navy/80 backdrop-blur-md animate-fade-in"
+      onClick={() => setIsOpen(false)}
+    >
       <div
         className="w-full max-w-2xl bg-ivory rounded-2xl border border-line shadow-2xl overflow-hidden flex flex-col max-h-[80vh]"
         onKeyDown={handleListKeyDown}
+        onClick={(e) => e.stopPropagation()}
       >
         <div className="p-4 border-b border-line flex items-center gap-3 bg-cream">
           <span className="text-xl">🔍</span>

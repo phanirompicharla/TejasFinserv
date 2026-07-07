@@ -22,6 +22,7 @@ const GoalPage = lazy(() => import('./pages/goals/GoalPage').then((m) => ({ defa
 const LegalPage = lazy(() => import('./pages/legal/LegalPage').then((m) => ({ default: m.LegalPage })))
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard })))
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
+const Sitemap = lazy(() => import('./pages/Sitemap').then((m) => ({ default: m.Sitemap })))
 
 function PageLoader() {
   return (
@@ -59,6 +60,7 @@ export default function App() {
               <Route path="terms" element={<LegalPage type="terms" />} />
               <Route path="disclaimer" element={<LegalPage type="disclaimer" />} />
               <Route path="contact" element={<Contact />} />
+              <Route path="sitemap" element={<Sitemap />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

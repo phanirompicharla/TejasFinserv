@@ -46,6 +46,7 @@ export function Footer() {
     { label: 'Contact', to: '/contact' },
     { label: 'FAQ', to: '/faq' },
     { label: 'Insights', to: '/insights' },
+    { label: 'Sitemap', to: '/sitemap' },
     { label: 'Open Your Account', href: siteConfig.onboardingUrl, external: true },
   ]
 
@@ -53,6 +54,7 @@ export function Footer() {
     { label: 'Privacy Policy', to: '/privacy' },
     { label: 'Terms of Use', to: '/terms' },
     { label: 'Disclaimer', to: '/disclaimer' },
+    { label: 'Sitemap', to: '/sitemap' },
   ]
 
   const complianceLinks = [

@@ -239,9 +239,9 @@ export function AdminDashboard() {
 
   useEffect(() => {
     if (token) {
-      if (activeTab === 'insights') fetchInsights();
-      if (activeTab === 'contacts') fetchContacts();
-      if (activeTab === 'reviews') fetchReviews();
+      fetchInsights();
+      fetchContacts();
+      fetchReviews();
     }
   }, [token, activeTab]);
 
