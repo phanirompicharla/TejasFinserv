@@ -24,6 +24,15 @@ CREATE TABLE IF NOT EXISTS insights (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS client_reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    review_text TEXT NOT NULL,
+    status ENUM('pending', 'approved') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Insert a default admin user (username: admin, password: password)
 -- NOTE: You should change this password immediately in production!
 INSERT IGNORE INTO admins (username, password_hash) VALUES ('admin', '$2b$10$Ld649l/t3gF29gTj8GvzWOr/BxhdnxhBSW2QqcbFRpsfGPZjPMVeG');

@@ -182,6 +182,62 @@ app.delete('/api/admin/insights/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// --- REVIEWS API ---
+app.post('/api/reviews', async (req, res) => {
+    try {
+        const { name, city, review_text } = req.body;
+        if (!name || !city || !review_text) {
+            return res.status(400).json({ error: 'All fields are required' });
+        }
+        await db.query(
+            'INSERT INTO client_reviews (name, city, review_text, status) VALUES (?, ?, ?, ?)',
+            [name, city, review_text, 'pending']
+        );
+        res.json({ success: true, message: 'Review submitted successfully' });
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/reviews', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT name, city, review_text, created_at FROM client_reviews WHERE status = "approved" ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/api/admin/reviews', authenticateToken, async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM client_reviews WHERE status = "pending" ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/admin/reviews/:id/approve', authenticateToken, async (req, res) => {
+    try {
+        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
+        await db.query('UPDATE client_reviews SET status = "approved" WHERE id = ?', [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete('/api/admin/reviews/:id', authenticateToken, async (req, res) => {
+    try {
+        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
+        await db.query('DELETE FROM client_reviews WHERE id = ?', [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // --- CATCH ALL FOR REACT ROUTER ---
 app.get(/.*/, (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

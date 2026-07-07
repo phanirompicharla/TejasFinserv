@@ -21,6 +21,14 @@ interface ContactMessage {
   created_at: string;
 }
 
+interface ClientReview {
+  id: number;
+  name: string;
+  city: string;
+  review_text: string;
+  created_at: string;
+}
+
 // Clean, Modern Inline Icons for an Executive Dashboard
 function IconDocument({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -66,6 +74,22 @@ function IconRefresh({ className = "w-4 h-4" }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+    </svg>
+  );
+}
+
+function IconCheck({ className = "w-3.5 h-3.5" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+    </svg>
+  );
+}
+
+function IconStar({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
     </svg>
   );
 }
@@ -118,22 +142,15 @@ function IconClock({ className = "w-3.5 h-3.5" }: { className?: string }) {
   );
 }
 
-function IconShield({ className = "w-5 h-5" }: { className?: string }) {
-  return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
-    </svg>
-  );
-}
-
 export function AdminDashboard() {
   const [token, setToken] = useState<string | null>(localStorage.getItem('adminToken'));
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [activeTab, setActiveTab] = useState<'insights' | 'contacts'>('insights');
+  const [activeTab, setActiveTab] = useState<'insights' | 'contacts' | 'reviews'>('insights');
   const [insights, setInsights] = useState<Insight[]>([]);
   const [contacts, setContacts] = useState<ContactMessage[]>([]);
+  const [reviews, setReviews] = useState<ClientReview[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Insight form state
@@ -194,10 +211,24 @@ export function AdminDashboard() {
     }
   };
 
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch('/api/admin/reviews', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setReviews(await res.json());
+      }
+    } catch (err) {
+      console.error('Failed to fetch reviews:', err);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       if (activeTab === 'insights') fetchInsights();
       if (activeTab === 'contacts') fetchContacts();
+      if (activeTab === 'reviews') fetchReviews();
     }
   }, [token, activeTab]);
 
@@ -247,6 +278,31 @@ export function AdminDashboard() {
       if (res.ok) fetchContacts();
     } catch (err) {
       console.error('Error deleting contact:', err);
+    }
+  };
+
+  const approveReview = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/reviews/${id}/approve`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) fetchReviews();
+    } catch (err) {
+      console.error('Error approving review:', err);
+    }
+  };
+
+  const deleteReview = async (id: number) => {
+    if (!confirm('Reject and delete this review?')) return;
+    try {
+      const res = await fetch(`/api/admin/reviews/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) fetchReviews();
+    } catch (err) {
+      console.error('Error deleting review:', err);
     }
   };
 
@@ -423,15 +479,19 @@ export function AdminDashboard() {
 
           <div className="bg-cream rounded-2xl border border-line p-4 sm:p-5 flex items-center justify-between shadow-xs hover:shadow-sm transition-shadow">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-muted block">Security & Compliance</span>
-              <div className="text-base font-display font-bold text-navy mt-1">ARN-251896</div>
-              <span className="text-[11px] text-emerald-600 font-medium mt-0.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                AMFI Registered & Active
-              </span>
+              <span className="text-xs font-bold uppercase tracking-wider text-muted block">Client Reviews</span>
+              <div className="text-2xl font-display font-bold text-navy mt-1 flex items-center gap-2">
+                <span>{reviews.length}</span>
+                {reviews.length > 0 && (
+                  <span className="text-xs font-sans font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full animate-pulse">
+                    Pending
+                  </span>
+                )}
+              </div>
+              <span className="text-[11px] text-muted mt-0.5 block">Awaiting Approval</span>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-600">
-              <IconShield className="w-6 h-6" />
+            <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
+              <IconStar className="w-6 h-6" />
             </div>
           </div>
         </div>
@@ -468,6 +528,22 @@ export function AdminDashboard() {
                 </span>
               )}
             </button>
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className={`flex items-center gap-2 px-5 py-2 rounded-xl font-display text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'reviews'
+                  ? 'bg-navy text-ivory shadow-md'
+                  : 'text-ink hover:text-navy hover:bg-ivory'
+              }`}
+            >
+              <IconStar className="w-4 h-4" />
+              <span>Client Reviews ({reviews.length})</span>
+              {reviews.length > 0 && (
+                <span className="ml-0.5 bg-amber-400 text-amber-900 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  Pending
+                </span>
+              )}
+            </button>
           </nav>
 
           <div className="flex items-center justify-between sm:justify-end gap-3">
@@ -479,6 +555,7 @@ export function AdminDashboard() {
               onClick={() => {
                 if (activeTab === 'insights') fetchInsights();
                 if (activeTab === 'contacts') fetchContacts();
+                if (activeTab === 'reviews') fetchReviews();
               }}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-ivory border border-line hover:border-brass text-xs font-semibold text-navy transition-all shadow-2xs active:scale-95 group"
               title="Refresh Data"
@@ -778,6 +855,92 @@ export function AdminDashboard() {
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {activeTab === 'reviews' && (
+          <div className="space-y-8 animate-fade-in">
+            <div className="border-b border-line pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="font-display text-3xl font-semibold text-navy">
+                  Client Reviews
+                </h2>
+                <p className="text-sm text-muted mt-1">
+                  Approve or reject client testimonials submitted from the public site.
+                </p>
+              </div>
+              <button
+                onClick={fetchReviews}
+                className="text-xs font-semibold text-navy bg-ivory border border-line hover:border-brass px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-2 w-fit"
+              >
+                <IconRefresh className="w-4 h-4 text-brass" />
+                <span>Refresh Reviews</span>
+              </button>
+            </div>
+
+            <div className="bg-ivory rounded-3xl border border-line shadow-card overflow-hidden">
+              {reviews.length === 0 ? (
+                <div className="p-16 text-center text-muted">
+                  <div className="w-16 h-16 rounded-full bg-cream border border-line flex items-center justify-center mx-auto mb-4 text-navy">
+                    <IconStar className="w-8 h-8 text-brass" />
+                  </div>
+                  <h3 className="font-display font-semibold text-navy text-xl">No pending reviews</h3>
+                  <p className="text-sm mt-1 max-w-sm mx-auto">When clients submit reviews on the homepage, they will appear here for your approval.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-sm">
+                    <thead className="bg-navy text-ivory text-xs uppercase tracking-wider font-semibold border-b border-ivory/10">
+                      <tr>
+                        <th className="py-4 px-6 w-1/4">Name & City</th>
+                        <th className="py-4 px-6 w-1/2">Review Text</th>
+                        <th className="py-4 px-6 w-1/4">Submitted Date</th>
+                        <th className="py-4 px-6 w-32 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line">
+                      {reviews.map(item => (
+                        <tr key={item.id} className="hover:bg-cream/80 transition-colors group">
+                          <td className="py-5 px-6 align-top">
+                            <div className="font-display font-semibold text-navy text-base">
+                              {item.name}
+                            </div>
+                            <div className="text-xs text-muted mt-1 flex items-center gap-1.5">
+                              <span>{item.city}</span>
+                            </div>
+                          </td>
+                          <td className="py-5 px-6 align-top">
+                            <p className="text-sm text-navy/90 whitespace-pre-wrap">"{item.review_text}"</p>
+                          </td>
+                          <td className="py-5 px-6 align-top text-muted">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-medium bg-cream border border-line text-navy/80">
+                              <IconClock className="w-3.5 h-3.5 text-brass" />
+                              <span>{new Date(item.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                            </span>
+                          </td>
+                          <td className="py-5 px-6 align-top text-right space-y-2">
+                            <button
+                              onClick={() => approveReview(item.id)}
+                              className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white px-3.5 py-2 rounded-xl border border-emerald-200 transition-all shadow-2xs"
+                            >
+                              <IconCheck className="w-3.5 h-3.5" />
+                              <span>Approve</span>
+                            </button>
+                            <button
+                              onClick={() => deleteReview(item.id)}
+                              className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white px-3.5 py-2 rounded-xl border border-red-200 transition-all shadow-2xs"
+                            >
+                              <IconTrash className="w-3.5 h-3.5" />
+                              <span>Reject</span>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
