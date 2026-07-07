@@ -104,7 +104,7 @@ export function HealthInsurance() {
   const whatsappMsg = encodeURIComponent(
     `Hi Phani, I used the Smart Health Insurance Planner on TejasFinserv.\n\n• Insured Group: ${familyType.toUpperCase()}\n• City Tier: ${cityTier === 'metro' ? 'Metro / Tier 1' : 'Tier 2 / Vijayawada'}\n• Recommended Base Mediclaim: ${formatINR(rec.base)}\n• Recommended Super Top-Up: ${formatINR(rec.topUp)}\n• Total Shield: ${formatINR(rec.total)} (${rec.estPremium})\n\nPlease recommend the best cashless plans with zero room rent capping.`
   )
-  const whatsappUrl = `https://wa.me/919848512345?text=${whatsappMsg}`
+  const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
 
   return (
     <>
