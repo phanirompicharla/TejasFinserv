@@ -115,12 +115,14 @@ export function RetirementCalculatorShell({ calculator }: CalculatorShellProps) 
                     data={chartData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={80}
-                    outerRadius={110}
+                    innerRadius={65}
+                    outerRadius={90}
                     paddingAngle={3}
                     dataKey="value"
                     stroke="none"
                     cornerRadius={5}
+                    label={(entry: any) => formatINR(entry.value, true)}
+                    labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
                   >
                     <Cell fill="#C89A52" /> {/* Brass / Gold */}
                     <Cell fill="#071321" /> {/* Navy / Black */}
