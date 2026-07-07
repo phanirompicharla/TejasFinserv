@@ -1,26 +1,60 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
-import { insights } from '../content/insights'
+import { insights, type InsightPost } from '../content/insights'
 import { siteConfig } from '../lib/siteConfig'
 import { breadcrumbSchema, websiteSchema } from '../schema'
 
 export function Insights() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTag, setSelectedTag] = useState<string>('All')
+  const [dbInsights, setDbInsights] = useState<InsightPost[]>([])
+
+  useEffect(() => {
+    const fetchDbInsights = async () => {
+      try {
+        const res = await fetch('/api/insights')
+        if (res.ok) {
+          const data = await res.json()
+          const mapped: InsightPost[] = data.map((item: any) => ({
+            slug: item.slug,
+            title: item.title,
+            description: item.description || '',
+            datePublished: item.published_at ? item.published_at.substring(0, 10) : new Date().toISOString().substring(0, 10),
+            author: item.author || 'Phani Rompicharla',
+            readTime: item.read_time || '5 min read',
+            tags: item.tags ? item.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+            content: item.content ? item.content.split('\n\n') : []
+          }))
+          setDbInsights(mapped)
+        }
+      } catch (err) {
+        console.error('Failed to load DB insights:', err)
+      }
+    }
+    fetchDbInsights()
+  }, [])
+
+  // Combine DB insights and static insights (DB overrides static if slug matches)
+  const combinedInsights = useMemo(() => {
+    const staticFiltered = insights.filter(
+      (staticItem) => !dbInsights.some((dbItem) => dbItem.slug === staticItem.slug)
+    )
+    return [...dbInsights, ...staticFiltered]
+  }, [dbInsights])
 
   // Extract unique tags from all articles
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
-    insights.forEach((post) => post.tags.forEach((tag) => tagSet.add(tag)))
+    combinedInsights.forEach((post) => post.tags.forEach((tag) => tagSet.add(tag)))
     return ['All', ...Array.from(tagSet)]
-  }, [])
+  }, [combinedInsights])
 
   // Filter articles based on search query and selected tag
   const filteredInsights = useMemo(() => {
-    return insights.filter((post) => {
+    return combinedInsights.filter((post) => {
       const matchesTag = selectedTag === 'All' || post.tags.includes(selectedTag)
       const matchesSearch =
         searchQuery.trim() === '' ||
@@ -30,7 +64,7 @@ export function Insights() {
 
       return matchesTag && matchesSearch
     })
-  }, [searchQuery, selectedTag])
+  }, [combinedInsights, searchQuery, selectedTag])
 
   return (
     <>
@@ -65,13 +99,13 @@ export function Insights() {
                 placeholder="Search articles by title, topic, or keyword..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-2xl bg-ivory/10 border border-ivory/20 pl-12 pr-4 py-3.5 text-sm text-ivory placeholder-ivory/50 focus:bg-ivory focus:text-navy focus:placeholder-muted focus:outline-none focus:ring-2 focus:ring-brass transition-all backdrop-blur-md"
+                className="w-full rounded-2xl bg-ivory/10 border border-ivory/20 pl-12 pr-10 py-3.5 text-sm text-ivory placeholder-ivory/50 focus:bg-ivory/25 focus:outline-none focus:ring-2 focus:ring-brass transition-all backdrop-blur-md"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-ivory/60 hover:text-ivory text-sm font-bold"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-ivory/70 hover:text-brass text-sm font-bold"
                 >
                   ✕
                 </button>

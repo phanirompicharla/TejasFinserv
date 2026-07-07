@@ -1,17 +1,62 @@
 import { Link, useParams } from 'react-router-dom'
+import { useState, useEffect } from 'react'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { Seo } from '../components/Seo'
-import { getInsight } from '../content/insights'
+import { getInsight, type InsightPost as InsightPostType } from '../content/insights'
 import { siteConfig } from '../lib/siteConfig'
 import { articleSchema, breadcrumbSchema, personSchema } from '../schema'
 
 export function InsightPost() {
   const { slug } = useParams<{ slug: string }>()
-  const post = slug ? getInsight(slug) : undefined
+  const [post, setPost] = useState<InsightPostType | undefined>(slug ? getInsight(slug) : undefined)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (slug && !getInsight(slug)) {
+      setLoading(true)
+      const fetchPost = async () => {
+        try {
+          const res = await fetch(`/api/insights/${slug}`)
+          if (res.ok) {
+            const data = await res.json()
+            setPost({
+              slug: data.slug,
+              title: data.title,
+              description: data.description || '',
+              datePublished: data.published_at ? data.published_at.substring(0, 10) : new Date().toISOString().substring(0, 10),
+              author: data.author || 'Phani Rompicharla',
+              readTime: data.read_time || '5 min read',
+              tags: data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : [],
+              content: data.content ? data.content.split('\n\n') : []
+            })
+          } else {
+            setPost(undefined)
+          }
+        } catch (err) {
+          console.error('Failed to load DB insight post:', err)
+          setPost(undefined)
+        } finally {
+          setLoading(false)
+        }
+      }
+      fetchPost()
+    } else if (slug) {
+      setPost(getInsight(slug))
+    }
+  }, [slug])
+
+  if (loading) {
+    return (
+      <div className="container-main section-padding text-center pt-36 sm:pt-40">
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brass"></div>
+        <p className="mt-2 text-sm text-muted">Loading article...</p>
+      </div>
+    )
+  }
 
   if (!post) {
     return (
-      <div className="container-main section-padding text-center">
+      <div className="container-main section-padding text-center pt-36 sm:pt-40">
         <h1 className="font-display text-2xl text-navy">Article not found</h1>
         <Link to="/insights" className="mt-4 inline-block text-brass">← All Insights</Link>
       </div>

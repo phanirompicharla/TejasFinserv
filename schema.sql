@@ -19,6 +19,10 @@ CREATE TABLE IF NOT EXISTS insights (
     title VARCHAR(255) NOT NULL,
     slug VARCHAR(255) NOT NULL UNIQUE,
     content TEXT NOT NULL,
+    description TEXT,
+    read_time VARCHAR(50),
+    tags VARCHAR(255),
+    author VARCHAR(100),
     image_url VARCHAR(255),
     published_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP

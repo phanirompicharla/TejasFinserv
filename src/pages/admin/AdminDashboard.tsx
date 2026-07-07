@@ -10,6 +10,10 @@ interface Insight {
   content: string;
   image_url: string;
   published_at: string;
+  description?: string;
+  read_time?: string;
+  tags?: string;
+  author?: string;
 }
 
 interface ContactMessage {
@@ -155,7 +159,16 @@ export function AdminDashboard() {
 
   // Insight form state
   const [editingInsight, setEditingInsight] = useState<Insight | null>(null);
-  const [insightForm, setInsightForm] = useState({ title: '', slug: '', content: '', image_url: '' });
+  const [insightForm, setInsightForm] = useState({
+    title: '',
+    slug: '',
+    content: '',
+    image_url: '',
+    description: '',
+    read_time: '',
+    tags: '',
+    author: ''
+  });
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -245,7 +258,16 @@ export function AdminDashboard() {
       });
       if (res.ok) {
         setEditingInsight(null);
-        setInsightForm({ title: '', slug: '', content: '', image_url: '' });
+        setInsightForm({
+          title: '',
+          slug: '',
+          content: '',
+          image_url: '',
+          description: '',
+          read_time: '',
+          tags: '',
+          author: ''
+        });
         fetchInsights();
       }
     } catch (err) {
@@ -584,7 +606,16 @@ export function AdminDashboard() {
                 <button
                   onClick={() => {
                     setEditingInsight({} as Insight);
-                    setInsightForm({ title: '', slug: '', content: '', image_url: '' });
+                    setInsightForm({
+                      title: '',
+                      slug: '',
+                      content: '',
+                      image_url: '',
+                      description: '',
+                      read_time: '',
+                      tags: '',
+                      author: ''
+                    });
                   }}
                   className="inline-flex items-center gap-2 rounded-2xl bg-brass px-6 py-3 text-sm font-bold text-navy shadow-lg hover:bg-brass-soft hover:-translate-y-0.5 transition-all active:scale-95 w-fit"
                 >
@@ -612,7 +643,16 @@ export function AdminDashboard() {
                   <button
                     onClick={() => {
                       setEditingInsight(null);
-                      setInsightForm({ title: '', slug: '', content: '', image_url: '' });
+                      setInsightForm({
+                        title: '',
+                        slug: '',
+                        content: '',
+                        image_url: '',
+                        description: '',
+                        read_time: '',
+                        tags: '',
+                        author: ''
+                      });
                     }}
                     className="text-xs font-semibold text-muted hover:text-navy px-3.5 py-2 rounded-xl bg-cream border border-line transition-all"
                   >
@@ -645,6 +685,60 @@ export function AdminDashboard() {
                         value={insightForm.slug}
                         onChange={e => setInsightForm({ ...insightForm, slug: e.target.value })}
                         className="w-full rounded-2xl border border-line bg-cream px-4 py-3.5 text-sm font-mono text-xs text-navy focus:border-brass focus:bg-ivory focus:outline-none focus:ring-2 focus:ring-brass/30 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-navy mb-2">
+                        Read Time (e.g. 5 min)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 5 min"
+                        value={insightForm.read_time}
+                        onChange={e => setInsightForm({ ...insightForm, read_time: e.target.value })}
+                        className="w-full rounded-2xl border border-line bg-cream px-4 py-3.5 text-sm font-medium text-navy focus:border-brass focus:bg-ivory focus:outline-none focus:ring-2 focus:ring-brass/30 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-navy mb-2">
+                        Hashtags / Topics (comma-separated)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="e.g. SIP, Mutual Funds, Beginners"
+                        value={insightForm.tags}
+                        onChange={e => setInsightForm({ ...insightForm, tags: e.target.value })}
+                        className="w-full rounded-2xl border border-line bg-cream px-4 py-3.5 text-sm font-medium text-navy focus:border-brass focus:bg-ivory focus:outline-none focus:ring-2 focus:ring-brass/30 transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-navy mb-2">
+                        Author Name (Optional)
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Phani Rompicharla"
+                        value={insightForm.author}
+                        onChange={e => setInsightForm({ ...insightForm, author: e.target.value })}
+                        className="w-full rounded-2xl border border-line bg-cream px-4 py-3.5 text-sm font-medium text-navy focus:border-brass focus:bg-ivory focus:outline-none focus:ring-2 focus:ring-brass/30 transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-navy mb-2">
+                        Short Description / Excerpt
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="Short summary of the article..."
+                        value={insightForm.description}
+                        onChange={e => setInsightForm({ ...insightForm, description: e.target.value })}
+                        className="w-full rounded-2xl border border-line bg-cream px-4 py-3.5 text-sm font-medium text-navy focus:border-brass focus:bg-ivory focus:outline-none focus:ring-2 focus:ring-brass/30 transition-all"
                       />
                     </div>
                   </div>
@@ -682,7 +776,16 @@ export function AdminDashboard() {
                       type="button"
                       onClick={() => {
                         setEditingInsight(null);
-                        setInsightForm({ title: '', slug: '', content: '', image_url: '' });
+                        setInsightForm({
+                          title: '',
+                          slug: '',
+                          content: '',
+                          image_url: '',
+                          description: '',
+                          read_time: '',
+                          tags: '',
+                          author: ''
+                        });
                       }}
                       className="px-6 py-3 rounded-2xl border border-line text-sm font-semibold text-muted hover:text-navy hover:bg-cream transition-all"
                     >
@@ -738,7 +841,16 @@ export function AdminDashboard() {
                             <button
                               onClick={() => {
                                 setEditingInsight(item);
-                                setInsightForm(item as any);
+                                setInsightForm({
+                                  title: item.title || '',
+                                  slug: item.slug || '',
+                                  content: item.content || '',
+                                  image_url: item.image_url || '',
+                                  description: item.description || '',
+                                  read_time: item.read_time || '',
+                                  tags: item.tags || '',
+                                  author: item.author || ''
+                                });
                                 window.scrollTo({ top: 100, behavior: 'smooth' });
                               }}
                               className="inline-flex items-center gap-1.5 text-xs font-semibold text-navy bg-cream hover:bg-brass hover:text-navy px-3.5 py-2 rounded-xl border border-line transition-all shadow-2xs"

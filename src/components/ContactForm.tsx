@@ -79,11 +79,21 @@ export function ContactForm() {
 
       if (response.ok) {
         setStatus('success')
+        const whatsappMsg = encodeURIComponent(
+          `Hi Phani, I submitted a contact query on TejasFinserv:\n\n• Name: ${form.name}\n• Email: ${form.email}\n• Phone: ${form.phone}\n\nMessage:\n${form.message}`
+        )
+        const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
+        window.open(whatsappUrl, '_blank')
         setForm({ name: '', email: '', phone: '', message: '' })
       } else {
         throw new Error('API unavailable')
       }
     } catch {
+      const whatsappMsg = encodeURIComponent(
+        `Hi Phani, I submitted a contact query on TejasFinserv:\n\n• Name: ${form.name}\n• Email: ${form.email}\n• Phone: ${form.phone}\n\nMessage:\n${form.message}`
+      )
+      const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
+      window.open(whatsappUrl, '_blank')
       mailtoFallback(form)
       setStatus('success')
       setForm({ name: '', email: '', phone: '', message: '' })

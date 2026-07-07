@@ -15,6 +15,26 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Database Startup Migrations
+(async () => {
+    try {
+        await db.query('ALTER TABLE insights ADD COLUMN description TEXT NULL');
+        console.log('Migrated: description column added to insights');
+    } catch (e) {}
+    try {
+        await db.query('ALTER TABLE insights ADD COLUMN read_time VARCHAR(50) NULL');
+        console.log('Migrated: read_time column added to insights');
+    } catch (e) {}
+    try {
+        await db.query('ALTER TABLE insights ADD COLUMN tags VARCHAR(255) NULL');
+        console.log('Migrated: tags column added to insights');
+    } catch (e) {}
+    try {
+        await db.query('ALTER TABLE insights ADD COLUMN author VARCHAR(100) NULL');
+        console.log('Migrated: author column added to insights');
+    } catch (e) {}
+})();
+
 // Security Middleware
 app.use(helmet({
     contentSecurityPolicy: false,
@@ -126,7 +146,7 @@ app.delete('/api/admin/contacts/:id', authenticateToken, async (req, res) => {
 // --- INSIGHTS API ---
 app.get('/api/insights', async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT id, title, slug, image_url, published_at, updated_at FROM insights ORDER BY published_at DESC');
+        const [rows] = await db.query('SELECT id, title, slug, content, image_url, description, read_time, tags, author, published_at, updated_at FROM insights ORDER BY published_at DESC');
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -145,10 +165,10 @@ app.get('/api/insights/:slug', async (req, res) => {
 
 app.post('/api/admin/insights', authenticateToken, async (req, res) => {
     try {
-        const { title, slug, content, image_url } = req.body;
+        const { title, slug, content, image_url, description, read_time, tags, author } = req.body;
         const [result] = await db.query(
-            'INSERT INTO insights (title, slug, content, image_url) VALUES (?, ?, ?, ?)',
-            [title, slug || title.toLowerCase().replace(/ /g, '-'), content, image_url || null]
+            'INSERT INTO insights (title, slug, content, image_url, description, read_time, tags, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [title, slug || title.toLowerCase().replace(/ /g, '-'), content, image_url || null, description || null, read_time || null, tags || null, author || null]
         );
         res.json({ success: true, id: result.insertId });
     } catch (error) {
@@ -161,10 +181,10 @@ app.put('/api/admin/insights/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
-        const { title, slug, content, image_url } = req.body;
+        const { title, slug, content, image_url, description, read_time, tags, author } = req.body;
         await db.query(
-            'UPDATE insights SET title=?, slug=?, content=?, image_url=? WHERE id=?',
-            [title, slug, content, image_url || null, id]
+            'UPDATE insights SET title=?, slug=?, content=?, image_url=?, description=?, read_time=?, tags=?, author=? WHERE id=?',
+            [title, slug, content, image_url || null, description || null, read_time || null, tags || null, author || null, id]
         );
         res.json({ success: true });
     } catch (error) {

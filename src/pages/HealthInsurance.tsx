@@ -253,7 +253,7 @@ export function HealthInsurance() {
                 </div>
               </div>
 
-              <div className="pt-6 relative z-10">
+              <div className="pt-6 relative z-10 flex justify-center">
                 <Button 
                   onClick={() => {
                     setLeadModalMessage(whatsappMsgRaw)
@@ -261,9 +261,9 @@ export function HealthInsurance() {
                     setLeadModalSubtitle("Fill in your details below to save your Smart Health Insurance calculation and instantly share it on WhatsApp.")
                     setIsLeadModalOpen(true)
                   }}
-                  className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600"
+                  className="w-full sm:w-auto px-6 shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600"
                 >
-                  💬 Save & Send Calculation to WhatsApp →
+                  💬 Send to WhatsApp →
                 </Button>
               </div>
             </div>
