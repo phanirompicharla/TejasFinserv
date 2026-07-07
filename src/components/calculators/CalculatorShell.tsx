@@ -110,6 +110,8 @@ export function CalculatorShell({ calculator }: CalculatorShellProps) {
               returns={Math.max(0, result.returns)}
               monthlyInvestment={values.monthly}
               lumpsumAmount={values.amount}
+              swpCorpus={values.corpus}
+              swpWithdrawal={values.monthlyWithdrawal}
               annualReturn={values.annualReturn}
               years={values.years}
             />

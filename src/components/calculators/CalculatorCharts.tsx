@@ -16,6 +16,10 @@ interface CalculatorChartsProps {
   monthlyInvestment?: number
   /** Lumpsum-specific: initial investment amount */
   lumpsumAmount?: number
+  /** SWP-specific: starting corpus */
+  swpCorpus?: number
+  /** SWP-specific: monthly withdrawal */
+  swpWithdrawal?: number
   /** Annual return percentage */
   annualReturn?: number
   /** Number of years (for year-by-year bar chart) */
@@ -79,12 +83,38 @@ function computeLumpsumYearlyData(amount: number, annualReturn: number, years: n
   return data
 }
 
+/** Compute year-by-year SWP accumulation */
+function computeSwpYearlyData(corpus: number, monthlyWithdrawal: number, annualReturn: number, years: number) {
+  const monthlyRate = annualReturn / 12 / 100
+  const data: { year: number; invested: number; totalValue: number; returns: number }[] = []
+
+  let balance = corpus
+  let totalWithdrawn = 0
+
+  for (let y = 1; y <= years; y++) {
+    for (let m = 0; m < 12; m++) {
+      if (balance > 0) {
+        balance = balance * (1 + monthlyRate) - monthlyWithdrawal
+        if (balance < 0) balance = 0
+        totalWithdrawn += monthlyWithdrawal
+      }
+    }
+    data.push({
+      year: y,
+      invested: balance, // Portfolio Balance
+      returns: totalWithdrawn, // Total Withdrawn
+      totalValue: balance + totalWithdrawn, // Only for technical consistency, won't show in SWP tooltip
+    })
+  }
+  return data
+}
+
 const COLORS = {
   invested: '#071321', // navy
   returns: '#C89A52',  // brass
 }
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload, label, labelInvested, labelReturns, isSwp }: any) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload
     return (
@@ -94,7 +124,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="flex items-center justify-between gap-6 text-sm">
             <span className="flex items-center gap-1.5 text-muted">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS.invested }} />
-              Invested
+              {labelInvested}
             </span>
             <span className="font-medium text-navy">
               {formatCurrency(data.invested)}
@@ -103,19 +133,21 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           <div className="flex items-center justify-between gap-6 text-sm">
             <span className="flex items-center gap-1.5 text-muted">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: COLORS.returns }} />
-              Returns
+              {labelReturns}
             </span>
             <span className="font-medium text-navy">
               {formatCurrency(data.returns)}
             </span>
           </div>
         </div>
-        <div className="mt-3 flex items-center justify-between gap-6 border-t border-line pt-3 text-sm">
-          <span className="font-semibold text-navy">Total Value</span>
-          <span className="font-semibold text-brass">
-            {formatCurrency(data.totalValue)}
-          </span>
-        </div>
+        {!isSwp && (
+          <div className="mt-3 flex items-center justify-between gap-6 border-t border-line pt-3 text-sm">
+            <span className="font-semibold text-navy">Total Value</span>
+            <span className="font-semibold text-brass">
+              {formatCurrency(data.totalValue)}
+            </span>
+          </div>
+        )}
       </div>
     )
   }
@@ -127,6 +159,8 @@ export function CalculatorCharts({
   returns,
   monthlyInvestment,
   lumpsumAmount,
+  swpCorpus,
+  swpWithdrawal,
   annualReturn,
   years,
 }: CalculatorChartsProps) {
@@ -136,6 +170,9 @@ export function CalculatorCharts({
 
   // Compute year-by-year data for the stacked bar chart
   const yearlyData = useMemo(() => {
+    if (swpCorpus && swpWithdrawal !== undefined && annualReturn !== undefined && years) {
+      return computeSwpYearlyData(swpCorpus, swpWithdrawal, annualReturn, years)
+    }
     if (monthlyInvestment && annualReturn !== undefined && years) {
       return computeYearlyData(monthlyInvestment, annualReturn, years)
     }
@@ -143,7 +180,12 @@ export function CalculatorCharts({
       return computeLumpsumYearlyData(lumpsumAmount, annualReturn, years)
     }
     return null
-  }, [monthlyInvestment, lumpsumAmount, annualReturn, years])
+  }, [monthlyInvestment, lumpsumAmount, swpCorpus, swpWithdrawal, annualReturn, years])
+
+  // Chart configuration based on type
+  const isSwp = swpCorpus !== undefined
+  const labelInvested = isSwp ? 'Portfolio Balance' : 'Invested'
+  const labelReturns = isSwp ? 'Total Withdrawn' : 'Returns'
 
   // Calculate label interval based on number of years to avoid overlapping X-axis labels
   const barCount = yearlyData ? yearlyData.length : 0
@@ -162,14 +204,14 @@ export function CalculatorCharts({
                 className="inline-block h-2.5 w-2.5 rounded-full"
                 style={{ background: COLORS.invested }}
               />
-              Invested
+              {labelInvested}
             </span>
             <span className="flex items-center gap-1.5">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-full"
                 style={{ background: COLORS.returns }}
               />
-              Returns
+              {labelReturns}
             </span>
           </div>
 
@@ -198,7 +240,16 @@ export function CalculatorCharts({
                   tick={{ fontSize: 11, fill: '#888' }}
                   width={55}
                 />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(7, 19, 33, 0.04)' }} />
+                <Tooltip 
+                  content={
+                    <CustomTooltip 
+                      labelInvested={labelInvested} 
+                      labelReturns={labelReturns} 
+                      isSwp={isSwp}
+                    />
+                  } 
+                  cursor={{ fill: 'rgba(7, 19, 33, 0.04)' }} 
+                />
                 <Bar
                   dataKey="invested"
                   stackId="a"
@@ -218,7 +269,7 @@ export function CalculatorCharts({
           </div>
         </div>
       ) : (
-        /* Fallback: allocation bar for non-SIP/Lumpsum calculators */
+        /* Fallback: allocation bar for non-SIP/Lumpsum/SWP calculators */
         <div className="grid gap-8 sm:grid-cols-2">
           <div className="flex flex-col items-center justify-center">
             <div className="flex gap-4 text-xs text-muted">
