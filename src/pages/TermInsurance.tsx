@@ -84,7 +84,7 @@ export function TermInsurance() {
   const whatsappMsg = encodeURIComponent(
     `Hi Phani, I used the HLV Term Calculator on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Age: ${age} Years\n• Existing Debt: ₹${(liabilities / 100000).toFixed(1)} Lakhs\n• Recommended Cover: ${formatINR(recommendedTermCover)}\n\nPlease share suitable pure term life quotes with 100% claim settlement support.`
   )
-  const whatsappUrl = `https://wa.me/919848512345?text=${whatsappMsg}`
+  const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
 
   return (
     <>
