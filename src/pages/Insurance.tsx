@@ -91,7 +91,7 @@ export function Insurance() {
   const whatsappMsg = encodeURIComponent(
     `Hi Phani, I checked my insurance cover requirements on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Current Age: ${age} Years\n• Dependents: ${dependents}\n• Recommended Term Life Cover: ${formatINR(recommendedTermCover)}\n• Recommended Family Health Cover: ${formatINR(recommendedHealthCover)}\n\nPlease review these figures and share suitable policy options.`
   )
-  const whatsappUrl = `https://wa.me/919848512345?text=${whatsappMsg}`
+  const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
 
   return (
     <>
@@ -370,9 +370,12 @@ export function Insurance() {
             <p className="mx-auto mt-4 max-w-xl text-ivory/80 text-lg">
               Reach out for a zero-obligation review of your existing insurance policies.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
               <Button to="/contact" variant="ghost-light">
                 Request Free Policy Review
+              </Button>
+              <Button href={siteConfig.contact.whatsappUrl} external variant="secondary">
+                Chat on WhatsApp →
               </Button>
             </div>
           </SectionReveal>
