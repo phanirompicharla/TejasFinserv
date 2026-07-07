@@ -109,6 +109,7 @@ export function CalculatorShell({ calculator }: CalculatorShellProps) {
               invested={result.invested}
               returns={Math.max(0, result.returns)}
               monthlyInvestment={values.monthly}
+              lumpsumAmount={values.amount}
               annualReturn={values.annualReturn}
               years={values.years}
             />
