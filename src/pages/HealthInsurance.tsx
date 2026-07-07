@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
+import { LeadModal } from '../components/LeadModal'
 import { InsurancePartnersStrip } from '../components/InsurancePartnersStrip'
 import { healthInsurancePartners } from '../lib/clientLogos'
 import { SectionReveal } from '../components/SectionReveal'
@@ -55,6 +55,11 @@ export function HealthInsurance() {
   const [familyType, setFamilyType] = useState<'individual' | 'couple' | 'family' | 'parents'>('family')
   const [cityTier, setCityTier] = useState<'metro' | 'non-metro'>('non-metro')
 
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false)
+  const [leadModalMessage, setLeadModalMessage] = useState('')
+  const [leadModalTitle, setLeadModalTitle] = useState('')
+  const [leadModalSubtitle, setLeadModalSubtitle] = useState('')
+
   // Health Cover Recommendation calculation
   const getRecommendation = () => {
     if (familyType === 'individual') {
@@ -101,10 +106,7 @@ export function HealthInsurance() {
     return `₹${val.toLocaleString('en-IN')}`
   }
 
-  const whatsappMsg = encodeURIComponent(
-    `Hi Phani, I used the Smart Health Insurance Planner on TejasFinserv.\n\n• Insured Group: ${familyType.toUpperCase()}\n• City Tier: ${cityTier === 'metro' ? 'Metro / Tier 1' : 'Tier 2 / Vijayawada'}\n• Recommended Base Mediclaim: ${formatINR(rec.base)}\n• Recommended Super Top-Up: ${formatINR(rec.topUp)}\n• Total Shield: ${formatINR(rec.total)} (${rec.estPremium})\n\nPlease recommend the best cashless plans with zero room rent capping.`
-  )
-  const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
+  const whatsappMsgRaw = `Hi Phani, I used the Smart Health Insurance Planner on TejasFinserv.\n\n• Insured Group: ${familyType.toUpperCase()}\n• City Tier: ${cityTier === 'metro' ? 'Metro / Tier 1' : 'Tier 2 / Vijayawada'}\n• Recommended Base Mediclaim: ${formatINR(rec.base)}\n• Recommended Super Top-Up: ${formatINR(rec.topUp)}\n• Total Shield: ${formatINR(rec.total)} (${rec.estPremium})\n\nPlease recommend the best cashless plans with zero room rent capping.`
 
   return (
     <>
@@ -126,12 +128,17 @@ export function HealthInsurance() {
             <p className="mt-6 max-w-2xl text-lg text-ivory/80 leading-relaxed">
               Medical inflation is rising at over 14% annually. We help you secure robust health mediclaim and super top-up plans with 100% cashless hospitalization across Vijayawada and all over India.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button href={siteConfig.onboardingUrl} external className="shadow-lg">
-                Compare Health Plans
-              </Button>
-              <Button to="/contact" variant="secondary">
-                Consult on Existing Mediclaim
+            <div className="mt-8">
+              <Button 
+                onClick={() => {
+                  setLeadModalMessage("Hi Phani, I want to consult on health insurance plans. Please connect with me.")
+                  setLeadModalTitle("Consult on Health Insurance")
+                  setLeadModalSubtitle("Fill in your details below to save your request and get customized health plan advice via WhatsApp.")
+                  setIsLeadModalOpen(true)
+                }} 
+                className="shadow-lg"
+              >
+                💬 Get Health Quote on WhatsApp →
               </Button>
             </div>
           </SectionReveal>
@@ -246,12 +253,17 @@ export function HealthInsurance() {
                 </div>
               </div>
 
-              <div className="pt-6 relative z-10 space-y-3">
-                <Button href={whatsappUrl} external className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600">
-                  💬 Send My Calculation to WhatsApp →
-                </Button>
-                <Button to="/contact" variant="ghost-light" className="w-full text-xs">
-                  Request Custom Evaluation via Email
+              <div className="pt-6 relative z-10">
+                <Button 
+                  onClick={() => {
+                    setLeadModalMessage(whatsappMsgRaw)
+                    setLeadModalTitle("Save & Send Calculation")
+                    setLeadModalSubtitle("Fill in your details below to save your Smart Health Insurance calculation and instantly share it on WhatsApp.")
+                    setIsLeadModalOpen(true)
+                  }}
+                  className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600"
+                >
+                  💬 Save & Send Calculation to WhatsApp →
                 </Button>
               </div>
             </div>
@@ -350,17 +362,30 @@ export function HealthInsurance() {
             <p className="mt-4 text-lg text-ivory/80 max-w-2xl mx-auto">
               Let Phani Rompicharla analyze your hospital networks in Vijayawada and recommend zero-compromise health cover.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button href={siteConfig.onboardingUrl} external className="shadow-xl">
-                Start Online Onboarding
-              </Button>
-              <Button href={siteConfig.contact.whatsappUrl} external variant="secondary">
-                Chat on WhatsApp →
+            <div className="mt-8">
+              <Button 
+                onClick={() => {
+                  setLeadModalMessage("Hi Phani, I want to start onboarding for cashless health insurance. Please guide me.")
+                  setLeadModalTitle("Start Online Onboarding")
+                  setLeadModalSubtitle("Fill in your details below to save your request and connect on WhatsApp for your onboarding.")
+                  setIsLeadModalOpen(true)
+                }} 
+                className="shadow-xl"
+              >
+                💬 Start Onboarding on WhatsApp →
               </Button>
             </div>
           </SectionReveal>
         </div>
       </section>
+
+      <LeadModal
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        defaultMessage={leadModalMessage}
+        title={leadModalTitle}
+        subtitle={leadModalSubtitle}
+      />
     </>
   )
 }

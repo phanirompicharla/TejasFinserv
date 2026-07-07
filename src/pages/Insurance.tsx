@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
+import { LeadModal } from '../components/LeadModal'
 import { InsurancePartnersStrip } from '../components/InsurancePartnersStrip'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
@@ -77,6 +78,11 @@ export function Insurance() {
   const [age, setAge] = useState<number>(32)
   const [dependents, setDependents] = useState<number>(3)
 
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false)
+  const [leadModalMessage, setLeadModalMessage] = useState('')
+  const [leadModalTitle, setLeadModalTitle] = useState('')
+  const [leadModalSubtitle, setLeadModalSubtitle] = useState('')
+
   // HLV Calculation
   const multiplier = age < 35 ? 20 : age < 45 ? 15 : 10
   const recommendedTermCover = annualIncome * multiplier
@@ -88,10 +94,7 @@ export function Insurance() {
     return `₹${val.toLocaleString('en-IN')}`
   }
 
-  const whatsappMsg = encodeURIComponent(
-    `Hi Phani, I checked my insurance cover requirements on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Current Age: ${age} Years\n• Dependents: ${dependents}\n• Recommended Term Life Cover: ${formatINR(recommendedTermCover)}\n• Recommended Family Health Cover: ${formatINR(recommendedHealthCover)}\n\nPlease review these figures and share suitable policy options.`
-  )
-  const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
+  const whatsappMsgRaw = `Hi Phani, I checked my insurance cover requirements on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Current Age: ${age} Years\n• Dependents: ${dependents}\n• Recommended Term Life Cover: ${formatINR(recommendedTermCover)}\n• Recommended Family Health Cover: ${formatINR(recommendedHealthCover)}\n\nPlease review these figures and share suitable policy options.`
 
   return (
     <>
@@ -234,12 +237,17 @@ export function Insurance() {
                 </div>
               </div>
 
-              <div className="pt-6 relative z-10 space-y-3">
-                <Button href={whatsappUrl} external className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600">
-                  💬 Send My Calculation to WhatsApp →
-                </Button>
-                <Button to="/contact" variant="ghost-light" className="w-full text-xs">
-                  Request Free Policy Review & Quotes
+              <div className="pt-6 relative z-10">
+                <Button 
+                  onClick={() => {
+                    setLeadModalMessage(whatsappMsgRaw)
+                    setLeadModalTitle("Save & Send Calculation")
+                    setLeadModalSubtitle("Fill in your details below to save your Insurance Cover requirements and instantly share it on WhatsApp.")
+                    setIsLeadModalOpen(true)
+                  }}
+                  className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600"
+                >
+                  💬 Save & Send Calculation to WhatsApp →
                 </Button>
               </div>
             </div>
@@ -370,17 +378,30 @@ export function Insurance() {
             <p className="mx-auto mt-4 max-w-xl text-ivory/80 text-lg">
               Reach out for a zero-obligation review of your existing insurance policies.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button to="/contact" variant="ghost-light">
-                Request Free Policy Review
-              </Button>
-              <Button href={siteConfig.contact.whatsappUrl} external variant="secondary">
-                Chat on WhatsApp →
+            <div className="mt-8">
+              <Button 
+                onClick={() => {
+                  setLeadModalMessage("Hi Phani, I want to request a free review of my existing insurance policies. Please connect with me.")
+                  setLeadModalTitle("Request Free Policy Review")
+                  setLeadModalSubtitle("Fill in your details below to save your request and get a free insurance policy review via WhatsApp.")
+                  setIsLeadModalOpen(true)
+                }} 
+                variant="ghost-light"
+              >
+                💬 Start Policy Review on WhatsApp →
               </Button>
             </div>
           </SectionReveal>
         </div>
       </section>
+
+      <LeadModal
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        defaultMessage={leadModalMessage}
+        title={leadModalTitle}
+        subtitle={leadModalSubtitle}
+      />
     </>
   )
 }

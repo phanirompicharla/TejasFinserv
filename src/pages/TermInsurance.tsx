@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
+import { LeadModal } from '../components/LeadModal'
 import { InsurancePartnersStrip } from '../components/InsurancePartnersStrip'
 import { termInsurancePartners } from '../lib/clientLogos'
 import { SectionReveal } from '../components/SectionReveal'
@@ -71,6 +71,11 @@ export function TermInsurance() {
   const [age, setAge] = useState<number>(30)
   const [liabilities, setLiabilities] = useState<number>(2000000)
 
+  const [isLeadModalOpen, setIsLeadModalOpen] = useState(false)
+  const [leadModalMessage, setLeadModalMessage] = useState('')
+  const [leadModalTitle, setLeadModalTitle] = useState('')
+  const [leadModalSubtitle, setLeadModalSubtitle] = useState('')
+
   // HLV Calculation: Recommended Term Cover = (Income * Multiplier) + Liabilities
   const multiplier = age < 35 ? 20 : age < 45 ? 15 : 10
   const recommendedTermCover = annualIncome * multiplier + liabilities
@@ -81,10 +86,7 @@ export function TermInsurance() {
     return `₹${val.toLocaleString('en-IN')}`
   }
 
-  const whatsappMsg = encodeURIComponent(
-    `Hi Phani, I used the HLV Term Calculator on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Age: ${age} Years\n• Existing Debt: ₹${(liabilities / 100000).toFixed(1)} Lakhs\n• Recommended Cover: ${formatINR(recommendedTermCover)}\n\nPlease share suitable pure term life quotes with 100% claim settlement support.`
-  )
-  const whatsappUrl = `https://api.whatsapp.com/send/?phone=919490716662&text=${whatsappMsg}&type=phone_number&app_absent=0`
+  const whatsappMsgRaw = `Hi Phani, I used the HLV Term Calculator on TejasFinserv.\n\n• Annual Income: ₹${(annualIncome / 100000).toFixed(1)} Lakhs\n• Age: ${age} Years\n• Existing Debt: ₹${(liabilities / 100000).toFixed(1)} Lakhs\n• Recommended Cover: ${formatINR(recommendedTermCover)}\n\nPlease share suitable pure term life quotes with 100% claim settlement support.`
 
   return (
     <>
@@ -106,12 +108,17 @@ export function TermInsurance() {
             <p className="mt-6 max-w-2xl text-lg text-ivory/80 leading-relaxed">
               Term insurance is the foundation of every sound financial plan. We help you determine your exact Human Life Value and select high claim-settlement term plans without commission bias.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Button href={siteConfig.onboardingUrl} external className="shadow-lg">
-                Get Customized Term Quotes
-              </Button>
-              <Button to="/contact" variant="secondary">
-                Speak with Phani Rompicharla
+            <div className="mt-8">
+              <Button 
+                onClick={() => {
+                  setLeadModalMessage("Hi Phani, I am interested in getting customized term insurance quotes. Please connect with me.")
+                  setLeadModalTitle("Get Term Insurance Quotes")
+                  setLeadModalSubtitle("Fill in your details below to save your request and get customized term insurance quotes via WhatsApp.")
+                  setIsLeadModalOpen(true)
+                }} 
+                className="shadow-lg"
+              >
+                💬 Get Customized Term Quotes on WhatsApp →
               </Button>
             </div>
           </SectionReveal>
@@ -238,12 +245,17 @@ export function TermInsurance() {
                 </div>
               </div>
 
-              <div className="pt-6 relative z-10 space-y-3">
-                <Button href={whatsappUrl} external className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600">
-                  💬 Send My Calculation to WhatsApp →
-                </Button>
-                <Button to="/contact" variant="ghost-light" className="w-full text-xs">
-                  Request Custom Evaluation via Email
+              <div className="pt-6 relative z-10">
+                <Button 
+                  onClick={() => {
+                    setLeadModalMessage(whatsappMsgRaw)
+                    setLeadModalTitle("Save & Send Calculation")
+                    setLeadModalSubtitle("Fill in your details below to save your Pure Term life coverage calculation and instantly share it on WhatsApp.")
+                    setIsLeadModalOpen(true)
+                  }}
+                  className="w-full shadow-lg !bg-emerald-500 !text-white hover:!bg-emerald-600"
+                >
+                  💬 Save & Send Calculation to WhatsApp →
                 </Button>
               </div>
             </div>
@@ -345,17 +357,30 @@ export function TermInsurance() {
             <p className="mt-4 text-lg text-ivory/80 max-w-2xl mx-auto">
               Connect with Phani Rompicharla today for an unbiased, commission-transparent policy evaluation.
             </p>
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              <Button href={siteConfig.onboardingUrl} external className="shadow-xl">
-                Start Online Onboarding
-              </Button>
-              <Button href={siteConfig.contact.whatsappUrl} external variant="secondary">
-                Chat on WhatsApp →
+            <div className="mt-8">
+              <Button 
+                onClick={() => {
+                  setLeadModalMessage("Hi Phani, I want to start online onboarding for term insurance. Please guide me.")
+                  setLeadModalTitle("Start Online Onboarding")
+                  setLeadModalSubtitle("Fill in your details below to save your request and connect on WhatsApp for your onboarding.")
+                  setIsLeadModalOpen(true)
+                }} 
+                className="shadow-xl"
+              >
+                💬 Start Onboarding on WhatsApp →
               </Button>
             </div>
           </SectionReveal>
         </div>
       </section>
+
+      <LeadModal
+        isOpen={isLeadModalOpen}
+        onClose={() => setIsLeadModalOpen(false)}
+        defaultMessage={leadModalMessage}
+        title={leadModalTitle}
+        subtitle={leadModalSubtitle}
+      />
     </>
   )
 }
