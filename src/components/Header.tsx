@@ -39,10 +39,10 @@ export function Header() {
         scrolled ? 'shadow-sm' : 'shadow-none'
       }`}
     >
-      <div className="container-main flex h-20 items-center justify-between py-4">
+      <div className="container-main flex h-20 items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/" className="focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brass" aria-label="TejasFinserv home">
-            <Logo />
+            <Logo imgClassName="h-14 sm:h-16 w-auto" />
           </Link>
           <div className="hidden sm:flex flex-col border-l border-line pl-3">
             <span className="text-[10px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
@@ -169,9 +169,9 @@ export function Header() {
         }`}
         aria-hidden={!menuOpen}
       >
-        <div className="flex h-20 shrink-0 items-center justify-between border-b border-ivory/10 bg-ivory px-5 py-4 w-full">
+        <div className="flex h-20 shrink-0 items-center justify-between border-b border-ivory/10 bg-ivory px-5 w-full">
           <div className="flex items-center gap-2.5">
-            <Logo />
+            <Logo imgClassName="h-14 sm:h-16 w-auto" />
             <div className="flex flex-col border-l border-line pl-2.5">
               <span className="text-[8px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
               <span className="text-[10px] font-semibold text-brass tracking-wider mt-0.5 leading-none">{siteConfig.regulatory.arn}</span>

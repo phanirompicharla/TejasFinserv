@@ -6,7 +6,7 @@ import { Button } from '../components/Button'
 import { ComplianceSection } from '../components/ComplianceSection'
 import { FAQSection } from '../components/FAQSection'
 import { HomeHero } from '../components/home/HomeHero'
-import { NewsletterForm } from '../components/NewsletterForm'
+// import { NewsletterForm } from '../components/NewsletterForm'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
 import { ServiceCard } from '../components/ServiceCard'
@@ -134,6 +134,7 @@ export function Home() {
         </div>
       </section>
 
+      {/* Stay informed section hidden for now; enable when needed:
       <section className="section-padding bg-cream">
         <div className="container-main grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
           <SectionReveal>
@@ -145,6 +146,7 @@ export function Home() {
           </SectionReveal>
         </div>
       </section>
+      */}
 
       <ComplianceSection />
     </>
