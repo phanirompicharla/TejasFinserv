@@ -361,4 +361,43 @@ input[type="range"]:focus-visible {
   }
 }
 
+/* Insurance Logo Placeholder — shown when an image fails to load */
+.insurance-logo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  gap: 3px;
+  background: linear-gradient(135deg, var(--navy) 0%, #1e3a5f 100%);
+  border-radius: 0.625rem;
+  padding: 0.5rem 0.75rem;
+  overflow: hidden;
+}
+
+.insurance-logo-initials {
+  font-family: var(--font-display, 'Inter', sans-serif);
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--brass, #c9a84c);
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+.insurance-logo-name {
+  font-family: var(--font-sans, 'Inter', sans-serif);
+  font-size: 0.45rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.2;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  max-width: 100%;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
 

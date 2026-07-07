@@ -1,8 +1,50 @@
+import { useState } from 'react'
 import { insurancePartners as defaultInsurancePartners } from '../lib/clientLogos'
 import { SectionReveal } from './SectionReveal'
 
+interface Partner {
+  name: string
+  slug: string
+  logo: string
+}
+
 interface InsurancePartnersStripProps {
-  partners?: { name: string; slug: string; logo: string }[]
+  partners?: Partner[]
+}
+
+/** Returns up to 2 initials from significant words (skip short words like "of", "MS", "and") */
+function getInitials(name: string): string {
+  const words = name.split(/\s+/).filter((w) => w.length > 2)
+  return words
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join('')
+}
+
+/** Single logo card with graceful onError fallback placeholder */
+function LogoCard({ partner }: { partner: Partner }) {
+  const [imgError, setImgError] = useState(false)
+
+  return (
+    <div className="amc-carousel-item" title={partner.name}>
+      {imgError ? (
+        <div className="insurance-logo-placeholder">
+          <span className="insurance-logo-initials">{getInitials(partner.name)}</span>
+          <span className="insurance-logo-name">{partner.name}</span>
+        </div>
+      ) : (
+        <img
+          src={partner.logo}
+          alt={`${partner.name} logo`}
+          width={160}
+          height={60}
+          loading="lazy"
+          decoding="async"
+          onError={() => setImgError(true)}
+        />
+      )}
+    </div>
+  )
 }
 
 export function InsurancePartnersStrip({ partners = defaultInsurancePartners }: InsurancePartnersStripProps) {
@@ -32,39 +74,13 @@ export function InsurancePartnersStrip({ partners = defaultInsurancePartners }: 
           {/* First set */}
           <div className="flex shrink-0 gap-6 pr-6">
             {partners.map((partner, i) => (
-              <div
-                key={`${partner.slug}-${i}`}
-                className="amc-carousel-item"
-                title={partner.name}
-              >
-                <img
-                  src={partner.logo}
-                  alt={`${partner.name} logo`}
-                  width={160}
-                  height={60}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
+              <LogoCard key={`${partner.slug}-${i}`} partner={partner} />
             ))}
           </div>
           {/* Duplicate set for seamless infinite loop */}
           <div className="flex shrink-0 gap-6 pr-6">
             {partners.map((partner, i) => (
-              <div
-                key={`${partner.slug}-dup-${i}`}
-                className="amc-carousel-item"
-                title={partner.name}
-              >
-                <img
-                  src={partner.logo}
-                  alt={`${partner.name} logo`}
-                  width={160}
-                  height={60}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
+              <LogoCard key={`${partner.slug}-dup-${i}`} partner={partner} />
             ))}
           </div>
         </div>
