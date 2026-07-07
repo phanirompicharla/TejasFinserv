@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { Breadcrumbs } from '../../components/Breadcrumbs'
 import { CalculatorShell } from '../../components/calculators/CalculatorShell'
+import { EmiCalculatorShell } from '../../components/calculators/EmiCalculatorShell'
 import { Seo } from '../../components/Seo'
 import { getCalculator } from '../../lib/calculators/registry'
 import { breadcrumbSchema, faqPageSchema, speakableSchema } from '../../schema'
@@ -49,7 +50,11 @@ export function CalculatorPage() {
       </section>
       <section className="section-padding bg-ivory">
         <div className="container-main">
-          <CalculatorShell calculator={calculator} />
+          {calculator.slug === 'emi' ? (
+            <EmiCalculatorShell calculator={calculator} />
+          ) : (
+            <CalculatorShell calculator={calculator} />
+          )}
         </div>
       </section>
     </>
