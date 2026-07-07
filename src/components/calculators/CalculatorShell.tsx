@@ -105,7 +105,13 @@ export function CalculatorShell({ calculator }: CalculatorShellProps) {
           )}
 
           <div className="mt-8">
-            <CalculatorCharts invested={result.invested} returns={Math.max(0, result.returns)} />
+            <CalculatorCharts
+              invested={result.invested}
+              returns={Math.max(0, result.returns)}
+              monthlyInvestment={values.monthly}
+              annualReturn={values.annualReturn}
+              years={values.years}
+            />
           </div>
 
           <p className="mt-6 text-xs text-muted italic">{CALC_DISCLAIMER}</p>
