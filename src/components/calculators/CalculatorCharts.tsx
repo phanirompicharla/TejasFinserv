@@ -216,7 +216,7 @@ export function CalculatorCharts({
           </div>
 
           {/* Recharts Chart */}
-          <div className="h-[280px] w-full">
+          <div className="h-[240px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={yearlyData}

@@ -33,7 +33,7 @@ export function CalculatorShell({ calculator }: CalculatorShellProps) {
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2">
+    <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
       <div className="space-y-6 rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
         <h2 className="font-display text-xl font-semibold text-navy">Inputs</h2>
         {calculator.fields.map((field) => (
