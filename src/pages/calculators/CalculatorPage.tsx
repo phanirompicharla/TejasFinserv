@@ -2,6 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Breadcrumbs } from '../../components/Breadcrumbs'
 import { CalculatorShell } from '../../components/calculators/CalculatorShell'
 import { EmiCalculatorShell } from '../../components/calculators/EmiCalculatorShell'
+import { RetirementCalculatorShell } from '../../components/calculators/RetirementCalculatorShell'
 import { Seo } from '../../components/Seo'
 import { getCalculator } from '../../lib/calculators/registry'
 import { breadcrumbSchema, faqPageSchema, speakableSchema } from '../../schema'
@@ -52,6 +53,8 @@ export function CalculatorPage() {
         <div className="container-main">
           {calculator.slug === 'emi' ? (
             <EmiCalculatorShell calculator={calculator} />
+          ) : calculator.slug === 'retirement' ? (
+            <RetirementCalculatorShell calculator={calculator} />
           ) : (
             <CalculatorShell calculator={calculator} />
           )}
