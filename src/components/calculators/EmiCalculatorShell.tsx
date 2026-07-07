@@ -45,7 +45,7 @@ export function EmiCalculatorShell({ calculator }: CalculatorShellProps) {
                 {field.label}
               </label>
               <span className="text-sm font-semibold text-brass">
-                {field.prefix}{values[field.id].toLocaleString('en-IN')}{field.suffix ? ` ${field.suffix}` : ''}
+                {field.prefix}{values[field.id] !== undefined ? values[field.id].toLocaleString('en-IN') : ''}{field.suffix ? ` ${field.suffix}` : ''}
               </span>
             </div>
             <input
@@ -54,7 +54,7 @@ export function EmiCalculatorShell({ calculator }: CalculatorShellProps) {
               min={field.min}
               max={field.max}
               step={field.step}
-              value={values[field.id]}
+              value={values[field.id] ?? field.defaultValue}
               onChange={(e) => update(field.id, Number(e.target.value), field.min, field.max)}
               className="w-full accent-brass"
             />
@@ -63,7 +63,7 @@ export function EmiCalculatorShell({ calculator }: CalculatorShellProps) {
               min={field.min}
               max={field.max}
               step={field.step}
-              value={values[field.id]}
+              value={values[field.id] ?? field.defaultValue}
               onChange={(e) => update(field.id, Number(e.target.value), field.min, field.max)}
               className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
             />

@@ -53,11 +53,11 @@ export function CalculatorPage() {
       <section className="section-padding bg-ivory">
         <div className="container-main">
           {calculator.slug === 'emi' ? (
-            <EmiCalculatorShell calculator={calculator} />
+            <EmiCalculatorShell key={calculator.slug} calculator={calculator} />
           ) : calculator.slug === 'retirement' ? (
-            <RetirementCalculatorShell calculator={calculator} />
+            <RetirementCalculatorShell key={calculator.slug} calculator={calculator} />
           ) : (
-            <CalculatorShell calculator={calculator} />
+            <CalculatorShell key={calculator.slug} calculator={calculator} />
           )}
         </div>
       </section>
