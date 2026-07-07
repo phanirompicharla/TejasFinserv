@@ -59,6 +59,15 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="mt-3 text-sm text-muted">
               We encountered an issue loading this section of the website. This might be due to a temporary network issue or a recent update.
             </p>
+            {this.state.error && (
+              <div className="mt-4 text-left border-t border-line pt-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-navy block mb-1">Error Diagnostics:</span>
+                <pre className="max-h-32 overflow-auto rounded-lg bg-navy/5 p-2.5 font-mono text-[10px] text-red-600 whitespace-pre-wrap select-all border border-line">
+                  {this.state.error.message || String(this.state.error)}
+                  {this.state.error.stack && `\n\nStack:\n${this.state.error.stack}`}
+                </pre>
+              </div>
+            )}
             <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
               <button
                 onClick={() => window.location.reload()}
