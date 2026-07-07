@@ -101,7 +101,7 @@ export function About() {
         <div className="container-main max-w-4xl">
           <SectionReveal>
             <div className="grid gap-8 md:grid-cols-12 items-center">
-              <div className="md:col-span-7 space-y-6">
+              <div className="md:col-span-7 space-y-6 max-w-prose">
                 <h2 className="font-display text-3xl font-semibold text-navy">
                   Local roots, national investment access.
                 </h2>

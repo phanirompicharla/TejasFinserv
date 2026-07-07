@@ -61,12 +61,12 @@ export function LegalPage({ type }: { type: LegalPageProps['type'] }) {
         </div>
       </section>
       <section className="section-padding bg-ivory">
-        <div className="container-main max-w-3xl space-y-10">
+        <div className="container-main max-w-prose space-y-10">
           {content.sections.map((section) => (
             <div key={section.title}>
               <h2 className="font-display text-xl font-semibold text-navy">{section.title}</h2>
               {section.paragraphs.map((p) => (
-                <p key={p.slice(0, 30)} className="mt-3 text-muted">{p}</p>
+                <p key={p.slice(0, 30)} className="mt-3 text-muted leading-relaxed text-base">{p}</p>
               ))}
             </div>
           ))}

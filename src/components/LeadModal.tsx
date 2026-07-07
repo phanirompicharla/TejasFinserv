@@ -22,10 +22,20 @@ export function LeadModal({
   const [message, setMessage] = useState(defaultMessage)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
+  const [hasSavedData, setHasSavedData] = useState(false)
 
   // Reset states when modal is opened/closed or message changes
   useEffect(() => {
     if (isOpen) {
+      const savedName = localStorage.getItem('tejas_user_name') || ''
+      const savedPhone = localStorage.getItem('tejas_user_phone') || ''
+      const savedEmail = localStorage.getItem('tejas_user_email') || ''
+      
+      setName(savedName)
+      setPhone(savedPhone)
+      setEmail(savedEmail)
+      setHasSavedData(Boolean(savedPhone || savedEmail))
+      
       setMessage(defaultMessage)
       setStatus('idle')
       setErrors({})
@@ -56,6 +66,14 @@ export function LeadModal({
     }
 
     setStatus('submitting')
+
+    try {
+      localStorage.setItem('tejas_user_name', name.trim())
+      localStorage.setItem('tejas_user_phone', phone.trim())
+      localStorage.setItem('tejas_user_email', email.trim())
+    } catch (e) {
+      console.warn('Could not access localStorage', e)
+    }
 
     const formData = { name, email, phone, message }
 
@@ -121,6 +139,12 @@ export function LeadModal({
         <div className="mb-6 pr-6">
           <h2 className="font-display text-2xl font-bold text-navy leading-tight">{title}</h2>
           <p className="mt-2 text-sm text-muted leading-relaxed">{subtitle}</p>
+          {hasSavedData && (
+            <div className="mt-3 bg-brass/15 border border-brass/40 rounded-xl p-3 flex items-center gap-2.5 text-xs font-semibold text-navy animate-fade-in shadow-sm">
+              <span className="text-base">⚡</span>
+              <span>Welcome back! We've pre-filled your contact details for 1-click consultation.</span>
+            </div>
+          )}
         </div>
 
         {/* Modal Body / Form */}

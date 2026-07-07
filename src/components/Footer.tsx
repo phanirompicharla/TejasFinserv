@@ -178,7 +178,7 @@ export function Footer() {
 
         <div className="hairline my-10" />
 
-        <div className="flex flex-wrap gap-x-6 gap-y-3 text-xs text-ivory/60">
+        <div className="flex flex-wrap gap-x-6 gap-y-3 text-xs text-ivory/70">
           {legalLinks.map((link) => (
             <Link key={link.to} to={link.to!} className="link-underline hover:text-ivory">
               {link.label}
@@ -198,11 +198,11 @@ export function Footer() {
         </div>
 
         <div className="mt-6 space-y-4">
-          <p className="text-xs leading-relaxed text-ivory/60">{siteConfig.regulatory.disclaimer}</p>
+          <p className="text-xs leading-relaxed text-ivory/70">{siteConfig.regulatory.disclaimer}</p>
           <ArnBadge variant="light" />
-          <div className="flex flex-col gap-2 text-xs text-ivory/50 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-2 text-xs text-ivory/70 sm:flex-row sm:items-center sm:justify-between">
             <p>{siteConfig.copyright}</p>
-            <a href={`https://${siteConfig.domain}`} className="link-underline hover:text-ivory/70">
+            <a href={`https://${siteConfig.domain}`} className="link-underline hover:text-ivory">
               {siteConfig.domain}
             </a>
           </div>

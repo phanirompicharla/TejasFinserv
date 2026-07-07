@@ -58,7 +58,7 @@ export function HeroSipPreview() {
       <p className="mt-4 font-display text-3xl font-semibold text-ivory md:text-4xl">
         {formatINR(displayTotal, true)}
       </p>
-      <p className="mt-1 text-xs text-ivory/50">Estimated maturity value</p>
+      <p className="mt-1 text-xs text-ivory/70">Estimated maturity value</p>
 
       <div className="mt-6 flex h-16 items-end gap-3">
         <div className="flex flex-col items-center gap-1">
@@ -67,7 +67,7 @@ export function HeroSipPreview() {
             style={{ height: `30px` }}
             aria-hidden="true"
           />
-          <span className="text-[10px] text-ivory/50">Invested</span>
+          <span className="text-[10px] text-ivory/70">Invested</span>
         </div>
         <div className="flex flex-col items-center gap-1">
           <div
@@ -75,7 +75,7 @@ export function HeroSipPreview() {
             style={{ height: `40px` }}
             aria-hidden="true"
           />
-          <span className="text-[10px] text-ivory/50">Returns</span>
+          <span className="text-[10px] text-ivory/70">Returns</span>
         </div>
         <svg viewBox="0 0 120 60" className="h-14 w-28 flex-shrink-0" aria-hidden="true">
           <path
