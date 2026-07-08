@@ -35,6 +35,7 @@ export function CalculatorShell({ calculator, headerNode, unifiedLayout }: Calcu
   }
 
   return (
+    <>
     <div className={unifiedLayout ? "flex flex-col lg:flex-row rounded-[2rem] overflow-hidden shadow-card border border-line bg-cream" : "grid gap-10 lg:grid-cols-2 lg:items-start"}>
       <div className={unifiedLayout ? "w-full lg:w-1/2 p-6 md:p-10 space-y-6" : "space-y-6 rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8"}>
         {headerNode && <div className="mb-8">{headerNode}</div>}
@@ -127,15 +128,16 @@ export function CalculatorShell({ calculator, headerNode, unifiedLayout }: Calcu
           <Button href={siteConfig.onboardingUrl} external>Start Investing</Button>
         </div>
       </div>
+    </div>
 
-      <div className="lg:col-span-2">
-        <AnswerCallout>
-          {calculator.intro}
-        </AnswerCallout>
-        <div className="mt-10">
-          <FAQSection faqs={calculator.faqs} title="Frequently Asked Questions" />
-        </div>
+    <div className="mt-12 lg:col-span-2">
+      <AnswerCallout>
+        {calculator.intro}
+      </AnswerCallout>
+      <div className="mt-10">
+        <FAQSection faqs={calculator.faqs} title="Frequently Asked Questions" />
       </div>
     </div>
+  </>
   )
 }
