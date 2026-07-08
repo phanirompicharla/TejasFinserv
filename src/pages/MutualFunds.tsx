@@ -99,34 +99,59 @@ export function MutualFunds() {
             </div>
           </SectionReveal>
 
-          <div className="max-w-7xl mx-auto mb-8 flex justify-start">
-            <div className="flex bg-ivory p-1 rounded-full border border-line w-fit shadow-sm">
-              <button
-                type="button"
-                onClick={() => setMode('sip')}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  mode === 'sip' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy'
-                }`}
-              >
-                Monthly SIP
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode('lumpsum')}
-                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  mode === 'lumpsum' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy'
-                }`}
-              >
-                One-Time Lumpsum
-              </button>
-            </div>
-          </div>
-          
           <div className="max-w-7xl mx-auto">
             {mode === 'sip' && sipCalculator ? (
-              <CalculatorShell key="sip" calculator={sipCalculator} />
+              <CalculatorShell 
+                key="sip" 
+                calculator={sipCalculator} 
+                unifiedLayout={true}
+                headerNode={
+                  <div className="flex justify-start">
+                    <div className="flex bg-ivory p-1 rounded-full border border-line w-fit shadow-sm">
+                      <button
+                        type="button"
+                        onClick={() => setMode('sip')}
+                        className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all bg-navy text-ivory shadow-md"
+                      >
+                        Monthly SIP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMode('lumpsum')}
+                        className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all text-ink hover:text-navy"
+                      >
+                        One-Time Lumpsum
+                      </button>
+                    </div>
+                  </div>
+                }
+              />
             ) : mode === 'lumpsum' && lumpsumCalculator ? (
-              <CalculatorShell key="lumpsum" calculator={lumpsumCalculator} />
+              <CalculatorShell 
+                key="lumpsum" 
+                calculator={lumpsumCalculator} 
+                unifiedLayout={true}
+                headerNode={
+                  <div className="flex justify-start">
+                    <div className="flex bg-ivory p-1 rounded-full border border-line w-fit shadow-sm">
+                      <button
+                        type="button"
+                        onClick={() => setMode('sip')}
+                        className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all text-ink hover:text-navy"
+                      >
+                        Monthly SIP
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMode('lumpsum')}
+                        className="px-6 py-2.5 rounded-full text-sm font-semibold transition-all bg-navy text-ivory shadow-md"
+                      >
+                        One-Time Lumpsum
+                      </button>
+                    </div>
+                  </div>
+                }
+              />
             ) : null}
           </div>
         </div>

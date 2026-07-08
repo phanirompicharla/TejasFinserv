@@ -9,9 +9,11 @@ import { AnswerCallout } from '../AnswerCallout'
 
 interface CalculatorShellProps {
   calculator: CalculatorDef
+  headerNode?: React.ReactNode
+  unifiedLayout?: boolean
 }
 
-export function CalculatorShell({ calculator }: CalculatorShellProps) {
+export function CalculatorShell({ calculator, headerNode, unifiedLayout }: CalculatorShellProps) {
   const initial = useMemo(() => {
     const v: Record<string, number> = {}
     calculator.fields.forEach((f) => { v[f.id] = f.defaultValue })
@@ -33,8 +35,9 @@ export function CalculatorShell({ calculator }: CalculatorShellProps) {
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-      <div className="space-y-6 rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
+    <div className={unifiedLayout ? "flex flex-col lg:flex-row rounded-[2rem] overflow-hidden shadow-card border border-line bg-cream" : "grid gap-10 lg:grid-cols-2 lg:items-start"}>
+      <div className={unifiedLayout ? "w-full lg:w-1/2 p-6 md:p-10 space-y-6" : "space-y-6 rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8"}>
+        {headerNode && <div className="mb-8">{headerNode}</div>}
         <h2 className="font-display text-xl font-semibold text-navy">Inputs</h2>
         {calculator.fields.map((field) => (
           <div key={field.id}>
@@ -69,9 +72,9 @@ export function CalculatorShell({ calculator }: CalculatorShellProps) {
         ))}
       </div>
 
-      <div className="space-y-6">
-        <div className="rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
-          <h2 className="font-display text-xl font-semibold text-navy">Results</h2>
+      <div className={unifiedLayout ? "w-full lg:w-1/2 p-6 md:p-10 bg-navy space-y-6" : "space-y-6"}>
+        <div className={unifiedLayout ? "" : "rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8"}>
+          <h2 className={`font-display text-xl font-semibold ${unifiedLayout ? 'text-ivory' : 'text-navy'}`}>Results</h2>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             <div className="rounded-xl bg-ivory p-4 text-center">
               <p className="text-xs uppercase tracking-wider text-muted">{labels.invested}</p>
