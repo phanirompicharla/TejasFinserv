@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { siteConfig } from '../lib/siteConfig'
 import { SectionReveal } from './SectionReveal'
 import { Button } from './Button'
@@ -7,6 +7,104 @@ interface Review {
   name: string;
   quote: string;
   location: string;
+}
+
+function TestimonialCard({ t }: { t: Review }) {
+  return (
+    <blockquote className="h-full min-h-[260px] flex flex-col rounded-2xl border border-line bg-cream p-6 shadow-sm">
+      <p className="text-muted italic whitespace-pre-wrap line-clamp-5 flex-grow">&ldquo;{t.quote}&rdquo;</p>
+      <footer className="mt-6 pt-4 border-t border-line/40 shrink-0">
+        <cite className="not-italic font-semibold text-navy block">{t.name}</cite>
+        <p className="text-xs text-muted">{t.location}</p>
+      </footer>
+    </blockquote>
+  )
+}
+
+function TestimonialCarousel({ reviews }: { reviews: Review[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isInteracting, setIsInteracting] = useState(false)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setPrefersReducedMotion(mediaQuery.matches)
+    const listener = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches)
+    mediaQuery.addEventListener('change', listener)
+    return () => mediaQuery.removeEventListener('change', listener)
+  }, [])
+
+  useEffect(() => {
+    if (prefersReducedMotion) return
+    const container = scrollRef.current
+    if (!container) return
+
+    let animationFrameId: number
+    const scrollSpeed = 0.5 // pixels per frame
+
+    const step = () => {
+      if (!isHovered && !isInteracting) {
+        container.scrollLeft += scrollSpeed
+        
+        // Loop seamlessly
+        if (container.scrollLeft >= container.scrollWidth / 2) {
+          container.scrollLeft -= container.scrollWidth / 2
+        }
+      }
+      animationFrameId = requestAnimationFrame(step)
+    }
+    
+    animationFrameId = requestAnimationFrame(step)
+    return () => cancelAnimationFrame(animationFrameId)
+  }, [isHovered, isInteracting, prefersReducedMotion, reviews])
+
+  const displayReviews = prefersReducedMotion ? reviews : [...reviews, ...reviews]
+
+  if (prefersReducedMotion) {
+    return (
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {displayReviews.map((t, i) => (
+          <SectionReveal key={`${t.name}-${i}`} delay={i * 80}>
+            <TestimonialCard t={t} />
+          </SectionReveal>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <SectionReveal delay={100}>
+      <div 
+        className="mt-10 relative -mx-4 px-4 sm:mx-0 sm:px-0 group"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onTouchStart={() => setIsInteracting(true)}
+        onTouchEnd={() => setTimeout(() => setIsInteracting(false), 1000)}
+        onMouseDown={() => setIsInteracting(true)}
+        onMouseUp={() => setTimeout(() => setIsInteracting(false), 1000)}
+      >
+        {/* Fade gradients blending into the ivory background */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-16 bg-gradient-to-r from-ivory to-transparent hidden sm:block" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-ivory to-transparent hidden sm:block" />
+        
+        <div 
+          ref={scrollRef}
+          className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-6 pt-2 hide-scrollbar items-stretch"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {displayReviews.map((t, i) => (
+            <div 
+              key={`${t.name}-${i}`} 
+              className="w-[85vw] sm:w-[calc(50%-12px)] lg:w-[calc(33.3333%-16px)] flex-shrink-0 snap-center sm:snap-start h-auto"
+            >
+              <TestimonialCard t={t} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </SectionReveal>
+  )
 }
 
 export function Testimonials() {
@@ -66,7 +164,7 @@ export function Testimonials() {
   }
 
   return (
-    <section className="section-padding bg-ivory relative">
+    <section className="section-padding bg-ivory relative overflow-hidden">
       <div className="container-main">
         <SectionReveal>
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -84,19 +182,7 @@ export function Testimonials() {
           </div>
         </SectionReveal>
         
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {reviews.map((t, i) => (
-            <SectionReveal key={`${t.name}-${i}`} delay={i * 80}>
-              <blockquote className="h-full rounded-2xl border border-line bg-cream p-6 shadow-sm">
-                <p className="text-muted italic whitespace-pre-wrap">&ldquo;{t.quote}&rdquo;</p>
-                <footer className="mt-4">
-                  <cite className="not-italic font-semibold text-navy">{t.name}</cite>
-                  <p className="text-xs text-muted">{t.location}</p>
-                </footer>
-              </blockquote>
-            </SectionReveal>
-          ))}
-        </div>
+        <TestimonialCarousel reviews={reviews} />
         
         {siteConfig.reviews.googleUrl && (
           <p className="mt-8 text-center text-sm">
