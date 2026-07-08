@@ -99,13 +99,13 @@ export function MutualFunds() {
             </div>
           </SectionReveal>
 
-          <div className="max-w-7xl mx-auto mb-8 grid lg:grid-cols-2 gap-10">
-            <div className="flex bg-ivory p-1 rounded-2xl border border-line shadow-sm">
+          <div className="max-w-7xl mx-auto mb-8 flex justify-start">
+            <div className="flex bg-ivory p-1 rounded-full border border-line w-fit shadow-sm">
               <button
                 type="button"
                 onClick={() => setMode('sip')}
-                className={`flex-1 py-3 px-6 rounded-xl text-sm font-semibold transition-all ${
-                  mode === 'sip' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy bg-transparent'
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                  mode === 'sip' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy'
                 }`}
               >
                 Monthly SIP
@@ -113,14 +113,13 @@ export function MutualFunds() {
               <button
                 type="button"
                 onClick={() => setMode('lumpsum')}
-                className={`flex-1 py-3 px-6 rounded-xl text-sm font-semibold transition-all ${
-                  mode === 'lumpsum' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy bg-transparent'
+                className={`px-6 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                  mode === 'lumpsum' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy'
                 }`}
               >
                 One-Time Lumpsum
               </button>
             </div>
-            <div className="hidden lg:block" />
           </div>
           
           <div className="max-w-7xl mx-auto">
