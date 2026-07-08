@@ -4,6 +4,8 @@ import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
+import { CalculatorCharts } from '../components/calculators/CalculatorCharts'
+import { CALC_DISCLAIMER, formatINR } from '../lib/format'
 
 const categories = [
   {
@@ -79,14 +81,7 @@ export function MutualFunds() {
       ? calculateSIP(amount, years, rate)
       : calculateLumpsum(amount * 10, years, rate)
 
-  const investedPercent = Math.max(10, Math.min(90, Math.round((results.invested / results.corpus) * 100)))
-  const returnsPercent = 100 - investedPercent
 
-  const formatINR = (val: number) => {
-    if (val >= 10000000) return `₹${(val / 10000000).toFixed(2)} Cr`
-    if (val >= 100000) return `₹${(val / 100000).toFixed(2)} Lakh`
-    return `₹${val.toLocaleString('en-IN')}`
-  }
 
   return (
     <>
@@ -129,10 +124,11 @@ export function MutualFunds() {
             </div>
           </SectionReveal>
 
-          <div className="max-w-5xl mx-auto rounded-3xl border border-line bg-ivory shadow-2xl overflow-hidden grid md:grid-cols-12">
-            {/* Controls Left */}
-            <div className="md:col-span-7 p-6 sm:p-10 space-y-8 border-b md:border-b-0 md:border-r border-line">
-              <div className="flex bg-cream p-1 rounded-2xl border border-line/60 w-fit">
+          <div className="max-w-5xl mx-auto grid gap-10 lg:grid-cols-2 lg:items-start">
+            <div className="space-y-6 rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
+              <h2 className="font-display text-xl font-semibold text-navy">Inputs</h2>
+              
+              <div className="flex bg-cream p-1 rounded-xl border border-line w-fit">
                 <button
                   type="button"
                   onClick={() => {
@@ -159,13 +155,12 @@ export function MutualFunds() {
                 </button>
               </div>
 
-              {/* Amount Slider */}
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-navy">
-                    {mode === 'sip' ? 'Monthly Investment' : 'Initial Investment Amount'}
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-sm font-medium text-ink">
+                    {mode === 'sip' ? 'Monthly Investment' : 'Total Investment'}
                   </label>
-                  <span className="font-display text-xl font-bold text-navy bg-cream px-3 py-1 rounded-lg border border-line">
+                  <span className="text-sm font-semibold text-brass">
                     ₹{(mode === 'sip' ? amount : amount * 10).toLocaleString('en-IN')}
                   </span>
                 </div>
@@ -182,46 +177,28 @@ export function MutualFunds() {
                   }
                   className="w-full accent-brass cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-muted mt-1 font-mono">
-                  <span>{mode === 'sip' ? '₹1,000' : '₹10,000'}</span>
-                  <span>{mode === 'sip' ? '₹1 Lakh/mo' : '₹10 Lakhs'}</span>
-                </div>
-              </div>
-
-              {/* Tenure Slider */}
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-navy">
-                    Investment Time Horizon
-                  </label>
-                  <span className="font-display text-xl font-bold text-navy bg-cream px-3 py-1 rounded-lg border border-line">
-                    {years} Years
-                  </span>
-                </div>
                 <input
-                  type="range"
-                  min={1}
-                  max={30}
-                  step={1}
-                  value={years}
-                  onChange={(e) => setYears(Number(e.target.value))}
-                  className="w-full accent-brass cursor-pointer"
+                  type="number"
+                  min={mode === 'sip' ? 1000 : 10000}
+                  max={mode === 'sip' ? 100000 : 1000000}
+                  step={mode === 'sip' ? 1000 : 10000}
+                  value={mode === 'sip' ? amount : amount * 10}
+                  onChange={(e) =>
+                    mode === 'sip'
+                      ? setAmount(Number(e.target.value))
+                      : setAmount(Number(e.target.value) / 10)
+                  }
+                  className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
                 />
-                <div className="flex justify-between text-xs text-muted mt-1 font-mono">
-                  <span>1 Year</span>
-                  <span>15 Years</span>
-                  <span>30 Years</span>
-                </div>
               </div>
 
-              {/* Return Rate Slider */}
               <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-xs font-semibold uppercase tracking-wider text-navy">
-                    Expected Annual Return Rate
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-sm font-medium text-ink">
+                    Expected Return (p.a)
                   </label>
-                  <span className="font-display text-xl font-bold text-navy bg-cream px-3 py-1 rounded-lg border border-line">
-                    {rate}% p.a.
+                  <span className="text-sm font-semibold text-brass">
+                    {rate}%
                   </span>
                 </div>
                 <input
@@ -233,76 +210,90 @@ export function MutualFunds() {
                   onChange={(e) => setRate(Number(e.target.value))}
                   className="w-full accent-brass cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-muted mt-1 font-mono">
-                  <span>8% (Conservative)</span>
-                  <span>12% (Moderate)</span>
-                  <span>20% (Aggressive)</span>
+                <input
+                  type="number"
+                  min={8}
+                  max={20}
+                  step={0.5}
+                  value={rate}
+                  onChange={(e) => setRate(Number(e.target.value))}
+                  className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
+                />
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <label className="text-sm font-medium text-ink">
+                    Investment Period
+                  </label>
+                  <span className="text-sm font-semibold text-brass">
+                    {years} Yr
+                  </span>
                 </div>
+                <input
+                  type="range"
+                  min={1}
+                  max={30}
+                  step={1}
+                  value={years}
+                  onChange={(e) => setYears(Number(e.target.value))}
+                  className="w-full accent-brass cursor-pointer"
+                />
+                <input
+                  type="number"
+                  min={1}
+                  max={30}
+                  step={1}
+                  value={years}
+                  onChange={(e) => setYears(Number(e.target.value))}
+                  className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
+                />
               </div>
             </div>
 
-            {/* Results Right */}
-            <div className="md:col-span-5 bg-navy text-ivory p-6 sm:p-10 flex flex-col justify-between relative overflow-hidden">
-              <div className="pointer-events-none absolute top-0 right-0 w-48 h-48 bg-brass/15 rounded-full blur-3xl -mr-10 -mt-10" />
-
-              <div className="space-y-6 relative z-10">
-                <div>
-                  <span className="text-xs font-semibold uppercase tracking-widest text-brass block mb-1">
-                    Estimated Wealth Corpus
-                  </span>
-                  <div className="font-display text-4xl sm:text-5xl font-bold text-ivory tracking-tight">
-                    {formatINR(results.corpus)}
+            <div className="space-y-6">
+              <div className="rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
+                <h2 className="font-display text-xl font-semibold text-navy">Results</h2>
+                <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                  <div className="rounded-xl bg-ivory p-4 text-center">
+                    <p className="text-xs uppercase tracking-wider text-muted">Amount Invested</p>
+                    <p className="mt-1 font-display text-lg font-semibold text-navy">{formatINR(results.invested, true)}</p>
+                  </div>
+                  <div className="rounded-xl bg-ivory p-4 text-center">
+                    <p className="text-xs uppercase tracking-wider text-muted">Est. Returns</p>
+                    <p className="mt-1 font-display text-lg font-semibold text-brass">
+                      {formatINR(results.returns, true)}
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-navy p-4 text-center text-ivory">
+                    <p className="text-xs uppercase tracking-wider text-ivory/70">Total Value</p>
+                    <p className="mt-1 font-display text-lg font-semibold text-brass-soft">{formatINR(results.corpus, true)}</p>
                   </div>
                 </div>
 
-                <div className="space-y-3 pt-4 border-t border-ivory/15 text-sm">
-                  <div className="flex justify-between items-center">
-                    <span className="text-ivory/70 flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-ivory/40 inline-block" />
-                      Total Amount Invested:
-                    </span>
-                    <span className="font-mono font-bold text-ivory">{formatINR(results.invested)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-brass flex items-center gap-2">
-                      <span className="w-3 h-3 rounded-full bg-brass inline-block" />
-                      Estimated Wealth Gain:
-                    </span>
-                    <span className="font-mono font-bold text-brass">{formatINR(results.returns)}</span>
-                  </div>
+                <div className="mt-8">
+                  <CalculatorCharts
+                    invested={results.invested}
+                    returns={Math.max(0, results.returns)}
+                    monthlyInvestment={mode === 'sip' ? amount : undefined}
+                    lumpsumAmount={mode === 'lumpsum' ? amount * 10 : undefined}
+                    years={years}
+                  />
                 </div>
 
-                {/* Visual Ratio Bar */}
-                <div className="pt-2">
-                  <div className="h-4 w-full bg-ivory/20 rounded-full overflow-hidden flex">
-                    <div
-                      style={{ width: `${investedPercent}%` }}
-                      className="bg-ivory/60 h-full transition-all duration-500"
-                      title="Invested Capital"
-                    />
-                    <div
-                      style={{ width: `${returnsPercent}%` }}
-                      className="bg-brass h-full transition-all duration-500"
-                      title="Compounding Growth"
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-ivory/70 mt-2 font-mono">
-                    <span>Invested ({investedPercent}%)</span>
-                    <span>Growth Gain ({returnsPercent}%)</span>
-                  </div>
-                </div>
+                <p className="mt-6 text-xs text-muted italic">{CALC_DISCLAIMER}</p>
               </div>
 
-              <div className="pt-8 relative z-10 space-y-3">
-                <Button href={siteConfig.onboardingUrl} external className="w-full shadow-lg">
-                  Start This {mode === 'sip' ? 'SIP' : 'Investment'} Online
-                </Button>
-                <Link
-                  to="/calculators"
-                  className="block text-center text-xs text-brass underline hover:text-ivory transition-colors"
-                >
-                  Explore All 10+ Specialized Financial Calculators →
-                </Link>
+              <div className="text-center">
+                <Button href={siteConfig.onboardingUrl} external>Start Investing</Button>
+                <div className="mt-4">
+                  <Link
+                    to="/calculators"
+                    className="text-xs text-navy underline hover:text-brass transition-colors font-medium inline-block"
+                  >
+                    Explore All 10+ Specialized Financial Calculators →
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
