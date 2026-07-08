@@ -94,7 +94,8 @@ export const siteConfig = {
   },
 
   compliance: {
-    scoresUrl: 'https://scores.gov.in/',
+    scoresUrl: 'https://scores.sebi.gov.in/',
+    smartOdrUrl: 'https://smartodr.in/login',
     investorCharterUrl: 'https://www.sebi.gov.in/sebiweb/home/HomeAction.do?menuCode=2000',
     mfSahiHaiUrl: 'https://www.mutualfundssahihai.com/',
     grievanceEmail: 'phani.rompicharla@gmail.com',
