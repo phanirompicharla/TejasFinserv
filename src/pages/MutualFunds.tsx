@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+
 import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
-import { CalculatorCharts } from '../components/calculators/CalculatorCharts'
-import { CALC_DISCLAIMER, formatINR } from '../lib/format'
+import { CalculatorShell } from '../components/calculators/CalculatorShell'
+import { getCalculator } from '../lib/calculators/registry'
 
 const categories = [
   {
@@ -54,34 +54,9 @@ const categories = [
 
 export function MutualFunds() {
   const [mode, setMode] = useState<'sip' | 'lumpsum'>('sip')
-  const [amount, setAmount] = useState<number>(10000)
-  const [years, setYears] = useState<number>(15)
-  const [rate, setRate] = useState<number>(12)
 
-  // SIP calculation formula
-  const calculateSIP = (monthlyAmount: number, tenureYears: number, annualRate: number) => {
-    const n = tenureYears * 12
-    const r = annualRate / 12 / 100
-    const invested = monthlyAmount * n
-    const corpus = monthlyAmount * ((Math.pow(1 + r, n) - 1) / r) * (1 + r)
-    const returns = corpus - invested
-    return { invested: Math.round(invested), returns: Math.round(returns), corpus: Math.round(corpus) }
-  }
-
-  // Lumpsum calculation formula
-  const calculateLumpsum = (initialAmount: number, tenureYears: number, annualRate: number) => {
-    const invested = initialAmount
-    const corpus = initialAmount * Math.pow(1 + annualRate / 100, tenureYears)
-    const returns = corpus - invested
-    return { invested: Math.round(invested), returns: Math.round(returns), corpus: Math.round(corpus) }
-  }
-
-  const results =
-    mode === 'sip'
-      ? calculateSIP(amount, years, rate)
-      : calculateLumpsum(amount * 10, years, rate)
-
-
+  const sipCalculator = getCalculator('sip')
+  const lumpsumCalculator = getCalculator('lumpsum')
 
   return (
     <>
@@ -124,178 +99,35 @@ export function MutualFunds() {
             </div>
           </SectionReveal>
 
-          <div className="max-w-5xl mx-auto grid gap-10 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-6 rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
-              <h2 className="font-display text-xl font-semibold text-navy">Inputs</h2>
-              
-              <div className="flex bg-cream p-1 rounded-xl border border-line w-fit">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('sip')
-                    if (amount > 100000) setAmount(15000)
-                  }}
-                  className={`px-6 py-2 rounded-xl text-sm font-semibold transition-all ${
-                    mode === 'sip' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy'
-                  }`}
-                >
-                  Monthly SIP
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('lumpsum')
-                    if (amount < 50000) setAmount(100000)
-                  }}
-                  className={`px-6 py-2 rounded-xl text-sm font-semibold transition-all ${
-                    mode === 'lumpsum' ? 'bg-navy text-ivory shadow-md' : 'text-ink hover:text-navy'
-                  }`}
-                >
-                  One-Time Lumpsum
-                </button>
-              </div>
-
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm font-medium text-ink">
-                    {mode === 'sip' ? 'Monthly Investment' : 'Total Investment'}
-                  </label>
-                  <span className="text-sm font-semibold text-brass">
-                    ₹{(mode === 'sip' ? amount : amount * 10).toLocaleString('en-IN')}
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={mode === 'sip' ? 1000 : 10000}
-                  max={mode === 'sip' ? 100000 : 1000000}
-                  step={mode === 'sip' ? 1000 : 10000}
-                  value={mode === 'sip' ? amount : amount * 10}
-                  onChange={(e) =>
-                    mode === 'sip'
-                      ? setAmount(Number(e.target.value))
-                      : setAmount(Number(e.target.value) / 10)
-                  }
-                  className="w-full accent-brass cursor-pointer"
-                />
-                <input
-                  type="number"
-                  min={mode === 'sip' ? 1000 : 10000}
-                  max={mode === 'sip' ? 100000 : 1000000}
-                  step={mode === 'sip' ? 1000 : 10000}
-                  value={mode === 'sip' ? amount : amount * 10}
-                  onChange={(e) =>
-                    mode === 'sip'
-                      ? setAmount(Number(e.target.value))
-                      : setAmount(Number(e.target.value) / 10)
-                  }
-                  className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
-                />
-              </div>
-
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm font-medium text-ink">
-                    Expected Return (p.a)
-                  </label>
-                  <span className="text-sm font-semibold text-brass">
-                    {rate}%
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={8}
-                  max={20}
-                  step={0.5}
-                  value={rate}
-                  onChange={(e) => setRate(Number(e.target.value))}
-                  className="w-full accent-brass cursor-pointer"
-                />
-                <input
-                  type="number"
-                  min={8}
-                  max={20}
-                  step={0.5}
-                  value={rate}
-                  onChange={(e) => setRate(Number(e.target.value))}
-                  className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
-                />
-              </div>
-
-              <div>
-                <div className="mb-2 flex items-center justify-between">
-                  <label className="text-sm font-medium text-ink">
-                    Investment Period
-                  </label>
-                  <span className="text-sm font-semibold text-brass">
-                    {years} Yr
-                  </span>
-                </div>
-                <input
-                  type="range"
-                  min={1}
-                  max={30}
-                  step={1}
-                  value={years}
-                  onChange={(e) => setYears(Number(e.target.value))}
-                  className="w-full accent-brass cursor-pointer"
-                />
-                <input
-                  type="number"
-                  min={1}
-                  max={30}
-                  step={1}
-                  value={years}
-                  onChange={(e) => setYears(Number(e.target.value))}
-                  className="mt-2 w-full rounded-lg border border-line bg-ivory px-3 py-2 text-sm focus:border-brass focus:outline-none focus:ring-2 focus:ring-brass/30"
-                />
-              </div>
+          <div className="mb-8 flex justify-center">
+            <div className="flex bg-ivory p-1 rounded-xl border border-line w-fit shadow-sm">
+              <button
+                type="button"
+                onClick={() => setMode('sip')}
+                className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  mode === 'sip' ? 'bg-navy text-ivory shadow-sm' : 'text-ink hover:text-navy'
+                }`}
+              >
+                Monthly SIP
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('lumpsum')}
+                className={`px-6 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  mode === 'lumpsum' ? 'bg-navy text-ivory shadow-sm' : 'text-ink hover:text-navy'
+                }`}
+              >
+                One-Time Lump Sum
+              </button>
             </div>
-
-            <div className="space-y-6">
-              <div className="rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
-                <h2 className="font-display text-xl font-semibold text-navy">Results</h2>
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-xl bg-ivory p-4 text-center">
-                    <p className="text-xs uppercase tracking-wider text-muted">Amount Invested</p>
-                    <p className="mt-1 font-display text-lg font-semibold text-navy">{formatINR(results.invested, true)}</p>
-                  </div>
-                  <div className="rounded-xl bg-ivory p-4 text-center">
-                    <p className="text-xs uppercase tracking-wider text-muted">Est. Returns</p>
-                    <p className="mt-1 font-display text-lg font-semibold text-brass">
-                      {formatINR(results.returns, true)}
-                    </p>
-                  </div>
-                  <div className="rounded-xl bg-navy p-4 text-center text-ivory">
-                    <p className="text-xs uppercase tracking-wider text-ivory/70">Total Value</p>
-                    <p className="mt-1 font-display text-lg font-semibold text-brass-soft">{formatINR(results.corpus, true)}</p>
-                  </div>
-                </div>
-
-                <div className="mt-8">
-                  <CalculatorCharts
-                    invested={results.invested}
-                    returns={Math.max(0, results.returns)}
-                    monthlyInvestment={mode === 'sip' ? amount : undefined}
-                    lumpsumAmount={mode === 'lumpsum' ? amount * 10 : undefined}
-                    years={years}
-                  />
-                </div>
-
-                <p className="mt-6 text-xs text-muted italic">{CALC_DISCLAIMER}</p>
-              </div>
-
-              <div className="text-center">
-                <Button href={siteConfig.onboardingUrl} external>Start Investing</Button>
-                <div className="mt-4">
-                  <Link
-                    to="/calculators"
-                    className="text-xs text-navy underline hover:text-brass transition-colors font-medium inline-block"
-                  >
-                    Explore All 10+ Specialized Financial Calculators →
-                  </Link>
-                </div>
-              </div>
-            </div>
+          </div>
+          
+          <div className="max-w-7xl mx-auto">
+            {mode === 'sip' && sipCalculator ? (
+              <CalculatorShell key="sip" calculator={sipCalculator} />
+            ) : mode === 'lumpsum' && lumpsumCalculator ? (
+              <CalculatorShell key="lumpsum" calculator={lumpsumCalculator} />
+            ) : null}
           </div>
         </div>
       </section>
