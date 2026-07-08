@@ -33,6 +33,10 @@ const PORT = process.env.PORT || 3000;
         await db.query('ALTER TABLE insights ADD COLUMN author VARCHAR(100) NULL');
         console.log('Migrated: author column added to insights');
     } catch (e) {}
+    try {
+        await db.query("ALTER TABLE client_reviews MODIFY COLUMN status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending'");
+        console.log('Migrated: status ENUM updated in client_reviews');
+    } catch (e) {}
 })();
 
 // Security Middleware
@@ -231,7 +235,7 @@ app.get('/api/reviews', async (req, res) => {
 
 app.get('/api/admin/reviews', authenticateToken, async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM client_reviews WHERE status = "pending" ORDER BY created_at DESC');
+        const [rows] = await db.query('SELECT * FROM client_reviews ORDER BY created_at DESC');
         res.json(rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -242,6 +246,16 @@ app.put('/api/admin/reviews/:id/approve', authenticateToken, async (req, res) =>
     try {
         if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
         await db.query('UPDATE client_reviews SET status = "approved" WHERE id = ?', [req.params.id]);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put('/api/admin/reviews/:id/reject', authenticateToken, async (req, res) => {
+    try {
+        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
+        await db.query('UPDATE client_reviews SET status = "rejected" WHERE id = ?', [req.params.id]);
         res.json({ success: true });
     } catch (error) {
         res.status(500).json({ error: error.message });

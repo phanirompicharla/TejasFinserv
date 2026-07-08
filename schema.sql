@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS client_reviews (
     name VARCHAR(100) NOT NULL,
     city VARCHAR(100) NOT NULL,
     review_text TEXT NOT NULL,
-    status ENUM('pending', 'approved') DEFAULT 'pending',
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

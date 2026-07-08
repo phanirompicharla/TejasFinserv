@@ -30,6 +30,7 @@ interface ClientReview {
   name: string;
   city: string;
   review_text: string;
+  status: 'pending' | 'approved' | 'rejected';
   created_at: string;
 }
 
@@ -155,6 +156,8 @@ export function AdminDashboard() {
   const [insights, setInsights] = useState<Insight[]>([]);
   const [contacts, setContacts] = useState<ContactMessage[]>([]);
   const [reviews, setReviews] = useState<ClientReview[]>([]);
+  const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
+  const [reviewSearchQuery, setReviewSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Insight form state
@@ -315,8 +318,20 @@ export function AdminDashboard() {
     }
   };
 
+  const rejectReview = async (id: number) => {
+    try {
+      const res = await fetch(`/api/admin/reviews/${id}/reject`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) fetchReviews();
+    } catch (err) {
+      console.error('Error rejecting review:', err);
+    }
+  };
+
   const deleteReview = async (id: number) => {
-    if (!confirm('Reject and delete this review?')) return;
+    if (!confirm('Delete this review?\n\nThis action cannot be undone.')) return;
     try {
       const res = await fetch(`/api/admin/reviews/${id}`, {
         method: 'DELETE',
@@ -327,6 +342,21 @@ export function AdminDashboard() {
       console.error('Error deleting review:', err);
     }
   };
+
+  const filteredReviews = reviews.filter(r => {
+    if (reviewFilter !== 'all' && r.status !== reviewFilter) return false;
+    if (reviewSearchQuery) {
+      const q = reviewSearchQuery.toLowerCase();
+      return r.name.toLowerCase().includes(q) || 
+             r.city.toLowerCase().includes(q) || 
+             r.review_text.toLowerCase().includes(q);
+    }
+    return true;
+  });
+
+  const pendingCount = reviews.filter(r => r.status === 'pending').length;
+  const approvedCount = reviews.filter(r => r.status === 'approved').length;
+  const rejectedCount = reviews.filter(r => r.status === 'rejected').length;
 
   // State of the Art Login Portal
   if (!token) {
@@ -971,14 +1001,14 @@ export function AdminDashboard() {
         )}
 
         {activeTab === 'reviews' && (
-          <div className="space-y-8 animate-fade-in">
-            <div className="border-b border-line pb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="space-y-6 animate-fade-in">
+            <div className="border-b border-line pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <h2 className="font-display text-3xl font-semibold text-navy">
                   Client Reviews
                 </h2>
                 <p className="text-sm text-muted mt-1">
-                  Approve or reject client testimonials submitted from the public site.
+                  Manage client testimonials before they appear on the public site.
                 </p>
               </div>
               <button
@@ -990,14 +1020,58 @@ export function AdminDashboard() {
               </button>
             </div>
 
+            {/* Statistics */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="bg-ivory border border-line rounded-2xl p-4 shadow-sm">
+                <p className="text-xs font-bold text-muted uppercase tracking-wider mb-1">Pending</p>
+                <p className="text-2xl font-display font-bold text-navy">{pendingCount}</p>
+              </div>
+              <div className="bg-ivory border border-line rounded-2xl p-4 shadow-sm">
+                <p className="text-xs font-bold text-emerald-600 uppercase tracking-wider mb-1">Approved</p>
+                <p className="text-2xl font-display font-bold text-emerald-700">{approvedCount}</p>
+              </div>
+              <div className="bg-ivory border border-line rounded-2xl p-4 shadow-sm">
+                <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Rejected</p>
+                <p className="text-2xl font-display font-bold text-red-700">{rejectedCount}</p>
+              </div>
+            </div>
+
+            {/* Filters and Search */}
+            <div className="flex flex-col sm:flex-row justify-between gap-4">
+              <div className="flex bg-cream p-1 rounded-xl border border-line overflow-x-auto w-full sm:w-auto">
+                {(['all', 'pending', 'approved', 'rejected'] as const).map(filter => (
+                  <button
+                    key={filter}
+                    onClick={() => setReviewFilter(filter)}
+                    className={`px-4 py-2 text-xs font-semibold rounded-lg capitalize whitespace-nowrap transition-all ${
+                      reviewFilter === filter 
+                        ? 'bg-ivory text-navy shadow-sm border border-line' 
+                        : 'text-muted hover:text-navy'
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+              <div className="relative w-full sm:w-72">
+                <input 
+                  type="text" 
+                  placeholder="Search reviews..." 
+                  value={reviewSearchQuery}
+                  onChange={e => setReviewSearchQuery(e.target.value)}
+                  className="w-full rounded-xl border border-line bg-cream px-4 py-2.5 text-sm focus:border-brass focus:outline-none"
+                />
+              </div>
+            </div>
+
             <div className="bg-ivory rounded-3xl border border-line shadow-card overflow-hidden">
-              {reviews.length === 0 ? (
+              {filteredReviews.length === 0 ? (
                 <div className="p-16 text-center text-muted">
                   <div className="w-16 h-16 rounded-full bg-cream border border-line flex items-center justify-center mx-auto mb-4 text-navy">
                     <IconStar className="w-8 h-8 text-brass" />
                   </div>
-                  <h3 className="font-display font-semibold text-navy text-xl">No pending reviews</h3>
-                  <p className="text-sm mt-1 max-w-sm mx-auto">When clients submit reviews on the homepage, they will appear here for your approval.</p>
+                  <h3 className="font-display font-semibold text-navy text-xl">No reviews found</h3>
+                  <p className="text-sm mt-1 max-w-sm mx-auto">Try adjusting your filters or search query.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -1006,12 +1080,12 @@ export function AdminDashboard() {
                       <tr>
                         <th className="py-4 px-6 w-1/4">Name & City</th>
                         <th className="py-4 px-6 w-1/2">Review Text</th>
-                        <th className="py-4 px-6 w-1/4">Submitted Date</th>
+                        <th className="py-4 px-6 w-32">Status</th>
                         <th className="py-4 px-6 w-32 text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-line">
-                      {reviews.map(item => (
+                      {filteredReviews.map(item => (
                         <tr key={item.id} className="hover:bg-cream/80 transition-colors group">
                           <td className="py-5 px-6 align-top">
                             <div className="font-display font-semibold text-navy text-base">
@@ -1020,30 +1094,44 @@ export function AdminDashboard() {
                             <div className="text-xs text-muted mt-1 flex items-center gap-1.5">
                               <span>{item.city}</span>
                             </div>
+                            <div className="text-[10px] text-muted/60 mt-2 font-mono flex items-center gap-1">
+                              <IconClock className="w-3 h-3" />
+                              <span>{new Date(item.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                            </div>
                           </td>
                           <td className="py-5 px-6 align-top">
                             <p className="text-sm text-navy/90 whitespace-pre-wrap">"{item.review_text}"</p>
                           </td>
-                          <td className="py-5 px-6 align-top text-muted">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-medium bg-cream border border-line text-navy/80">
-                              <IconClock className="w-3.5 h-3.5 text-brass" />
-                              <span>{new Date(item.created_at).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                            </span>
+                          <td className="py-5 px-6 align-top">
+                            {item.status === 'pending' && <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">Pending</span>}
+                            {item.status === 'approved' && <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-100 text-emerald-800">Approved</span>}
+                            {item.status === 'rejected' && <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800">Rejected</span>}
                           </td>
                           <td className="py-5 px-6 align-top text-right space-y-2">
-                            <button
-                              onClick={() => approveReview(item.id)}
-                              className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white px-3.5 py-2 rounded-xl border border-emerald-200 transition-all shadow-2xs"
-                            >
-                              <IconCheck className="w-3.5 h-3.5" />
-                              <span>Approve</span>
-                            </button>
+                            {item.status === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => approveReview(item.id)}
+                                  className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white px-3 py-2 rounded-lg border border-emerald-200 transition-all shadow-2xs"
+                                >
+                                  <IconCheck className="w-3.5 h-3.5" />
+                                  <span>Approve</span>
+                                </button>
+                                <button
+                                  onClick={() => rejectReview(item.id)}
+                                  className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white px-3 py-2 rounded-lg border border-red-200 transition-all shadow-2xs"
+                                >
+                                  <IconTrash className="w-3.5 h-3.5" />
+                                  <span>Reject</span>
+                                </button>
+                              </>
+                            )}
                             <button
                               onClick={() => deleteReview(item.id)}
-                              className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-600 hover:text-white px-3.5 py-2 rounded-xl border border-red-200 transition-all shadow-2xs"
+                              className="w-full justify-center inline-flex items-center gap-1.5 text-xs font-semibold text-muted hover:text-white bg-cream hover:bg-red-600 px-3 py-2 rounded-lg border border-line hover:border-red-600 transition-all shadow-2xs"
                             >
                               <IconTrash className="w-3.5 h-3.5" />
-                              <span>Reject</span>
+                              <span>Delete</span>
                             </button>
                           </td>
                         </tr>
