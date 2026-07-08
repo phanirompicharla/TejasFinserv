@@ -5,8 +5,8 @@ export function AmcMarquee() {
     <section className="border-y border-line bg-ivory py-8 overflow-hidden" aria-label="Trusted AMC partners">
       <div className="container-main mb-5 text-center">
         <p className="text-sm font-medium text-muted">
-          Distributing <span className="font-semibold text-navy">6,000+ schemes</span> across{' '}
-          <span className="font-semibold text-navy">46 Asset Management Companies</span>
+          Distributing <span className="font-semibold text-navy">6,000+ Schemes</span> Across{' '}
+          <span className="font-semibold text-navy">40+ Asset Management Companies</span>
         </p>
       </div>
       <div className="relative overflow-hidden">
@@ -29,7 +29,7 @@ export function AmcMarquee() {
                   height={60}
                   loading="lazy"
                   decoding="async"
-                  style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
+                  style={{ objectFit: 'contain', objectPosition: 'center', ...(amc.scale ? { transform: `scale(${amc.scale})` } : {}) }}
                 />
               </div>
             ))}
@@ -48,7 +48,7 @@ export function AmcMarquee() {
                   height={60}
                   loading="lazy"
                   decoding="async"
-                  style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
+                  style={{ objectFit: 'contain', objectPosition: 'center', ...(amc.scale ? { transform: `scale(${amc.scale})` } : {}) }}
                 />
               </div>
             ))}

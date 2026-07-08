@@ -44,7 +44,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
-                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
+                      style={{ objectFit: 'contain', objectPosition: 'center', ...(amc.scale ? { transform: `scale(${amc.scale})` } : {}) }}
                     />
                   </div>
                 ))}
@@ -63,7 +63,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
-                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
+                      style={{ objectFit: 'contain', objectPosition: 'center', ...(amc.scale ? { transform: `scale(${amc.scale})` } : {}) }}
                     />
                   </div>
                 ))}
@@ -86,7 +86,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
-                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
+                      style={{ objectFit: 'contain', objectPosition: 'center', ...(amc.scale ? { transform: `scale(${amc.scale})` } : {}) }}
                     />
                   </div>
                 ))}
@@ -105,7 +105,7 @@ export function AmcStrip() {
                       height={60}
                       loading="lazy"
                       decoding="async"
-                      style={amc.scale ? { transform: `scale(${amc.scale})` } : undefined}
+                      style={{ objectFit: 'contain', objectPosition: 'center', ...(amc.scale ? { transform: `scale(${amc.scale})` } : {}) }}
                     />
                   </div>
                 ))}
