@@ -61,6 +61,7 @@ export function Footer() {
     { label: 'SEBI SCORES', href: siteConfig.compliance.scoresUrl, external: true },
     { label: 'Investor Charter', href: siteConfig.compliance.investorCharterUrl, external: true },
     { label: 'Mutual Funds Sahi Hai', href: siteConfig.compliance.mfSahiHaiUrl, external: true },
+    { label: 'AMFI', href: 'https://www.amfiindia.com/', external: true },
   ]
 
   return (
