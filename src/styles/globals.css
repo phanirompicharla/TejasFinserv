@@ -359,6 +359,96 @@ input[type="range"]:focus-visible {
   .amc-carousel-track-right {
     animation: none;
   }
+  .testimonial-carousel-track {
+    animation: none !important;
+  }
+}
+
+/* ===== Client Stories – Testimonial Auto-Scrolling Carousel ===== */
+.testimonial-carousel-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  padding: 0.5rem 0 1.5rem;
+}
+
+.testimonial-carousel-fade-left,
+.testimonial-carousel-fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: clamp(20px, 6vw, 80px);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.testimonial-carousel-fade-left {
+  left: 0;
+  background: linear-gradient(to right, var(--ivory), transparent);
+}
+
+.testimonial-carousel-fade-right {
+  right: 0;
+  background: linear-gradient(to left, var(--ivory), transparent);
+}
+
+/* Track: holds two identical sets of cards side-by-side, animates the whole strip */
+.testimonial-carousel-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  animation: testimonial-scroll 30s linear infinite;
+}
+
+.testimonial-carousel-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes testimonial-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Each testimonial slide */
+.testimonial-carousel-slide {
+  flex-shrink: 0;
+  width: 85vw;
+}
+
+@media (min-width: 640px) {
+  .testimonial-carousel-slide {
+    width: 380px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .testimonial-carousel-slide {
+    width: 400px;
+  }
+}
+
+/* Testimonial card – fixed height, flexbox layout for bottom-aligned footer */
+.testimonial-card {
+  height: 260px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background-color: var(--cream);
+  padding: 1.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  box-shadow: var(--shadow-card);
+  transform: translateY(-2px);
 }
 
 /* Insurance Logo Placeholder — shown when an image fails to load */
