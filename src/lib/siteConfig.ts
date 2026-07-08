@@ -102,7 +102,7 @@ export const siteConfig = {
     grievancePhone: '+91 94907 16662',
   },
 
-  copyright: '© 2025 TejasFinserv. All rights reserved.',
+  copyright: '© 2026 TejasFinserv. All rights reserved.',
 
   assets: {
     logo: 'src/assets/logo.webp',
