@@ -31,7 +31,7 @@ const sitemapData: SitemapSection[] = [
     description: 'Tailored investment distribution across mutual funds and structured goal planning.',
     links: [
       { label: 'Mutual Fund Distribution', path: '/mutual-funds', desc: 'Expert scheme selection, rebalancing, and portfolio tracking.' },
-      { label: 'Financial Planning', path: '/financial-planning', desc: 'Holistic wealth mapping for short and long-term milestones.' },
+      { label: 'Savings Plans', path: '/savings-plans', desc: 'Personalized savings strategies to help you achieve your short-term and long-term financial goals with confidence.' },
       { label: 'Child Higher Education Goal', path: '/goals/education', desc: 'Dedicated planning for future education expenses.' },
       { label: 'Retirement Corpus Planning', path: '/goals/retirement', desc: 'Build a stress-free financial cushion for post-retirement life.' },
       { label: 'Long-Term Wealth Creation', path: '/goals/wealth', desc: 'Systematic compounding strategies for financial independence.' },
