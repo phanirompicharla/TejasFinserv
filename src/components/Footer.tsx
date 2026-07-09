@@ -69,7 +69,7 @@ export function Footer() {
       <div className="container-main section-padding pb-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <span className="inline-flex rounded-lg bg-cream px-2 py-1">
+            <span className="inline-flex">
               <Logo />
             </span>
             <p className="mt-4 text-sm leading-relaxed text-ivory/70">
