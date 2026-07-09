@@ -68,19 +68,19 @@ export function FinancialPlanning() {
   return (
     <>
       <Seo
-        title={siteConfig.seo.financialPlanning.title}
-        description={siteConfig.seo.financialPlanning.description}
-        path="/financial-planning"
+        title="Savings Plans Vijayawada — TejasFinserv"
+        description="Goal-based savings planning, retirement strategies, and portfolio reviews tailored to your life and goals in Vijayawada."
+        path="/savings-plans"
       />
 
       <section className="grain-overlay bg-navy pt-36 pb-20 text-ivory relative overflow-hidden">
         <div className="container-main relative z-10">
           <SectionReveal>
             <p className="mb-3 text-xs font-semibold tracking-widest text-brass uppercase">
-              Financial Planning & Advisory
+              Savings Planning
             </p>
             <h1 className="max-w-3xl font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight">
-              Financial planning that fits your life.
+              Savings plan that fits your life.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-ivory/80 leading-relaxed">
               A roadmap that aligns your income, goals, and risk tolerance over time — so every financial decision moves you closer to where you want to be.
@@ -93,10 +93,10 @@ export function FinancialPlanning() {
         <div className="container-main">
           <SectionReveal>
             <h2 className="font-display text-3xl font-semibold text-navy">
-              What's included in our advisory
+              What's included in our savings advisory
             </h2>
             <p className="mt-4 max-w-2xl text-muted text-base">
-              Our financial planning service covers every dimension of your financial life, from day-to-day cash flow to multi-generational wealth creation.
+              Our savings planning service covers every dimension of your financial life, from day-to-day cash flow to multi-generational wealth creation.
             </p>
           </SectionReveal>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -233,7 +233,7 @@ export function FinancialPlanning() {
       <section className="grain-overlay section-padding bg-navy text-center text-ivory relative overflow-hidden">
         <div className="container-main relative z-10">
           <SectionReveal>
-            <h2 className="font-display text-3xl sm:text-4xl font-semibold">Let's build your financial roadmap today.</h2>
+            <h2 className="font-display text-3xl sm:text-4xl font-semibold">Let's build your savings roadmap today.</h2>
             <p className="mx-auto mt-4 max-w-xl text-ivory/80 text-lg">
               Start with a conversation or open your account directly through our secure onboarding platform.
             </p>
