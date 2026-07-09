@@ -80,10 +80,7 @@ export function Contact() {
                   Hours
                 </dt>
                 <dd className="mt-1 text-muted">
-                  {siteConfig.contact.hours}
-                  <span className="mt-1 block text-xs text-brass">
-                    [CONFIRM] — please confirm business hours with client before launch.
-                  </span>
+                  9:00 AM – 10:00 PM
                 </dd>
               </div>
             </dl>
