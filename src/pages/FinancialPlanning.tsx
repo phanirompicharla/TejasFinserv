@@ -202,7 +202,7 @@ export function FinancialPlanning() {
               <div className="bg-ivory rounded-2xl p-6 border border-line flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-navy text-brass font-display font-bold text-lg flex items-center justify-center">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-2xl bg-navy text-brass font-display font-bold text-3xl sm:text-4xl shadow-lg border border-brass/20 flex items-center justify-center">
                       {score}%
                     </div>
                     <div>
