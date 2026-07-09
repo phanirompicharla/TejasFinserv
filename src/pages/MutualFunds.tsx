@@ -104,7 +104,6 @@ export function MutualFunds() {
               <CalculatorShell 
                 key="sip" 
                 calculator={sipCalculator} 
-                unifiedLayout={true}
                 headerNode={
                   <div className="flex justify-start">
                     <div className="flex bg-ivory p-1 rounded-full border border-line w-fit shadow-sm">
@@ -130,7 +129,6 @@ export function MutualFunds() {
               <CalculatorShell 
                 key="lumpsum" 
                 calculator={lumpsumCalculator} 
-                unifiedLayout={true}
                 headerNode={
                   <div className="flex justify-start">
                     <div className="flex bg-ivory p-1 rounded-full border border-line w-fit shadow-sm">
