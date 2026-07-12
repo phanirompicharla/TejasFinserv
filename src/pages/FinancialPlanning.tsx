@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
 import { SectionReveal } from '../components/SectionReveal'
@@ -54,7 +54,37 @@ const checklistItems = [
   { id: 'debt', label: 'High-Interest Liability & Loan Payoff Strategy', category: 'Cashflow' },
 ]
 
+const savingsPlansData = [
+  { company: 'LIC of India', name: 'Jeevan Labh', why: 'High bonus potential, guaranteed maturity, ideal for long-term wealth creation.' },
+  { company: 'LIC of India', name: 'Jeevan Umang', why: 'Provides lifelong life cover with annual survival benefits after maturity.' },
+  { company: 'LIC of India', name: 'New Endowment Plan', why: 'Suitable for disciplined savings with insurance protection and bonus benefits.' },
+  { company: 'HDFC Life', name: 'Sanchay Plus', why: 'Flexible guaranteed income options with customizable payout periods.' },
+  { company: 'Tata AIA Life', name: 'Fortune Guarantee Plus', why: 'Offers guaranteed income, wealth accumulation, and flexible premium terms.' },
+  { company: 'ICICI Prudential Life', name: 'GIFT Pro', why: 'Provides guaranteed income, lump sum benefits, and tax-efficient financial planning.' },
+  { company: 'SBI Life', name: 'Smart Platina Plus', why: 'Ideal for creating long-term wealth with guaranteed maturity benefits.' },
+  { company: 'Axis Max Life', name: 'Smart Wealth Advantage Guarantee Elite', why: 'Guaranteed returns with flexible payout and legacy planning options.' },
+  { company: 'Bajaj Allianz Life', name: 'ACE', why: 'Combines guaranteed benefits with market-linked wealth creation opportunities.' },
+  { company: 'Kotak Mahindra Life', name: 'Assured Savings Plan', why: 'Guaranteed maturity benefits with flexible premium payment options.' },
+  { company: 'Aditya Birla Sun Life', name: 'Guaranteed Milestone Plan', why: 'Designed for achieving life goals with guaranteed milestone payouts.' },
+  { company: 'PNB MetLife', name: 'Guaranteed Future Plan Plus', why: 'Helps build a secure financial future with assured returns.' },
+  { company: 'Canara HSBC Life', name: 'Promise4Future', why: 'Long-term savings with guaranteed income and protection benefits.' },
+  { company: 'IndiaFirst Life', name: 'Growth of Life Dreams Plus', why: 'Suitable for goal-based savings and family financial security.' },
+  { company: 'Edelweiss Life', name: 'Guaranteed Wealth Plus', why: 'Provides guaranteed wealth accumulation with flexible income options.' },
+  { company: 'Bandhan Life', name: 'Guaranteed Income Plan', why: 'Ideal for those seeking stable and predictable post-retirement income.' },
+  { company: 'Ageas Federal Life', name: 'Guaranteed Wealth Plan', why: 'Helps build wealth with assured maturity and life protection.' },
+  { company: 'Aviva Life', name: 'Signature Investment Plan', why: 'Suitable for long-term financial planning with investment flexibility.' },
+  { company: 'Reliance Nippon Life', name: 'Prosperity Plus', why: 'Designed for wealth creation while protecting your family\'s future.' },
+  { company: 'Shriram Life', name: 'Assured Income Plan', why: 'Offers regular guaranteed income with affordable premiums.' },
+  { company: 'Pramerica Life', name: 'Guaranteed Maturity Plan', why: 'Ensures fixed maturity benefits for future financial goals.' },
+  { company: 'Future Generali Life', name: 'Assure Plus', why: 'Combines savings, protection, and guaranteed financial security.' },
+  { company: 'Star Union Dai-ichi Life', name: 'Wealth Plus Plan', why: 'Suitable for systematic wealth creation over the long term.' },
+  { company: 'Bharti AXA Life*', name: 'Monthly Income Plan (Legacy)', why: 'Generates regular monthly income after the accumulation period.' },
+  { company: 'Exide Life*', name: 'Guaranteed Income Insurance Plan (Legacy)', why: 'Provides predictable income and financial stability for families.' },
+]
+
 export function FinancialPlanning() {
+  const location = useLocation()
+  const isSavingsPlans = location.pathname.includes('savings-plans')
   const [selectedGoals, setSelectedGoals] = useState<string[]>(['retire', 'tax'])
 
   const toggleGoal = (id: string) => {
@@ -68,19 +98,19 @@ export function FinancialPlanning() {
   return (
     <>
       <Seo
-        title="Savings Plans Vijayawada — TejasFinserv"
-        description="Goal-based savings planning, retirement strategies, and portfolio reviews tailored to your life and goals in Vijayawada."
-        path="/savings-plans"
+        title={siteConfig.seo.financialPlanning.title}
+        description={siteConfig.seo.financialPlanning.description}
+        path="/financial-planning"
       />
 
       <section className="grain-overlay bg-navy pt-36 pb-20 text-ivory relative overflow-hidden">
         <div className="container-main relative z-10">
           <SectionReveal>
             <p className="mb-3 text-xs font-semibold tracking-widest text-brass uppercase">
-              Savings Planning
+              Financial Planning & Advisory
             </p>
             <h1 className="max-w-3xl font-display text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight">
-              Savings plan that fits your life.
+              Financial planning that fits your life.
             </h1>
             <p className="mt-6 max-w-2xl text-lg text-ivory/80 leading-relaxed">
               A roadmap that aligns your income, goals, and risk tolerance over time — so every financial decision moves you closer to where you want to be.
@@ -93,10 +123,10 @@ export function FinancialPlanning() {
         <div className="container-main">
           <SectionReveal>
             <h2 className="font-display text-3xl font-semibold text-navy">
-              What's included in our savings advisory
+              What's included in our advisory
             </h2>
             <p className="mt-4 max-w-2xl text-muted text-base">
-              Our savings planning service covers every dimension of your financial life, from day-to-day cash flow to multi-generational wealth creation.
+              Our financial planning service covers every dimension of your financial life, from day-to-day cash flow to multi-generational wealth creation.
             </p>
           </SectionReveal>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -145,6 +175,53 @@ export function FinancialPlanning() {
           </div>
         </div>
       </section>
+
+      {isSavingsPlans && (
+        <section className="section-padding bg-ivory border-t border-line">
+          <div className="container-main">
+            <SectionReveal>
+              <div className="mb-10 text-center max-w-3xl mx-auto">
+                <span className="text-xs font-semibold uppercase tracking-widest text-brass bg-navy/5 px-3 py-1.5 rounded-full border border-navy/10 inline-block mb-3">
+                  Product Matrix
+                </span>
+                <h2 className="font-display text-3xl font-semibold text-navy">
+                  Savings & Guaranteed Income Plans
+                </h2>
+                <p className="mt-3 text-muted">
+                  We assist you with onboarding and advisory for guaranteed maturity plans, endowment savings, and regular monthly income products from top insurance providers.
+                </p>
+              </div>
+
+              {/* Responsive Table Design */}
+              <div className="overflow-x-auto rounded-3xl border border-line bg-cream shadow-xl">
+                <table className="w-full text-left border-collapse min-w-[700px]">
+                  <thead>
+                    <tr className="bg-navy text-ivory font-display border-b border-line">
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-16 text-center">S.No</th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Insurance Company</th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Savings Plan Name</th>
+                      <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Why Choose This Plan?</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line text-ink">
+                    {savingsPlansData.map((plan, idx) => (
+                      <tr
+                        key={idx}
+                        className="transition-colors duration-150 hover:bg-ivory/50 odd:bg-cream even:bg-cream-light/30"
+                      >
+                        <td className="px-6 py-4 text-sm font-semibold text-muted font-mono text-center">{idx + 1}</td>
+                        <td className="px-6 py-4 text-sm font-bold text-navy">{plan.company}</td>
+                        <td className="px-6 py-4 text-sm font-semibold text-brass">{plan.name}</td>
+                        <td className="px-6 py-4 text-sm text-ink leading-relaxed">{plan.why}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </SectionReveal>
+          </div>
+        </section>
+      )}
 
       {/* Interactive Goal Discovery Checklist Widget (Addressing UX Report Page 5) */}
       <section className="section-padding bg-ivory">
@@ -202,7 +279,7 @@ export function FinancialPlanning() {
               <div className="bg-ivory rounded-2xl p-6 border border-line flex flex-col sm:flex-row items-center justify-between gap-6">
                 <div>
                   <div className="flex items-center gap-3">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-2xl bg-navy text-brass font-display font-bold text-3xl sm:text-4xl shadow-lg border border-brass/20 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-navy text-brass font-display font-bold text-lg flex items-center justify-center">
                       {score}%
                     </div>
                     <div>
@@ -233,7 +310,7 @@ export function FinancialPlanning() {
       <section className="grain-overlay section-padding bg-navy text-center text-ivory relative overflow-hidden">
         <div className="container-main relative z-10">
           <SectionReveal>
-            <h2 className="font-display text-3xl sm:text-4xl font-semibold">Let's build your savings roadmap today.</h2>
+            <h2 className="font-display text-3xl sm:text-4xl font-semibold">Let's build your financial roadmap today.</h2>
             <p className="mx-auto mt-4 max-w-xl text-ivory/80 text-lg">
               Start with a conversation or open your account directly through our secure onboarding platform.
             </p>

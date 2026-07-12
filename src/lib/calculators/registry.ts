@@ -127,7 +127,7 @@ export const calculators: CalculatorDef[] = [
       { id: 'years', label: 'Withdrawal Period', min: 1, max: 40, step: 1, defaultValue: 25, suffix: 'yrs' },
     ],
     compute: (v) => math.calcSwp(v.corpus, v.monthlyWithdrawal, v.annualReturn, v.years),
-    resultLabels: { invested: 'Starting Corpus', returns: 'Net Withdrawn', total: 'Ending Balance' },
+    resultLabels: { invested: 'Starting Corpus', returns: 'Est. Returns', total: 'Total Value' },
     faqs: [
       { question: 'What is a SWP?', answer: 'A Systematic Withdrawal Plan pays you a fixed sum regularly from your mutual fund holdings. It is popular for retirement income while keeping the balance invested.' },
     ],
@@ -193,7 +193,7 @@ export const calculators: CalculatorDef[] = [
       { id: 'years', label: 'Investment Period', min: 1, max: 30, step: 1, defaultValue: 10, suffix: 'yrs' },
     ],
     compute: (v) => math.calcLumpsumVsSip(v.monthly, v.annualReturn, v.years),
-    resultLabels: { invested: 'Total Invested', returns: 'SIP Advantage', total: 'SIP Value' },
+    resultLabels: { invested: 'Total Invested', returns: 'SIP Returns', total: 'SIP Value' },
     faqs: [
       { question: 'Is SIP better than lumpsum?', answer: 'SIP reduces timing risk through rupee-cost averaging. Lumpsum can outperform in rising markets but underperforms if invested at peaks. Both have merit depending on market conditions.' },
     ],

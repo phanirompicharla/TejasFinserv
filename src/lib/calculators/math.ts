@@ -71,15 +71,20 @@ export function calcSwp(
     monthsLasted++
   }
 
+  const endingBalance = Math.max(0, Math.round(balance))
   const totalWithdrawn = monthlyWithdrawal * monthsLasted
+  const totalValue = totalWithdrawn + endingBalance
+  const totalGained = totalValue - corpus
+
   return {
     invested: corpus,
-    total: Math.max(0, Math.round(balance)),
-    returns: totalWithdrawn - corpus,
+    total: totalValue,
+    returns: totalGained,
     extra: {
       monthsLasted,
       yearsLasted: (monthsLasted / 12).toFixed(1),
       totalWithdrawn: Math.round(totalWithdrawn),
+      endingBalance,
     },
   }
 }
@@ -205,13 +210,14 @@ export function calcFd(principal: number, annualRate: number, years: number, com
 }
 
 export function calcRd(monthly: number, annualRate: number, years: number): CalcResult {
-  const i = annualRate / 400
+  const r = annualRate / 100
   const n = years * 12
   const invested = monthly * n
-  const total =
-    i === 0
-      ? invested
-      : monthly * ((Math.pow(1 + i, n) - 1) / i) * (1 + i)
+  if (r === 0) {
+    return baseResult(invested, invested)
+  }
+  const R = Math.pow(1 + r / 4, 1 / 3)
+  const total = (monthly * R * (Math.pow(R, n) - 1)) / (R - 1)
   return baseResult(invested, total)
 }
 
@@ -235,22 +241,50 @@ export function calcElss(annual: number, annualReturn: number, years: number): C
 }
 
 export function calcNps(monthly: number, annualReturn: number, years: number): CalcResult {
-  return calcSip(monthly, annualReturn, years)
+  const sipResult = calcSip(monthly, annualReturn, years)
+  const lumpsumWithdrawal = Math.round(sipResult.total * 0.6)
+  const annuityCorpus = Math.round(sipResult.total * 0.4)
+  const estMonthlyPension = Math.round((annuityCorpus * 0.06) / 12)
+  return {
+    ...sipResult,
+    extra: {
+      lumpsumWithdrawal,
+      annuityCorpus,
+      estMonthlyPension,
+    },
+  }
 }
 
 export function calcSukanya(annual: number, annualRate: number, years: number): CalcResult {
-  return calcPpf(annual, annualRate, years)
+  let balance = 0
+  const r = annualRate / 100
+  for (let y = 0; y < years; y++) {
+    balance = (balance + annual) * (1 + r)
+  }
+  const total = balance * Math.pow(1 + r, 6)
+  return baseResult(annual * years, total)
 }
 
 export function calcIncomeTax(annualIncome: number, regime: 'old' | 'new'): CalcResult {
   let tax = 0
   if (regime === 'new') {
-    if (annualIncome > 300000) tax += Math.min(annualIncome - 300000, 300000) * 0.05
-    if (annualIncome > 600000) tax += Math.min(annualIncome - 600000, 300000) * 0.1
-    if (annualIncome > 900000) tax += Math.min(annualIncome - 900000, 300000) * 0.15
-    if (annualIncome > 1200000) tax += Math.min(annualIncome - 1200000, 300000) * 0.2
-    if (annualIncome > 1500000) tax += (annualIncome - 1500000) * 0.3
-    if (annualIncome <= 700000) tax = 0
+    // Slabs for FY 2025-26 (Budget 2025):
+    // Up to 4L: Nil
+    // 4L to 8L: 5%
+    // 8L to 12L: 10%
+    // 12L to 16L: 15%
+    // 16L to 20L: 20%
+    // 20L to 24L: 25%
+    // Above 24L: 30%
+    if (annualIncome > 400000) tax += Math.min(annualIncome - 400000, 400000) * 0.05
+    if (annualIncome > 800000) tax += Math.min(annualIncome - 800000, 400000) * 0.1
+    if (annualIncome > 1200000) tax += Math.min(annualIncome - 1200000, 400000) * 0.15
+    if (annualIncome > 1600000) tax += Math.min(annualIncome - 1600000, 400000) * 0.2
+    if (annualIncome > 2000000) tax += Math.min(annualIncome - 2000000, 400000) * 0.25
+    if (annualIncome > 2400000) tax += (annualIncome - 2400000) * 0.3
+    // Rebate under Section 87A for New Tax Regime:
+    // If taxable income is up to 12L, the tax liability is Nil.
+    if (annualIncome <= 1200000) tax = 0
   } else {
     if (annualIncome > 250000) tax += Math.min(annualIncome - 250000, 250000) * 0.05
     if (annualIncome > 500000) tax += Math.min(annualIncome - 500000, 500000) * 0.2
