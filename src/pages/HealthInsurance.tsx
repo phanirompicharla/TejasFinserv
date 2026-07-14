@@ -51,6 +51,33 @@ const topUpSteps = [
   },
 ]
 
+const healthPlansData = [
+  { company: 'Care Health Insurance', name: 'Care Supreme' },
+  { company: 'HDFC ERGO', name: 'Optima Secure' },
+  { company: 'Niva Bupa Health Insurance', name: 'Aspire' },
+  { company: 'ICICI Lombard', name: 'Elevate' },
+  { company: 'Tata AIG', name: 'Medicare Premier' },
+  { company: 'Star Health', name: 'Comprehensive Health Insurance Policy' },
+  { company: 'Bajaj Allianz General Insurance', name: 'Health Guard' },
+  { company: 'SBI General Insurance', name: 'Arogya Supreme' },
+  { company: 'Reliance General Insurance', name: 'Health Gain' },
+  { company: 'ManipalCigna Health Insurance', name: 'ProHealth Prime' },
+  { company: 'ACKO General Insurance', name: 'Platinum Health Plan' },
+  { company: 'Digit Insurance', name: 'Digit Health Insurance' },
+  { company: 'Go Digit General Insurance', name: 'World Care Health Insurance' },
+  { company: 'Future Generali', name: 'Health Total' },
+  { company: 'Kotak General Insurance', name: 'Health Premier' },
+  { company: 'Liberty General Insurance', name: 'Health Connect Supreme' },
+  { company: 'Royal Sundaram', name: 'Lifeline Supreme' },
+  { company: 'National Insurance', name: 'National Mediclaim Plus Policy' },
+  { company: 'New India Assurance', name: 'New India Mediclaim Policy' },
+  { company: 'Oriental Insurance', name: 'Happy Family Floater' },
+  { company: 'United India Insurance', name: 'Family Medicare Policy' },
+  { company: 'IFFCO Tokio General Insurance', name: 'Health Protector' },
+  { company: 'Cholamandalam MS General Insurance', name: 'Flexi Health' },
+  { company: 'Shriram General Insurance', name: 'Shri Health Suraksha 2.0' },
+]
+
 export function HealthInsurance() {
   const [familyType, setFamilyType] = useState<'individual' | 'couple' | 'family' | 'parents'>('family')
   const [cityTier, setCityTier] = useState<'metro' | 'non-metro'>('non-metro')
@@ -350,6 +377,50 @@ export function HealthInsurance() {
 
       {/* Partners Strip */}
       <InsurancePartnersStrip partners={healthInsurancePartners} />
+
+      {/* Product Matrix Table */}
+      <section className="section-padding bg-ivory border-t border-line">
+        <div className="container-main">
+          <SectionReveal>
+            <div className="mb-10 text-center max-w-3xl mx-auto">
+              <span className="text-xs font-semibold uppercase tracking-widest text-brass bg-navy/5 px-3 py-1.5 rounded-full border border-navy/10 inline-block mb-3">
+                PRODUCT MATRIX
+              </span>
+              <h2 className="font-display text-3xl font-semibold text-navy">
+                Health Insurance Plans
+              </h2>
+              <p className="mt-3 text-muted">
+                Compare popular health insurance plans from leading insurers and choose the medical coverage that best protects you and your family.
+              </p>
+            </div>
+
+            {/* Responsive Table Design */}
+            <div className="overflow-x-auto rounded-3xl border border-line bg-cream shadow-xl">
+              <table className="w-full text-left border-collapse min-w-[700px]">
+                <thead>
+                  <tr className="bg-navy text-ivory font-display border-b border-line">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-16 text-center">S.No</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Insurance Company</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Health Insurance Plan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line text-ink">
+                  {healthPlansData.map((plan, idx) => (
+                    <tr
+                      key={idx}
+                      className="transition-colors duration-150 hover:bg-ivory/50 odd:bg-cream even:bg-cream-light/30"
+                    >
+                      <td className="px-6 py-4 text-sm font-semibold text-muted font-mono text-center">{idx + 1}</td>
+                      <td className="px-6 py-4 text-sm font-bold text-navy">{plan.company}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-brass">{plan.name}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </SectionReveal>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="section-padding bg-navy text-ivory relative overflow-hidden">
