@@ -80,12 +80,13 @@ export function Footer() {
               href="https://www.linkedin.com/company/tejasfinserv/"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 flex w-fit items-center gap-2 text-sm text-ivory/70 transition-colors duration-200 hover:text-[#0A66C2] hover:underline"
+              aria-label="TejasFinserv LinkedIn"
+              className="mt-4 inline-flex items-center text-ivory/70 transition-all duration-200 hover:text-[#0A66C2] hover:scale-110"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -97,7 +98,6 @@ export function Footer() {
                 <rect width="4" height="12" x="2" y="9" />
                 <circle cx="4" cy="4" r="2" />
               </svg>
-              Follow us on LinkedIn
             </a>
           </div>
 
