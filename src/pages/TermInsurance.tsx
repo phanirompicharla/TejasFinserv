@@ -66,6 +66,34 @@ const comparisonData = [
   },
 ]
 
+const termPlansData = [
+  { company: 'Tata AIA Life', name: 'Sampoorna Raksha Promise' },
+  { company: 'HDFC Life', name: 'Click 2 Protect Super' },
+  { company: 'ICICI Prudential Life', name: 'iProtect Smart' },
+  { company: 'Axis Max Life', name: 'Smart Term Plan Plus' },
+  { company: 'LIC of India', name: 'Yuva Term' },
+  { company: 'SBI Life', name: 'eShield Next' },
+  { company: 'Bajaj Allianz Life', name: 'Smart Protect Goal' },
+  { company: 'Kotak Mahindra Life', name: 'Kotak e-Term Plan' },
+  { company: 'Aditya Birla Sun Life', name: 'DigiShield Plan' },
+  { company: 'PNB MetLife', name: 'Mera Term Plan Plus' },
+  { company: 'Canara HSBC Life', name: 'iSelect Smart360 Term Plan' },
+  { company: 'IndiaFirst Life', name: 'Guaranteed Protection Plus Plan' },
+  { company: 'Ageas Federal Life', name: 'iTerm Insurance Plan' },
+  { company: 'Aviva Life Insurance', name: 'Aviva Signature 3D Term Plan' },
+  { company: 'Edelweiss Tokio Life', name: 'Zindagi Protect Plan' },
+  { company: 'Bandhan Life', name: 'iTerm Prime' },
+  { company: 'Bharti AXA Life*', name: 'Flexi Term Pro (Legacy Plans)' },
+  { company: 'Future Generali India Life', name: 'Care Plus Term Plan' },
+  { company: 'Pramerica Life', name: 'U-Protect Term Plan' },
+  { company: 'Star Union Dai-ichi Life', name: 'Saral Jeevan Bima' },
+  { company: 'Shriram Life', name: 'My Spouse Term Plan' },
+  { company: 'Reliance Nippon Life', name: 'Digi-Term Insurance Plan' },
+  { company: 'Tata AIA Life', name: 'Maha Raksha Supreme' },
+  { company: 'HDFC Life', name: 'Click 2 Protect Elite' },
+  { company: 'ICICI Prudential Life', name: 'iProtect Return of Premium' },
+]
+
 export function TermInsurance() {
   const [annualIncome, setAnnualIncome] = useState<number>(1200000)
   const [age, setAge] = useState<number>(30)
@@ -345,6 +373,50 @@ export function TermInsurance() {
 
       {/* Partners Strip */}
       <InsurancePartnersStrip partners={termInsurancePartners} />
+
+      {/* Product Matrix Table */}
+      <section className="section-padding bg-ivory border-t border-line">
+        <div className="container-main">
+          <SectionReveal>
+            <div className="mb-10 text-center max-w-3xl mx-auto">
+              <span className="text-xs font-semibold uppercase tracking-widest text-brass bg-navy/5 px-3 py-1.5 rounded-full border border-navy/10 inline-block mb-3">
+                PRODUCT MATRIX
+              </span>
+              <h2 className="font-display text-3xl font-semibold text-navy">
+                Term Insurance Plans
+              </h2>
+              <p className="mt-3 text-muted">
+                Compare popular term insurance plans from leading insurers and choose the protection that best fits your family's financial needs.
+              </p>
+            </div>
+
+            {/* Responsive Table Design */}
+            <div className="overflow-x-auto rounded-3xl border border-line bg-cream shadow-xl">
+              <table className="w-full text-left border-collapse min-w-[700px]">
+                <thead>
+                  <tr className="bg-navy text-ivory font-display border-b border-line">
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider w-16 text-center">S.No</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Insurance Company</th>
+                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider">Term Insurance Plan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line text-ink">
+                  {termPlansData.map((plan, idx) => (
+                    <tr
+                      key={idx}
+                      className="transition-colors duration-150 hover:bg-ivory/50 odd:bg-cream even:bg-cream-light/30"
+                    >
+                      <td className="px-6 py-4 text-sm font-semibold text-muted font-mono text-center">{idx + 1}</td>
+                      <td className="px-6 py-4 text-sm font-bold text-navy">{plan.company}</td>
+                      <td className="px-6 py-4 text-sm font-semibold text-brass">{plan.name}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </SectionReveal>
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="section-padding bg-navy text-ivory relative overflow-hidden">
