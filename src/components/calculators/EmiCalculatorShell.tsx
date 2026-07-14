@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
+import { TakeSnapshot } from './TakeSnapshot'
 import type { CalculatorDef } from '../../lib/calculators/registry'
 import { CALC_DISCLAIMER, clamp, formatINR } from '../../lib/format'
 import { Button } from '../Button'
@@ -33,6 +34,66 @@ export function EmiCalculatorShell({ calculator }: CalculatorShellProps) {
 
   const principalPct = (principal / totalAmount) * 100
   const interestPct = (totalInterest / totalAmount) * 100
+
+  const exportInputs = useMemo(() => {
+    return calculator.fields.map(field => {
+      const val = values[field.id]
+      const valStr = val !== undefined ? val.toLocaleString('en-IN') : ''
+      return {
+        label: field.label,
+        value: `${field.prefix || ''}${valStr}${field.suffix ? ` ${field.suffix}` : ''}`
+      }
+    })
+  }, [calculator, values])
+
+  const exportResultsNode = (
+    <div className="w-full h-full flex flex-col">
+        <div className="rounded-2xl border border-line bg-cream p-10 shadow-card flex-1 flex flex-col justify-center">
+          
+          <div className="mb-12">
+            <div className="mb-4 font-display text-4xl font-bold text-navy">
+              {formatINR(totalAmount, true)}
+            </div>
+            <div className="flex h-6 overflow-hidden rounded-full mb-6 shadow-sm bg-line">
+              <div className="bg-navy transition-all duration-500" style={{ width: `${principalPct}%` }} />
+              <div className="bg-brass transition-all duration-500" style={{ width: `${interestPct}%` }} />
+            </div>
+            <div className="flex flex-wrap items-center gap-x-8 gap-y-4 text-lg text-muted">
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 rounded-full bg-navy" />
+                Loan Amount ({formatINR(principal, true)})
+              </span>
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 rounded-full bg-brass" />
+                Interest Payable ({formatINR(totalInterest, true)})
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 text-center border-t border-line">
+            <div>
+              <p className="text-sm uppercase tracking-wider text-muted">Loan Amount</p>
+              <p className="mt-2 font-display text-2xl font-semibold text-navy">{formatINR(principal, true)}</p>
+            </div>
+            <div className="md:col-auto col-span-2">
+              <p className="text-sm uppercase tracking-wider text-muted">Total Amount Payable</p>
+              <p className="mt-2 font-display text-2xl font-semibold text-navy">{formatINR(totalAmount, true)}</p>
+            </div>
+            <div>
+              <p className="text-sm uppercase tracking-wider text-muted">Interest Payable</p>
+              <p className="mt-2 font-display text-2xl font-semibold text-brass">{formatINR(totalInterest, true)}</p>
+            </div>
+          </div>
+          
+          <div className="mt-12 flex justify-center">
+            <div className="text-center bg-ivory rounded-2xl p-8 border border-line shadow-sm">
+              <p className="text-sm uppercase tracking-wider text-muted">Monthly EMI</p>
+              <p className="mt-2 font-display text-5xl font-bold text-navy">{formatINR(emi)}</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  )
 
   return (
     <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
@@ -73,6 +134,14 @@ export function EmiCalculatorShell({ calculator }: CalculatorShellProps) {
 
       <div className="space-y-6">
         <div className="rounded-2xl border border-line bg-cream p-6 shadow-card md:p-8">
+          <div className="flex items-center justify-end mb-6">
+            <TakeSnapshot
+              title={calculator.title}
+              inputs={exportInputs}
+              resultsNode={exportResultsNode}
+              filename={`TejasFinserv-${calculator.slug}-Calculator.png`}
+            />
+          </div>
           
           {/* Top Values & Horizontal Allocation Bar */}
           <div className="mb-8">
