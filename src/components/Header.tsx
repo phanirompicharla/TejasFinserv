@@ -42,7 +42,9 @@ export function Header() {
       <div className="container-main flex h-20 items-center justify-between">
         <div className="flex items-center gap-3">
           <Link to="/" className="focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brass" aria-label="TejasFinserv home">
-            <Logo imgClassName="h-14 sm:h-16 w-auto" />
+            <span className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-navy rounded-[10px] p-2.5">
+              <Logo imgClassName="w-full h-full object-contain object-center" />
+            </span>
           </Link>
           <div className="hidden sm:flex flex-col border-l border-line pl-3">
             <span className="text-[10px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
