@@ -13,6 +13,7 @@ export function Logo({ className = '', imgClassName = 'h-12 w-auto' }: LogoProps
         alt="TejasFinserv"
         loading="eager"
         decoding="async"
+        crossOrigin="anonymous"
         className={`block object-contain object-left overflow-visible ${imgClassName}`}
       />
     </span>

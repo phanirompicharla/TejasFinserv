@@ -49,21 +49,28 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
       }
 
       // 2. Wait for fonts/charts to fully render
-      await new Promise((r) => setTimeout(r, 800))
+      await document.fonts.ready
+      await new Promise((r) => setTimeout(r, 300))
 
       // 3. Generate the snapshot
       const canvas = await html2canvas(exportRef.current, {
+        backgroundColor: '#ffffff',
         scale: 2, // High resolution
         useCORS: true,
+        allowTaint: true,
         logging: false,
-        backgroundColor: '#FDFBF7', // Match the ivory/cream background
       })
+
+      if (canvas.width === 0 || canvas.height === 0) {
+        throw new Error('Canvas rendering failed (width or height is 0).')
+      }
 
       // 4. Save the generated PNG
       if (fileHandle) {
         // Native Save: Write the blob directly to the selected location
         const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png', 1.0))
-        if (!blob) throw new Error('Failed to create PNG blob from canvas')
+        if (!blob) throw new Error('PNG generation failed.')
+        if (blob.size === 0) throw new Error('PNG generation failed (0 bytes).')
         
         const writable = await fileHandle.createWritable()
         await writable.write(blob)
@@ -76,9 +83,9 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         link.download = downloadFilename
         link.click()
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Snapshot failed:', err)
-      alert('Failed to save the snapshot. Please try again.')
+      alert(err.message || 'Failed to save the snapshot.')
     } finally {
       setIsGenerating(false)
     }

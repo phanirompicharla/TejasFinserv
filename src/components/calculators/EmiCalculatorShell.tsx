@@ -55,8 +55,8 @@ export function EmiCalculatorShell({ calculator }: CalculatorShellProps) {
               {formatINR(totalAmount, true)}
             </div>
             <div className="flex h-6 overflow-hidden rounded-full mb-6 shadow-sm bg-line">
-              <div className="bg-navy transition-all duration-500" style={{ width: `${principalPct}%` }} />
-              <div className="bg-brass transition-all duration-500" style={{ width: `${interestPct}%` }} />
+              <div className="bg-navy" style={{ width: `${principalPct}%` }} />
+              <div className="bg-brass" style={{ width: `${interestPct}%` }} />
             </div>
             <div className="flex flex-wrap items-center gap-x-8 gap-y-4 text-lg text-muted">
               <span className="flex items-center gap-2">

@@ -96,6 +96,7 @@ export function RetirementCalculatorShell({ calculator }: CalculatorShellProps) 
                     dataKey="value"
                     stroke="none"
                     cornerRadius={5}
+                    isAnimationActive={false}
                     label={(entry: any) => formatINR(entry.value, true)}
                     labelLine={{ stroke: '#94a3b8', strokeWidth: 1 }}
                   >

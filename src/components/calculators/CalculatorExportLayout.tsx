@@ -18,13 +18,15 @@ export const CalculatorExportLayout = forwardRef<HTMLDivElement, Props>(
       <div
         ref={ref}
         style={{
-          position: 'fixed',
-          left: '-10000px',
+          position: 'absolute',
+          left: '-99999px',
           top: 0,
           width: '1600px',
           height: '900px',
+          background: 'white',
+          opacity: 1,
         }}
-        className="flex flex-col font-sans bg-cream overflow-hidden z-[-50]"
+        className="flex flex-col font-sans overflow-hidden z-[-50]"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-16 py-10 border-b border-line bg-ivory">
@@ -60,10 +62,10 @@ export const CalculatorExportLayout = forwardRef<HTMLDivElement, Props>(
         <div className="px-16 py-6 bg-navy text-ivory flex justify-between items-center border-t-4 border-brass">
           <div className="max-w-4xl">
             <p className="text-sm font-semibold">
-              Calculators are for illustration purposes only and do not represent actual returns.
+              Calculators are for illustration purposes only. Returns assumed, not guaranteed.
             </p>
             <p className="text-xs text-ivory/70 mt-1">
-              Mutual Fund investments are subject to market risks. Read all scheme-related documents carefully.
+              Mutual Funds are subject to market risks.
             </p>
           </div>
           <div className="flex items-center gap-3">

@@ -96,6 +96,7 @@ export function CalculatorShell({ calculator, headerNode, unifiedLayout }: Calcu
               swpWithdrawal={values.monthlyWithdrawal}
               annualReturn={values.annualReturn}
               years={values.years}
+              isSnapshot={true}
             />
           </div>
         </div>

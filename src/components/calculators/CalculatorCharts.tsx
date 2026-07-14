@@ -24,6 +24,8 @@ interface CalculatorChartsProps {
   annualReturn?: number
   /** Number of years (for year-by-year bar chart) */
   years?: number
+  /** True if rendered inside the export snapshot to disable animations */
+  isSnapshot?: boolean
 }
 
 /** Format value in Indian compact style for Y-axis labels */
@@ -163,6 +165,7 @@ export function CalculatorCharts({
   swpWithdrawal,
   annualReturn,
   years,
+  isSnapshot = false,
 }: CalculatorChartsProps) {
   const total = invested + returns
   const safeTotal = total > 0 ? total : 1
@@ -255,6 +258,7 @@ export function CalculatorCharts({
                   stackId="a"
                   fill={COLORS.invested}
                   radius={[0, 0, 0, 0]}
+                  isAnimationActive={!isSnapshot}
                   animationDuration={800}
                 />
                 <Bar
@@ -262,6 +266,7 @@ export function CalculatorCharts({
                   stackId="a"
                   fill={COLORS.returns}
                   radius={[4, 4, 0, 0]}
+                  isAnimationActive={!isSnapshot}
                   animationDuration={800}
                 />
               </BarChart>
@@ -287,10 +292,10 @@ export function CalculatorCharts({
             <p className="mb-2 text-sm font-medium text-navy">Allocation</p>
             <div className="flex h-8 overflow-hidden rounded-lg">
               <div
-                className="bg-navy transition-all duration-500"
+                className={`bg-navy ${!isSnapshot ? 'transition-all duration-500' : ''}`}
                 style={{ width: `${investedPct}%` }}
               />
-              <div className="bg-brass flex-1 transition-all duration-500" />
+              <div className={`bg-brass flex-1 ${!isSnapshot ? 'transition-all duration-500' : ''}`} />
             </div>
             <div className="mt-2 flex justify-between text-xs text-muted">
               <span>Invested {investedPct.toFixed(0)}%</span>
