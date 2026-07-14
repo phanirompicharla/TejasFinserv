@@ -76,6 +76,29 @@ export function Footer() {
               {siteConfig.tagline} — AMFI-registered mutual fund distribution, financial planning,
               and insurance advisory in Vijayawada, Andhra Pradesh.
             </p>
+            <a
+              href="https://www.linkedin.com/company/tejasfinserv/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 flex w-fit items-center gap-2 text-sm text-ivory/70 transition-colors duration-200 hover:text-[#0A66C2] hover:underline"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+                <rect width="4" height="12" x="2" y="9" />
+                <circle cx="4" cy="4" r="2" />
+              </svg>
+              Follow us on LinkedIn
+            </a>
           </div>
 
           <FooterLinks title="Company" links={companyLinks} />
