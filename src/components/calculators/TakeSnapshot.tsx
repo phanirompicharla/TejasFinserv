@@ -21,10 +21,37 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
   const handleSnapshot = async () => {
     if (!exportRef.current || isGenerating) return
     setIsGenerating(true)
+
+    const downloadFilename = filename || `TejasFinserv-${title.replace(/\\s+/g, '-')}.png`
+    let fileHandle: any = null
+
     try {
-      // Give time for charts to animate/render and fonts to load
+      // 1. If supported, show the native Save As dialog first
+      if ('showSaveFilePicker' in window) {
+        try {
+          fileHandle = await (window as any).showSaveFilePicker({
+            suggestedName: downloadFilename,
+            types: [
+              {
+                description: 'PNG Image',
+                accept: { 'image/png': ['.png'] },
+              },
+            ],
+          })
+        } catch (err: any) {
+          // If the user simply cancelled the dialog, abort silently
+          if (err.name === 'AbortError') {
+            setIsGenerating(false)
+            return
+          }
+          console.warn('Native save dialog failed, falling back to standard download...', err)
+        }
+      }
+
+      // 2. Wait for fonts/charts to fully render
       await new Promise((r) => setTimeout(r, 800))
 
+      // 3. Generate the snapshot
       const canvas = await html2canvas(exportRef.current, {
         scale: 2, // High resolution
         useCORS: true,
@@ -32,13 +59,26 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         backgroundColor: '#FDFBF7', // Match the ivory/cream background
       })
 
-      const image = canvas.toDataURL('image/png', 1.0)
-      const link = document.createElement('a')
-      link.href = image
-      link.download = filename || `TejasFinserv-${title.replace(/\s+/g, '-')}.png`
-      link.click()
+      // 4. Save the generated PNG
+      if (fileHandle) {
+        // Native Save: Write the blob directly to the selected location
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png', 1.0))
+        if (!blob) throw new Error('Failed to create PNG blob from canvas')
+        
+        const writable = await fileHandle.createWritable()
+        await writable.write(blob)
+        await writable.close()
+      } else {
+        // Fallback: Automatic download via anchor tag
+        const image = canvas.toDataURL('image/png', 1.0)
+        const link = document.createElement('a')
+        link.href = image
+        link.download = downloadFilename
+        link.click()
+      }
     } catch (err) {
-      console.error('Snapshot failed', err)
+      console.error('Snapshot failed:', err)
+      alert('Failed to save the snapshot. Please try again.')
     } finally {
       setIsGenerating(false)
     }
