@@ -52,8 +52,58 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
       await document.fonts.ready
       await new Promise((r) => setTimeout(r, 300))
 
-      // 3. Generate the snapshot
-      const canvas = await html2canvas(exportRef.current, {
+      // 3. Clone node and convert OKLCH/OKLAB to RGB
+      const originalNode = exportRef.current
+      const cloneNode = originalNode.cloneNode(true) as HTMLElement
+      // Append clone to body to compute styles properly (hidden)
+      cloneNode.style.position = 'absolute'
+      cloneNode.style.left = '-99999px'
+      cloneNode.style.top = '0'
+      cloneNode.style.width = '1600px'
+      cloneNode.style.height = '900px'
+      cloneNode.style.opacity = '1'
+      document.body.appendChild(cloneNode)
+
+      const getRgbFromCss = (colorStr: string): string => {
+        if (!colorStr || (!colorStr.includes('oklch') && !colorStr.includes('oklab'))) return colorStr
+        const canvas = document.createElement('canvas')
+        canvas.width = 1
+        canvas.height = 1
+        const ctx = canvas.getContext('2d', { willReadFrequently: true })
+        if (!ctx) return colorStr
+        ctx.fillStyle = colorStr
+        ctx.fillRect(0, 0, 1, 1)
+        const data = ctx.getImageData(0, 0, 1, 1).data
+        return `rgba(${data[0]}, ${data[1]}, ${data[2]}, ${data[3] / 255})`
+      }
+
+      const originalElements = Array.from(originalNode.querySelectorAll('*'))
+      const clonedElements = Array.from(cloneNode.querySelectorAll('*'))
+      const props = ['color', 'backgroundColor', 'borderColor', 'fill', 'stroke', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor']
+
+      originalElements.forEach((orig, index) => {
+        const cloneEl = clonedElements[index] as HTMLElement
+        if (!cloneEl || !cloneEl.style) return
+        const computed = window.getComputedStyle(orig)
+        props.forEach(prop => {
+          const val = (computed as any)[prop]
+          if (val && (val.includes('oklch') || val.includes('oklab'))) {
+            (cloneEl.style as any)[prop] = getRgbFromCss(val)
+          }
+        })
+      })
+
+      // Convert root node
+      const computedRoot = window.getComputedStyle(originalNode)
+      props.forEach(prop => {
+        const val = (computedRoot as any)[prop]
+        if (val && (val.includes('oklch') || val.includes('oklab'))) {
+          (cloneNode.style as any)[prop] = getRgbFromCss(val)
+        }
+      })
+
+      // 4. Generate the snapshot on the converted CLONE
+      const canvas = await html2canvas(cloneNode, {
         backgroundColor: '#ffffff',
         scale: 2, // High resolution
         useCORS: true,
@@ -61,11 +111,14 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         logging: false,
       })
 
+      // 5. Cleanup clone
+      document.body.removeChild(cloneNode)
+
       if (canvas.width === 0 || canvas.height === 0) {
         throw new Error('Canvas rendering failed (width or height is 0).')
       }
 
-      // 4. Save the generated PNG
+      // 6. Save the generated PNG
       if (fileHandle) {
         // Native Save: Write the blob directly to the selected location
         const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png', 1.0))
