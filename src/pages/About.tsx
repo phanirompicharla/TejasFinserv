@@ -3,6 +3,7 @@ import { Button } from '../components/Button'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
 import { organizationSchema, personSchema } from '../schema'
+import founderImage from '../assets/images/founder.jpg'
 
 const approachSteps = [
   {
@@ -281,9 +282,14 @@ export function About() {
               <div className="pointer-events-none absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 rounded-full bg-brass/10 blur-2xl" aria-hidden="true" />
               
               <div className="flex flex-col sm:flex-row items-center gap-8 text-center sm:text-left relative z-10">
-                <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-3xl bg-navy font-display text-4xl font-bold text-brass shadow-xl border-4 border-ivory">
-                  PR
-                </div>
+                <img
+                  src={founderImage}
+                  alt="Phani Rompicharla - Founder of Tejas Finserv"
+                  className="h-28 w-28 shrink-0 rounded-3xl object-cover shadow-xl border-4 border-ivory bg-navy"
+                  loading="lazy"
+                  width="112"
+                  height="112"
+                />
                 
                 <div className="space-y-2">
                   <div className="inline-block px-3 py-1 rounded-full bg-brass/15 text-navy font-semibold text-xs uppercase tracking-wider">
