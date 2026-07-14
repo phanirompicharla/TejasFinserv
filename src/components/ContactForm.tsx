@@ -147,7 +147,7 @@ export function ContactForm() {
         <input
           id="name"
           type="text"
-          placeholder="e.g. Ramesh Kumar"
+          placeholder="e.g. GuruCharan"
           value={form.name}
           onChange={(e) => handleChange('name', e.target.value)}
           className={inputClass('name')}
@@ -169,7 +169,7 @@ export function ContactForm() {
         <input
           id="email"
           type="email"
-          placeholder="e.g. ramesh@example.com"
+          placeholder="e.g. baluhanu@example.com"
           value={form.email}
           onChange={(e) => handleChange('email', e.target.value)}
           className={inputClass('email')}
