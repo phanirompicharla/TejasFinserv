@@ -69,9 +69,7 @@ export function Footer() {
       <div className="container-main section-padding pb-8">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-6">
           <div className="lg:col-span-2">
-            <span className="inline-flex items-center justify-center w-[72px] h-[72px] bg-white rounded-xl p-3 overflow-hidden shadow-[0_6px_18px_rgba(0,0,0,0.12)]">
-              <Logo imgClassName="w-full h-full object-contain object-center" />
-            </span>
+            <Logo className="w-[48px] h-[48px]" imgClassName="w-full h-full object-contain object-left" />
             <p className="mt-4 text-sm leading-relaxed text-ivory/70">
               {siteConfig.tagline} — AMFI-registered mutual fund distribution, financial planning,
               and insurance advisory in Vijayawada, Andhra Pradesh.
