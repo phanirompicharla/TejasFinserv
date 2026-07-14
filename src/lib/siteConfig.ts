@@ -21,9 +21,9 @@ export const siteConfig = {
     phone: '+91 94907 16662',
     phoneTel: '+919490716662',
     whatsappUrl: 'https://wa.me/919490716662',
-    mapsUrl: 'https://goo.gl/maps/iKzCHPG9gJDmKAe18',
+    mapsUrl: 'https://maps.app.goo.gl/7saxjnh6xzKCHm8f8',
     mapsEmbedUrl:
-      'https://www.google.com/maps?q=23-221,+Near+Old+Water+Tank,+Yanamalakuduru,+Vijayawada+520007,+Andhra+Pradesh&output=embed',
+      'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d315.3115456919365!2d80.66253927018474!3d16.48729682486066!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a35fbd892544077%3A0xbc8ca84ca8f1bb85!2sTEJAS%20FINSERV!5e0!3m2!1sen!2sin!4v1784029080784!5m2!1sen!2sin',
     // TODO: confirm with client
     hours: '[CONFIRM] business hours',
   },
