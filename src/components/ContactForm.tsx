@@ -191,7 +191,7 @@ export function ContactForm() {
         <input
           id="phone"
           type="tel"
-          placeholder="+91 98765 43210"
+          placeholder="+91 94907 16662"
           value={form.phone}
           onChange={(e) => handleChange('phone', e.target.value)}
           className={inputClass('phone')}
