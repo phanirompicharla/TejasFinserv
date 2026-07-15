@@ -35,9 +35,6 @@ function PageLoader() {
 
 export default function App() {
   const [isComingSoon, setIsComingSoon] = useState<boolean>(true);
-  const [isVIPBypassed, setIsVIPBypassed] = useState<boolean>(() => {
-    return localStorage.getItem('bypass_coming_soon') === 'true';
-  });
 
   useEffect(() => {
     fetch('/api/settings/status')
@@ -52,16 +49,13 @@ export default function App() {
       });
   }, []);
 
-  const handleVIPBypass = () => {
-    localStorage.setItem('bypass_coming_soon', 'true');
-    setIsVIPBypassed(true);
-  };
+  const isAdminOrLogged = window.location.pathname.startsWith('/admin') || Boolean(localStorage.getItem('adminToken'));
 
-  if (isComingSoon && !isVIPBypassed && !window.location.pathname.startsWith('/admin')) {
+  if (isComingSoon && !isAdminOrLogged) {
     return (
       <ErrorBoundary>
         <BrowserRouter>
-          <ComingSoonPage onVIPBypass={handleVIPBypass} />
+          <ComingSoonPage />
         </BrowserRouter>
       </ErrorBoundary>
     );
