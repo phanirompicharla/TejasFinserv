@@ -1,17 +1,26 @@
 User-agent: *
 Allow: /
 
-# AI crawlers — allowed by default (set Disallow below to opt out)
+# Allow AI/LLM crawlers to access the site for specialized search and AI answers
 User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
 Allow: /
 
 User-agent: PerplexityBot
 Allow: /
 
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
 User-agent: Google-Extended
 Allow: /
 
-User-agent: ClaudeBot
+User-agent: FacebookBot
 Allow: /
 
 Sitemap: https://tejasfinserv.com/sitemap.xml

@@ -34,6 +34,16 @@ interface ClientReview {
   created_at: string;
 }
 
+interface LoginLog {
+  id: number;
+  admin_id: number | null;
+  username: string;
+  ip_address: string;
+  user_agent: string;
+  status: 'SUCCESS' | 'FAILURE';
+  attempted_at: string;
+}
+
 // Clean, Modern Inline Icons for an Executive Dashboard
 function IconDocument({ className = "w-4 h-4" }: { className?: string }) {
   return (
@@ -152,10 +162,11 @@ export function AdminDashboard() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-  const [activeTab, setActiveTab] = useState<'insights' | 'contacts' | 'reviews'>('insights');
+  const [activeTab, setActiveTab] = useState<'insights' | 'contacts' | 'reviews' | 'loginLogs'>('insights');
   const [insights, setInsights] = useState<Insight[]>([]);
   const [contacts, setContacts] = useState<ContactMessage[]>([]);
   const [reviews, setReviews] = useState<ClientReview[]>([]);
+  const [loginLogs, setLoginLogs] = useState<LoginLog[]>([]);
   const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const [reviewSearchQuery, setReviewSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
@@ -240,11 +251,25 @@ export function AdminDashboard() {
     }
   };
 
+  const fetchLoginLogs = async () => {
+    try {
+      const res = await fetch('/api/admin/login-logs', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setLoginLogs(await res.json());
+      }
+    } catch (err) {
+      console.error('Failed to fetch login logs:', err);
+    }
+  };
+
   useEffect(() => {
     if (token) {
       fetchInsights();
       fetchContacts();
       fetchReviews();
+      fetchLoginLogs();
     }
   }, [token, activeTab]);
 
@@ -499,7 +524,7 @@ export function AdminDashboard() {
 
       {/* KPI Overview Ribbon */}
       <div className="bg-ivory border-b border-line/80 shadow-sm py-6">
-        <div className="container-main grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+        <div className="container-main grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <div className="bg-cream rounded-2xl border border-line p-4 sm:p-5 flex items-center justify-between shadow-xs hover:shadow-sm transition-shadow">
             <div>
               <span className="text-xs font-bold uppercase tracking-wider text-muted block">Knowledge Hub</span>
@@ -546,13 +571,31 @@ export function AdminDashboard() {
               <IconStar className="w-6 h-6" />
             </div>
           </div>
+
+          <div className="bg-cream rounded-2xl border border-line p-4 sm:p-5 flex items-center justify-between shadow-xs hover:shadow-sm transition-shadow">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-muted block">Audit & Security</span>
+              <div className="text-2xl font-display font-bold text-navy mt-1 flex items-center gap-2">
+                <span>{loginLogs.length}</span>
+                {loginLogs.filter(l => l.status === 'FAILURE').length > 0 && (
+                  <span className="text-[10px] font-sans font-bold bg-red-500 text-white px-2 py-0.5 rounded-full">
+                    {loginLogs.filter(l => l.status === 'FAILURE').length} Failed
+                  </span>
+                )}
+              </div>
+              <span className="text-[11px] text-muted mt-0.5 block">Login Events Recorded</span>
+            </div>
+            <div className="w-12 h-12 rounded-2xl bg-navy/10 border border-navy/20 flex items-center justify-center text-navy">
+              <IconLock className="w-6 h-6 text-navy" />
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Navigation Pills & Quick Actions Bar */}
       <div className="bg-ivory/80 backdrop-blur-md border-b border-line sticky top-20 z-30">
         <div className="container-main py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <nav className="flex gap-1.5 p-1 bg-cream rounded-2xl border border-line/80 w-fit shadow-inner">
+          <nav className="flex flex-wrap gap-1.5 p-1 bg-cream rounded-2xl border border-line/80 w-fit shadow-inner">
             <button
               onClick={() => setActiveTab('insights')}
               className={`flex items-center gap-2 px-5 py-2 rounded-xl font-display text-sm font-semibold transition-all duration-200 ${
@@ -596,6 +639,22 @@ export function AdminDashboard() {
                 </span>
               )}
             </button>
+            <button
+              onClick={() => setActiveTab('loginLogs')}
+              className={`flex items-center gap-2 px-5 py-2 rounded-xl font-display text-sm font-semibold transition-all duration-200 ${
+                activeTab === 'loginLogs'
+                  ? 'bg-navy text-ivory shadow-md'
+                  : 'text-ink hover:text-navy hover:bg-ivory'
+              }`}
+            >
+              <IconLock className="w-4 h-4" />
+              <span>Security Audit Logs ({loginLogs.length})</span>
+              {loginLogs.filter(l => l.status === 'FAILURE').length > 0 && (
+                <span className="ml-0.5 bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  Alerts
+                </span>
+              )}
+            </button>
           </nav>
 
           <div className="flex items-center justify-between sm:justify-end gap-3">
@@ -608,6 +667,7 @@ export function AdminDashboard() {
                 if (activeTab === 'insights') fetchInsights();
                 if (activeTab === 'contacts') fetchContacts();
                 if (activeTab === 'reviews') fetchReviews();
+                if (activeTab === 'loginLogs') fetchLoginLogs();
               }}
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-ivory border border-line hover:border-brass text-xs font-semibold text-navy transition-all shadow-2xs active:scale-95 group"
               title="Refresh Data"
@@ -1133,6 +1193,89 @@ export function AdminDashboard() {
                               <IconTrash className="w-3.5 h-3.5" />
                               <span>Delete</span>
                             </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'loginLogs' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="bg-ivory rounded-3xl border border-line p-6 sm:p-8 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-line/60">
+                <div>
+                  <h2 className="font-display text-xl font-bold text-navy flex items-center gap-2.5">
+                    <IconLock className="w-5 h-5 text-brass" />
+                    <span>Administrator Authentication Audit History</span>
+                  </h2>
+                  <p className="text-xs text-muted mt-1">
+                    Real-time security log of all successful and failed login attempts across the executive portal.
+                  </p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cream border border-line text-xs font-semibold text-navy">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>Security Monitor Active</span>
+                  </span>
+                </div>
+              </div>
+
+              {loginLogs.length === 0 ? (
+                <div className="text-center py-16 px-4 bg-cream/50 rounded-2xl border border-dashed border-line">
+                  <IconLock className="w-12 h-12 text-muted/40 mx-auto mb-3" />
+                  <h3 className="font-display text-base font-semibold text-navy">No Authentication Events Recorded Yet</h3>
+                  <p className="text-xs text-muted max-w-md mx-auto mt-1">
+                    When administrators log in or attempt to access the portal, the timestamp, IP address, and status will appear here.
+                  </p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-line text-[11px] font-bold uppercase tracking-wider text-muted bg-cream/70">
+                        <th className="py-3.5 px-4 rounded-l-xl">Status</th>
+                        <th className="py-3.5 px-4">Username</th>
+                        <th className="py-3.5 px-4">IP Address</th>
+                        <th className="py-3.5 px-4">User Agent / Browser</th>
+                        <th className="py-3.5 px-4 rounded-r-xl">Attempted At</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-line/60 text-xs font-sans">
+                      {loginLogs.map((log) => (
+                        <tr key={log.id} className="hover:bg-cream/50 transition-colors">
+                          <td className="py-4 px-4 font-semibold">
+                            {log.status === 'SUCCESS' ? (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-700 font-bold text-[11px] border border-emerald-500/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                SUCCESS
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-500/15 text-red-700 font-bold text-[11px] border border-red-500/20">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                                FAILURE
+                              </span>
+                            )}
+                          </td>
+                          <td className="py-4 px-4 font-display font-bold text-navy">
+                            {log.username || 'UNKNOWN'}
+                            {log.admin_id && <span className="text-muted font-normal ml-1">({log.admin_id})</span>}
+                          </td>
+                          <td className="py-4 px-4 font-mono text-[11px] text-ink">
+                            {log.ip_address}
+                          </td>
+                          <td className="py-4 px-4 text-muted max-w-xs truncate" title={log.user_agent}>
+                            {log.user_agent}
+                          </td>
+                          <td className="py-4 px-4 text-muted font-medium">
+                            {new Date(log.attempted_at).toLocaleString('en-IN', {
+                              dateStyle: 'medium',
+                              timeStyle: 'medium'
+                            })}
                           </td>
                         </tr>
                       ))}

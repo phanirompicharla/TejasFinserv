@@ -11,6 +11,8 @@ export function Logo({ className = '', imgClassName = 'h-12 w-auto' }: LogoProps
       <img
         src={logoImg}
         alt="TejasFinserv"
+        width={200}
+        height={48}
         loading="eager"
         decoding="async"
         crossOrigin="anonymous"
