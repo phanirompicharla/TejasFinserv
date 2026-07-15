@@ -78,6 +78,21 @@ const apiLimiter = rateLimit({
     } catch (e) {
         console.error('Error migrating admin_login_logs table:', e);
     }
+    try {
+        await db.query(`
+            CREATE TABLE IF NOT EXISTS site_settings (
+                setting_key VARCHAR(50) PRIMARY KEY,
+                setting_value VARCHAR(255)
+            )
+        `);
+        await db.query(`
+            INSERT IGNORE INTO site_settings (setting_key, setting_value)
+            VALUES ('coming_soon', 'true')
+        `);
+        console.log('Migrated: site_settings table checked/created with default coming_soon=true');
+    } catch (e) {
+        console.error('Error migrating site_settings table:', e);
+    }
 })();
 
 // Security Middleware with Helmet + HSTS
@@ -808,6 +823,32 @@ app.delete('/api/admin/reviews/:id', authenticateToken, async (req, res) => {
         if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
         await db.query('DELETE FROM client_reviews WHERE id = ?', [req.params.id]);
         res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// --- SITE SETTINGS API (Coming Soon Toggle) ---
+app.get('/api/settings/status', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT setting_value FROM site_settings WHERE setting_key = "coming_soon"');
+        const isComingSoon = rows.length > 0 && rows[0].setting_value === 'true';
+        res.json({ coming_soon: isComingSoon });
+    } catch (error) {
+        res.json({ coming_soon: process.env.COMING_SOON === 'true' });
+    }
+});
+
+app.put('/api/admin/settings/coming-soon', authenticateToken, async (req, res) => {
+    try {
+        const { coming_soon } = req.body;
+        const value = coming_soon ? 'true' : 'false';
+        await db.query(`
+            INSERT INTO site_settings (setting_key, setting_value)
+            VALUES ("coming_soon", ?)
+            ON DUPLICATE KEY UPDATE setting_value = ?
+        `, [value, value]);
+        res.json({ success: true, coming_soon: coming_soon });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

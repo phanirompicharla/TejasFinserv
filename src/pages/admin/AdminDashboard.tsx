@@ -170,6 +170,7 @@ export function AdminDashboard() {
   const [reviewFilter, setReviewFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('pending');
   const [reviewSearchQuery, setReviewSearchQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isComingSoon, setIsComingSoon] = useState<boolean>(true);
 
   // Insight form state
   const [editingInsight, setEditingInsight] = useState<Insight | null>(null);
@@ -270,8 +271,32 @@ export function AdminDashboard() {
       fetchContacts();
       fetchReviews();
       fetchLoginLogs();
+      fetch('/api/settings/status')
+        .then(res => res.json())
+        .then(data => {
+          if (data && typeof data.coming_soon === 'boolean') {
+            setIsComingSoon(data.coming_soon);
+          }
+        })
+        .catch(() => {});
     }
   }, [token, activeTab]);
+
+  const toggleComingSoon = async () => {
+    const nextStatus = !isComingSoon;
+    try {
+      const res = await fetch('/api/admin/settings/coming-soon', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ coming_soon: nextStatus })
+      });
+      if (res.ok) {
+        setIsComingSoon(nextStatus);
+      }
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    }
+  };
 
   const saveInsight = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -521,6 +546,38 @@ export function AdminDashboard() {
           </div>
         </div>
       </header>
+
+      {/* Public Site Status & Launch Banner */}
+      <div className={`border-b px-4 py-3 sm:px-6 transition-colors shadow-sm ${isComingSoon ? 'bg-amber-500/15 border-amber-500/30 text-amber-900' : 'bg-emerald-500/15 border-emerald-500/30 text-emerald-900'}`}>
+        <div className="container-main flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className={`flex h-3 w-3 rounded-full ${isComingSoon ? 'bg-amber-500 animate-ping' : 'bg-emerald-500 animate-pulse'}`} />
+            <div className="text-sm font-semibold">
+              {isComingSoon ? (
+                <span>Public Site Status: <strong className="font-extrabold uppercase tracking-wide text-amber-950">Coming Soon Mode Active</strong> (Visitors see countdown screen)</span>
+              ) : (
+                <span>Public Site Status: <strong className="font-extrabold uppercase tracking-wide text-emerald-950">Live & Open to Public</strong> (Full portal active worldwide)</span>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={toggleComingSoon}
+            className={`rounded-xl px-4 py-2 text-xs font-bold transition shadow-md cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${isComingSoon ? 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white hover:from-emerald-500 hover:to-emerald-400 shadow-emerald-600/25 animate-bounce' : 'bg-amber-600/90 text-white hover:bg-amber-700'}`}
+          >
+            {isComingSoon ? (
+              <>
+                <span>🚀</span>
+                <span>Launch Public Portal Now (Open Site)</span>
+              </>
+            ) : (
+              <>
+                <span>🔒</span>
+                <span>Switch Back to Coming Soon Mode</span>
+              </>
+            )}
+          </button>
+        </div>
+      </div>
 
       {/* KPI Overview Ribbon */}
       <div className="bg-ivory border-b border-line/80 shadow-sm py-6">
