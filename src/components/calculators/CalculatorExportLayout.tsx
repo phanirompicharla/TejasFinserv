@@ -31,8 +31,10 @@ export const CalculatorExportLayout = forwardRef<HTMLDivElement, Props>(
         {/* Header */}
         <div className="flex items-center justify-between px-16 py-10 border-b border-line bg-ivory">
           <h1 className="text-4xl font-display font-bold text-navy">{title}</h1>
-          <div className="flex items-center h-12">
-            <Logo imgClassName="h-12 w-auto object-contain" />
+          <div className="flex items-center h-14">
+            <span className="inline-flex items-center justify-center w-14 h-14 bg-navy rounded-[10px] p-2.5 shadow-sm">
+              <Logo imgClassName="w-full h-full object-contain object-center" />
+            </span>
           </div>
         </div>
 

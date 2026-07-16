@@ -173,7 +173,9 @@ export function Header() {
       >
         <div className="flex h-20 shrink-0 items-center justify-between border-b border-ivory/10 bg-ivory px-5 w-full">
           <div className="flex items-center gap-2.5">
-            <Logo imgClassName="h-14 sm:h-16 w-auto" />
+            <span className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-navy rounded-[10px] p-2.5 shadow-sm">
+              <Logo imgClassName="w-full h-full object-contain object-center" />
+            </span>
             <div className="flex flex-col border-l border-line pl-2.5">
               <span className="text-[8px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
               <span className="text-[10px] font-semibold text-brass tracking-wider mt-0.5 leading-none">{siteConfig.regulatory.arn}</span>
