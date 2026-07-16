@@ -40,15 +40,15 @@ export function Header() {
       }`}
     >
       <div className="container-main flex h-20 items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/" className="focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brass" aria-label="TejasFinserv home">
-            <span className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-navy rounded-[10px] p-2.5">
+            <span className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-navy rounded-[10px] p-2 sm:p-2.5 shadow-xs">
               <Logo imgClassName="w-full h-full object-contain object-center" />
             </span>
           </Link>
-          <div className="hidden sm:flex flex-col border-l border-line pl-3">
-            <span className="text-[10px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
-            <span className="text-[11px] font-semibold text-brass tracking-wider mt-0.5 leading-none">{siteConfig.regulatory.arn}</span>
+          <div className="flex max-[350px]:hidden flex-col border-l border-line pl-2 sm:pl-3 whitespace-nowrap">
+            <span className="text-[8.5px] sm:text-[10px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
+            <span className="text-[9.5px] sm:text-[11px] font-semibold text-brass tracking-wider mt-0.5 leading-none">{siteConfig.regulatory.arn}</span>
           </div>
         </div>
 
@@ -172,13 +172,13 @@ export function Header() {
         aria-hidden={!menuOpen}
       >
         <div className="flex h-20 shrink-0 items-center justify-between border-b border-ivory/10 bg-ivory px-5 w-full">
-          <div className="flex items-center gap-2.5">
-            <span className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 bg-navy rounded-[10px] p-2.5 shadow-sm">
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            <span className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-navy rounded-[10px] p-2 sm:p-2.5 shadow-sm">
               <Logo imgClassName="w-full h-full object-contain object-center" />
             </span>
-            <div className="flex flex-col border-l border-line pl-2.5">
-              <span className="text-[8px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
-              <span className="text-[10px] font-semibold text-brass tracking-wider mt-0.5 leading-none">{siteConfig.regulatory.arn}</span>
+            <div className="flex flex-col border-l border-line pl-2 sm:pl-2.5 whitespace-nowrap">
+              <span className="text-[8.5px] sm:text-[10px] font-bold text-navy tracking-wider uppercase leading-none">AMFI Registered</span>
+              <span className="text-[9.5px] sm:text-[11px] font-semibold text-brass tracking-wider mt-0.5 leading-none">{siteConfig.regulatory.arn}</span>
             </div>
           </div>
           <button type="button" className="flex h-10 w-10 items-center justify-center text-navy focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brass" onClick={() => setMenuOpen(false)} aria-label="Close menu">
