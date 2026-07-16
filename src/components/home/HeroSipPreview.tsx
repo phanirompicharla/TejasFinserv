@@ -5,7 +5,7 @@ import { formatINR } from '../../lib/format'
 
 const MONTHLY = 5000
 const RATE = 12
-const YEARS = 10
+const YEARS = 15
 
 export function HeroSipPreview() {
   const result = calcSip(MONTHLY, RATE, YEARS)
@@ -60,7 +60,7 @@ export function HeroSipPreview() {
       </p>
       <p className="mt-1 text-xs text-ivory/70">Estimated maturity value</p>
 
-      <div className="mt-6 flex h-16 items-end gap-3">
+      <div className="mt-6 flex h-20 items-end gap-3">
         <div className="flex flex-col items-center gap-1">
           <div
             className="hero-bar-invested w-10 rounded-t bg-navy-deep/90"
@@ -72,15 +72,15 @@ export function HeroSipPreview() {
         <div className="flex flex-col items-center gap-1">
           <div
             className="hero-bar-returns w-10 rounded-t bg-brass/85"
-            style={{ height: `40px` }}
+            style={{ height: `60px` }}
             aria-hidden="true"
           />
           <span className="text-[10px] text-ivory/70">Returns</span>
         </div>
-        <svg viewBox="0 0 120 60" className="h-14 w-28 flex-shrink-0" aria-hidden="true">
+        <svg viewBox="0 0 120 70" className="h-16 w-28 flex-shrink-0" aria-hidden="true">
           <path
             className="hero-growth-line"
-            d="M4 50 L30 42 L55 35 L80 22 L116 8"
+            d="M4 60 L30 50 L55 38 L80 22 L116 6"
             fill="none"
             stroke="var(--brass-soft)"
             strokeWidth="2"
