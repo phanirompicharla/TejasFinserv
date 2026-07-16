@@ -1,9 +1,8 @@
-import { lazy, Suspense, useState, useEffect } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { ScrollToTop } from './components/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
-import { ComingSoonPage } from './pages/ComingSoonPage'
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
@@ -34,33 +33,6 @@ function PageLoader() {
 }
 
 export default function App() {
-  const [isComingSoon, setIsComingSoon] = useState<boolean>(true);
-
-  useEffect(() => {
-    fetch('/api/settings/status')
-      .then(res => res.json())
-      .then(data => {
-        if (data && typeof data.coming_soon === 'boolean') {
-          setIsComingSoon(data.coming_soon);
-        }
-      })
-      .catch(() => {
-        // Default stays true if fetch fails on initial check
-      });
-  }, []);
-
-  const isAdminOrLogged = window.location.pathname.startsWith('/admin') || Boolean(localStorage.getItem('adminToken'));
-
-  if (isComingSoon && !isAdminOrLogged) {
-    return (
-      <ErrorBoundary>
-        <BrowserRouter>
-          <ComingSoonPage />
-        </BrowserRouter>
-      </ErrorBoundary>
-    );
-  }
-
   return (
     <ErrorBoundary>
       <BrowserRouter>
