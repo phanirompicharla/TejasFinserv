@@ -131,8 +131,15 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         ctx.fillStyle = '#0B1526' // dark navy color
         ctx.textBaseline = 'bottom'
 
-        // Load and draw the logo
-        let logoOffset = 0
+        // Bottom-left Text
+        const leftFontSize = 28 * scale
+        ctx.font = `700 ${leftFontSize}px sans-serif`
+        ctx.textAlign = 'left'
+        const brandText = 'Powered by TejasFinserv'
+        ctx.fillText(brandText, horizontalMargin, yPos)
+        const textWidth = ctx.measureText(brandText).width
+
+        // Load and draw the logo after the text
         try {
           const logo = new Image()
           logo.src = logoImg
@@ -147,19 +154,12 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
           
           // Align logo vertically with text baseline (roughly)
           const logoY = yPos - logoHeight + (5 * scale) 
+          const logoX = horizontalMargin + textWidth + (16 * scale) // text width + 16px gap
           
-          ctx.drawImage(logo, horizontalMargin, logoY, logoWidth, logoHeight)
-          
-          logoOffset = logoWidth + (16 * scale) // logo width + 16px gap
+          ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight)
         } catch (e) {
           console.error("Failed to draw logo on snapshot", e)
         }
-
-        // Bottom-left
-        const leftFontSize = 28 * scale
-        ctx.font = `700 ${leftFontSize}px sans-serif`
-        ctx.textAlign = 'left'
-        ctx.fillText('Powered by TejasFinserv', horizontalMargin + logoOffset, yPos)
 
         // Bottom-right
         const rightFontSize = 24 * scale
