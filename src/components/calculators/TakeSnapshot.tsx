@@ -122,22 +122,30 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         ctx.setTransform(1, 0, 0, 1, 0, 0)
 
         const scale = 2
-        const padding = 30 * scale
-        const fontSize = 18 * scale
-        const lineHeight = 26 * scale
+        
+        // Match the 64px (px-16) padding of the layout container
+        const horizontalMargin = 64 * scale
+        
+        // 45px padding from the bottom inside the cream area
+        const bottomPadding = 45 * scale
+        
+        const fontSize = 16 * scale
+        const lineHeight = 24 * scale
 
-        ctx.fillStyle = '#1e293b' // dark navy color for contrast on cream background
-        ctx.font = `bold ${fontSize}px sans-serif`
+        ctx.fillStyle = '#1e293b' // dark navy text
+        ctx.font = `500 ${fontSize}px sans-serif` // Medium weight, elegant font
         ctx.textBaseline = 'bottom'
+
+        const yPos = canvas.height - bottomPadding
 
         // Bottom-left
         ctx.textAlign = 'left'
-        ctx.fillText('Powered by TejasFinserv', padding, canvas.height - padding)
+        ctx.fillText('Powered by TejasFinserv', horizontalMargin, yPos)
 
         // Bottom-right
         ctx.textAlign = 'right'
-        ctx.fillText('ARN-251896', canvas.width - padding, canvas.height - padding - lineHeight)
-        ctx.fillText('9490716662', canvas.width - padding, canvas.height - padding)
+        ctx.fillText('ARN-251896', canvas.width - horizontalMargin, yPos - lineHeight)
+        ctx.fillText('9490716662', canvas.width - horizontalMargin, yPos)
 
         ctx.restore()
       }
