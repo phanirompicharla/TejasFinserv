@@ -123,7 +123,7 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         const fontSize = 18 * scale
         const lineHeight = 26 * scale
 
-        ctx.fillStyle = '#000000' // strict black for visibility
+        ctx.fillStyle = '#ffffff' // white to show on navy background
         ctx.font = `bold ${fontSize}px sans-serif`
         ctx.textBaseline = 'bottom'
 
