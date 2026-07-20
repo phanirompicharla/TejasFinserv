@@ -163,11 +163,9 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
 
         // Bottom-right
         const rightFontSize = 24 * scale
-        const rightLineHeight = rightFontSize * 1.5 // 1.5 line spacing
         ctx.font = `600 ${rightFontSize}px sans-serif`
         ctx.textAlign = 'right'
-        ctx.fillText('ARN-251896', canvas.width - horizontalMargin, yPos - rightLineHeight)
-        ctx.fillText('9490716662', canvas.width - horizontalMargin, yPos)
+        ctx.fillText('ARN: 251896 | Ph: 9490716662', canvas.width - horizontalMargin, yPos)
 
         ctx.restore()
       }
