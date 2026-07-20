@@ -118,12 +118,15 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
       if (ctx) {
         console.log("Drawing footer");
         ctx.save()
+        // html2canvas leaves the context scaled (e.g. scale: 2). Reset it so our raw pixel coordinates work.
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+
         const scale = 2
         const padding = 30 * scale
         const fontSize = 18 * scale
         const lineHeight = 26 * scale
 
-        ctx.fillStyle = '#ffffff' // white to show on navy background
+        ctx.fillStyle = '#1e293b' // dark navy color for contrast on cream background
         ctx.font = `bold ${fontSize}px sans-serif`
         ctx.textBaseline = 'bottom'
 
