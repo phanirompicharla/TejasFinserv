@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import html2canvas from 'html2canvas'
 import { CalculatorExportLayout } from './CalculatorExportLayout'
+import logoImg from '../../assets/images/TEJAS SVG2.svg'
 
 interface ExportInput {
   label: string
@@ -130,11 +131,35 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         ctx.fillStyle = '#0B1526' // dark navy color
         ctx.textBaseline = 'bottom'
 
+        // Load and draw the logo
+        let logoOffset = 0
+        try {
+          const logo = new Image()
+          logo.src = logoImg
+          await new Promise((resolve, reject) => {
+            logo.onload = resolve
+            logo.onerror = reject
+          })
+          
+          // Height: 36px visually (which is ~50% larger than the original 24px layout logo)
+          const logoHeight = 36 * scale
+          const logoWidth = (logo.width / logo.height) * logoHeight
+          
+          // Align logo vertically with text baseline (roughly)
+          const logoY = yPos - logoHeight + (5 * scale) 
+          
+          ctx.drawImage(logo, horizontalMargin, logoY, logoWidth, logoHeight)
+          
+          logoOffset = logoWidth + (16 * scale) // logo width + 16px gap
+        } catch (e) {
+          console.error("Failed to draw logo on snapshot", e)
+        }
+
         // Bottom-left
         const leftFontSize = 28 * scale
         ctx.font = `700 ${leftFontSize}px sans-serif`
         ctx.textAlign = 'left'
-        ctx.fillText('Powered by TejasFinserv', horizontalMargin, yPos)
+        ctx.fillText('Powered by TejasFinserv', horizontalMargin + logoOffset, yPos)
 
         // Bottom-right
         const rightFontSize = 24 * scale
