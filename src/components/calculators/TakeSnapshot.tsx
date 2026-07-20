@@ -19,6 +19,7 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
   const exportRef = useRef<HTMLDivElement>(null)
 
   const handleSnapshot = async () => {
+    console.log("Snapshot started");
     if (!exportRef.current || isGenerating) return
     setIsGenerating(true)
 
@@ -111,17 +112,19 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         logging: false,
       })
 
+      console.log("Canvas generated", canvas.width, canvas.height);
       // Add footer text to the canvas
       const ctx = canvas.getContext('2d')
       if (ctx) {
+        console.log("Drawing footer");
         ctx.save()
         const scale = 2
         const padding = 30 * scale
-        const fontSize = 16 * scale
-        const lineHeight = 24 * scale
+        const fontSize = 18 * scale
+        const lineHeight = 26 * scale
 
-        ctx.fillStyle = '#6b7280' // subtle gray
-        ctx.font = `500 ${fontSize}px sans-serif`
+        ctx.fillStyle = '#000000' // strict black for visibility
+        ctx.font = `bold ${fontSize}px sans-serif`
         ctx.textBaseline = 'bottom'
 
         // Bottom-left
@@ -144,6 +147,7 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
       }
 
       // 6. Save the generated PNG
+      console.log("Downloading image");
       if (fileHandle) {
         // Native Save: Write the blob directly to the selected location
         const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png', 1.0))
