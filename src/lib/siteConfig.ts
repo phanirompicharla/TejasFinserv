@@ -111,7 +111,7 @@ export const siteConfig = {
   },
 
   analytics: {
-    ga4Id: import.meta.env.VITE_GA4_ID as string | undefined,
+    ga4Id: (import.meta.env.VITE_GA4_ID as string | undefined) || 'G-D69S6DVF1W',
     gscVerification: import.meta.env.VITE_GSC_VERIFICATION as string | undefined,
     metaPixelId: import.meta.env.VITE_META_PIXEL_ID as string | undefined,
   },

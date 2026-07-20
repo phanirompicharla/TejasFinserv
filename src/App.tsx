@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Layout } from './components/Layout'
 import { ScrollToTop } from './components/ScrollToTop'
 import { ErrorBoundary } from './components/ErrorBoundary'
+import { Analytics } from './components/Analytics'
 
 const Home = lazy(() => import('./pages/Home').then((m) => ({ default: m.Home })))
 const About = lazy(() => import('./pages/About').then((m) => ({ default: m.About })))
@@ -37,6 +38,7 @@ export default function App() {
     <ErrorBoundary>
       <BrowserRouter>
         <ScrollToTop />
+        <Analytics />
         <Suspense fallback={<PageLoader />}>
           <Routes>
             <Route path="/admin/*" element={<AdminDashboard />} />
