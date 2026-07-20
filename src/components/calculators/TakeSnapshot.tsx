@@ -111,6 +111,31 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         logging: false,
       })
 
+      // Add footer text to the canvas
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        ctx.save()
+        const scale = 2
+        const padding = 30 * scale
+        const fontSize = 16 * scale
+        const lineHeight = 24 * scale
+
+        ctx.fillStyle = '#6b7280' // subtle gray
+        ctx.font = `500 ${fontSize}px sans-serif`
+        ctx.textBaseline = 'bottom'
+
+        // Bottom-left
+        ctx.textAlign = 'left'
+        ctx.fillText('Powered by TejasFinserv', padding, canvas.height - padding)
+
+        // Bottom-right
+        ctx.textAlign = 'right'
+        ctx.fillText('ARN-251896', canvas.width - padding, canvas.height - padding - lineHeight)
+        ctx.fillText('9490716662', canvas.width - padding, canvas.height - padding)
+
+        ctx.restore()
+      }
+
       // 5. Cleanup clone
       document.body.removeChild(cloneNode)
 
