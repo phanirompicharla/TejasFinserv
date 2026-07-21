@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import html2canvas from 'html2canvas'
 import { CalculatorExportLayout } from './CalculatorExportLayout'
+import logoImg from '../../assets/images/TEJAS SVG2.svg'
 
 interface ExportInput {
   label: string
@@ -19,6 +20,7 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
   const exportRef = useRef<HTMLDivElement>(null)
 
   const handleSnapshot = async () => {
+    console.log("Snapshot started");
     if (!exportRef.current || isGenerating) return
     setIsGenerating(true)
 
@@ -111,6 +113,63 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
         logging: false,
       })
 
+      console.log("Canvas generated", canvas.width, canvas.height);
+      // Add footer text to the canvas
+      const ctx = canvas.getContext('2d')
+      if (ctx) {
+        console.log("Drawing footer");
+        ctx.save()
+        // html2canvas leaves the context scaled (e.g. scale: 2). Reset it so our raw pixel coordinates work.
+        ctx.setTransform(1, 0, 0, 1, 0, 0)
+
+        const scale = 2
+        const horizontalMargin = 65 * scale
+        const bottomPadding = 45 * scale
+        
+        const yPos = canvas.height - bottomPadding
+
+        ctx.fillStyle = '#0B1526' // dark navy color
+        ctx.textBaseline = 'bottom'
+
+        // Bottom-left Text
+        const leftFontSize = 28 * scale
+        ctx.font = `700 ${leftFontSize}px sans-serif`
+        ctx.textAlign = 'left'
+        const brandText = 'Powered by TejasFinserv'
+        ctx.fillText(brandText, horizontalMargin, yPos)
+        const textWidth = ctx.measureText(brandText).width
+
+        // Load and draw the logo after the text
+        try {
+          const logo = new Image()
+          logo.src = logoImg
+          await new Promise((resolve, reject) => {
+            logo.onload = resolve
+            logo.onerror = reject
+          })
+          
+          // Height: 36px visually (which is ~50% larger than the original 24px layout logo)
+          const logoHeight = 36 * scale
+          const logoWidth = (logo.width / logo.height) * logoHeight
+          
+          // Align logo vertically with text baseline (roughly)
+          const logoY = yPos - logoHeight + (5 * scale) 
+          const logoX = horizontalMargin + textWidth + (16 * scale) // text width + 16px gap
+          
+          ctx.drawImage(logo, logoX, logoY, logoWidth, logoHeight)
+        } catch (e) {
+          console.error("Failed to draw logo on snapshot", e)
+        }
+
+        // Bottom-right
+        const rightFontSize = 24 * scale
+        ctx.font = `600 ${rightFontSize}px sans-serif`
+        ctx.textAlign = 'right'
+        ctx.fillText('ARN: 251896 | Ph: 9490716662', canvas.width - horizontalMargin, yPos)
+
+        ctx.restore()
+      }
+
       // 5. Cleanup clone
       document.body.removeChild(cloneNode)
 
@@ -119,6 +178,7 @@ export function TakeSnapshot({ title, inputs, resultsNode, filename }: TakeSnaps
       }
 
       // 6. Save the generated PNG
+      console.log("Downloading image");
       if (fileHandle) {
         // Native Save: Write the blob directly to the selected location
         const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png', 1.0))
