@@ -34,11 +34,12 @@ export function Seo({ title, description, path = '/', jsonLd, noindex }: SeoProp
       <meta property="og:url" content={url} />
       <meta property="og:site_name" content={siteConfig.name} />
       <meta property="og:locale" content="en_IN" />
-      <meta property="og:image" content={`${siteConfig.baseUrl}/favicon.svg`} />
+      <meta property="og:image" content={`${siteConfig.baseUrl}/logo.webp`} />
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={`${siteConfig.baseUrl}/logo.webp`} />
 
       {schemas.map((schema, i) => (
         <script key={i} type="application/ld+json">

@@ -6,7 +6,7 @@ export function organizationSchema() {
     '@type': 'Organization',
     name: siteConfig.name,
     url: siteConfig.baseUrl,
-    logo: `${siteConfig.baseUrl}/favicon.svg`,
+    logo: `${siteConfig.baseUrl}/logo.webp`,
     description: `${siteConfig.name} — ${siteConfig.tagline}. AMFI-registered Mutual Fund Distributor ${siteConfig.regulatory.arn}.`,
     telephone: siteConfig.contact.phoneTel,
     email: siteConfig.contact.email,
@@ -135,7 +135,7 @@ export function articleSchema(title: string, description: string, slug: string, 
     datePublished,
     dateModified: datePublished,
     author: { '@type': 'Person', name: author },
-    publisher: { '@type': 'Organization', name: siteConfig.name, logo: { '@type': 'ImageObject', url: `${siteConfig.baseUrl}/favicon.svg` } },
+    publisher: { '@type': 'Organization', name: siteConfig.name, logo: { '@type': 'ImageObject', url: `${siteConfig.baseUrl}/logo.webp` } },
     mainEntityOfPage: `${siteConfig.baseUrl}/insights/${slug}`,
   }
 }
