@@ -72,19 +72,34 @@ export const siteConfig = {
 
   testimonials: [
     {
-      name: 'Ravi K.',
+      name: 'Sneha E',
       location: 'Vijayawada',
-      quote: 'TejasFinserv helped me start my first SIP and explained every step clearly. Transparent advice without pressure.',
+      quote: 'Excellent service at Tejas Finserv! A top-notch financial services firm. I was impressed by their quick turnaround time and attention to detail. They handle documentation and follow-ups very efficiently, making the whole experience hassle-free. 5 stars for their professionalism and customer support.',
     },
     {
-      name: 'Lakshmi P.',
-      location: 'Guntur',
-      quote: 'Goal-based planning for my daughter\'s education gave me clarity on how much to invest monthly. Highly recommended.',
+      name: 'Sunkara Nagasindhu',
+      location: 'Vijayawada',
+      quote: 'I am happy to invest in TEJAS FINSERV and the guidance given by Mr. Phani Kishore sir.',
     },
     {
-      name: 'Suresh M.',
+      name: 'Immidi Srikanth',
       location: 'Vijayawada',
-      quote: 'Professional, AMFI-registered, and always available on WhatsApp for queries. A trustworthy advisor in Vijayawada.',
+      quote: 'I have been investing with TEJAS FINSERV for more than 4 years. I would strongly recommend TEJAS FINSERV to anyone looking to secure their future.',
+    },
+    {
+      name: 'Krishna Chaitanya Bobba',
+      location: 'Vijayawada',
+      quote: 'Great experience with Mr. Phani Kishore. Clearly explained everything point by point in detail.',
+    },
+    {
+      name: 'Surekha Solasa',
+      location: 'Vijayawada',
+      quote: 'He explains all funds in detail, responds on time, and frequently monitors the portfolio.',
+    },
+    {
+      name: 'Misra Ravikanth',
+      location: 'Vijayawada',
+      quote: 'As an Assistant Professor, I appreciate their excellent guidance and support. They are never profit-minded and always strive to help clients, especially during insurance claim settlements. \'Assistance with Assurance\' truly reflects their service. They provide 24×7 guidance, support, motivation, insurance assistance, and financial advice.',
     },
   ],
 
