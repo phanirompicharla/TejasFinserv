@@ -80,6 +80,7 @@ export function Testimonials() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     const fetchApprovedReviews = async () => {
@@ -93,6 +94,7 @@ export function Testimonials() {
             location: r.city
           }))
           setReviews([...siteConfig.testimonials, ...apiReviews])
+          setLoaded(true)
         }
       } catch (err) {
         console.error('Failed to fetch reviews:', err)
@@ -139,7 +141,7 @@ export function Testimonials() {
                 Client Stories
               </p>
               <h2 className="font-display text-2xl font-semibold text-navy">
-                Trusted by investors in Vijayawada
+                What our investors say
               </h2>
             </div>
             <Button onClick={() => setIsModalOpen(true)} className="w-fit">
@@ -148,7 +150,19 @@ export function Testimonials() {
           </div>
         </SectionReveal>
         
-        <TestimonialCarousel reviews={reviews} />
+        {reviews.length > 0 ? (
+          <TestimonialCarousel reviews={reviews} />
+        ) : loaded ? (
+          <SectionReveal delay={100}>
+            <div className="mt-10 rounded-3xl border border-dashed border-brass/40 bg-cream p-8 text-center">
+              <p className="font-display text-xl font-semibold text-navy">Invested with TejasFinserv?</p>
+              <p className="mx-auto mt-2 max-w-xl text-muted">
+                Your experience helps other families in Vijayawada choose with confidence. Reviews appear here after a quick check.
+              </p>
+              <Button onClick={() => setIsModalOpen(true)} className="mt-6">Share your experience</Button>
+            </div>
+          </SectionReveal>
+        ) : null}
         
         {siteConfig.reviews.googleUrl && (
           <p className="mt-8 text-center text-sm">

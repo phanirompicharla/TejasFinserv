@@ -12,6 +12,10 @@ export const siteConfig = {
       'TejasFinserv is an AMFI-registered Mutual Fund Distributor (ARN-251896). Mutual Fund investments are subject to market risks, read all scheme related documents carefully. Past performance is not indicative of future returns.',
     marketRiskNote:
       'Mutual Fund investments are subject to market risks, read all scheme related documents carefully. Past performance is not indicative of future returns.',
+    insuranceNote: 'Insurance is the subject matter of solicitation.',
+    // TODO: add IRDAI licence / POSP code and insurer or broker name, e.g. 'IRDAI POSP code: XXXXX · <Broker name>'
+    insuranceRegistration: undefined as string | undefined,
+    mfPlatform: 'Mutual fund transactions are processed through the AssetPlus platform.',
   },
 
   contact: {
@@ -40,19 +44,22 @@ export const siteConfig = {
   },
 
   advisor: {
-    name: 'Phani Rompicharla',
+    name: 'Phani Kishore Rompicharla',
     title: 'Founder & Mutual Fund Distributor',
+    credentials: 'B.Tech, M.Tech, (Ph.D), LMCSI',
+    profileUrl: 'https://phanisworld.com',
+    linkedinUrl: 'https://www.linkedin.com/in/phanikishorerompicharla/',
     arn: 'ARN-251896',
     location: 'Vijayawada',
     // TODO: confirm with client
     experience: '[CONFIRM] years',
-    bio: 'Phani Rompicharla is the founder of TejasFinserv and an AMFI-registered Mutual Fund Distributor (ARN-251896) based in Vijayawada. He helps individuals and businesses across Andhra Pradesh with mutual fund investments, goal-based financial planning, and insurance advisory.',
+    bio: 'Phani Kishore Rompicharla is the founder of TejasFinserv and an AMFI-registered Mutual Fund Distributor (ARN-251896) based in Vijayawada. An engineer and educator by profession, he helps families across Andhra Pradesh start SIPs, link every goal to a monthly investment, and stay protected with health, term and vehicle insurance, explained simply and without pressure.',
   },
 
   stats: {
     schemes: 6000,
     amcs: 40,
-    serviceLines: 3,
+    calculators: 15,
   },
 
   amcPartners: [
@@ -70,23 +77,9 @@ export const siteConfig = {
     { name: 'Tata Mutual Fund', slug: 'tata' },
   ],
 
-  testimonials: [
-    {
-      name: 'Ravi K.',
-      location: 'Vijayawada',
-      quote: 'TejasFinserv helped me start my first SIP and explained every step clearly. Transparent advice without pressure.',
-    },
-    {
-      name: 'Lakshmi P.',
-      location: 'Guntur',
-      quote: 'Goal-based planning for my daughter\'s education gave me clarity on how much to invest monthly. Highly recommended.',
-    },
-    {
-      name: 'Suresh M.',
-      location: 'Vijayawada',
-      quote: 'Professional, AMFI-registered, and always available on WhatsApp for queries. A trustworthy advisor in Vijayawada.',
-    },
-  ],
+  // Only real, client-approved reviews belong on the site. Reviews submitted through "Write a Review"
+  // appear automatically once approved in /admin. Add a reviewed quote here only with the client's consent.
+  testimonials: [] as { name: string; location: string; quote: string }[],
 
   reviews: {
     // TODO: confirm Google Business Profile review URL
@@ -140,8 +133,8 @@ export const siteConfig = {
 
   services: [
     {
-      title: 'Financial Planning',
-      description: 'A clear roadmap for your goals, cash flow, and future.',
+      title: 'Goal-based Investing',
+      description: 'Link each goal (education, a home, retirement) to a monthly SIP and suitable funds.',
       path: '/financial-planning',
     },
     {
@@ -152,7 +145,7 @@ export const siteConfig = {
     },
     {
       title: 'Insurance',
-      description: 'Protect what matters with the right life and health cover.',
+      description: 'Health, term life and vehicle insurance to protect what matters.',
       path: '/insurance',
     },
     {
@@ -170,7 +163,7 @@ export const siteConfig = {
   ],
 
   social: {
-    linkedin: undefined as string | undefined,
+    linkedin: 'https://www.linkedin.com/company/tejasfinserv/' as string | undefined,
     facebook: undefined as string | undefined,
     instagram: undefined as string | undefined,
     youtube: undefined as string | undefined,
@@ -181,17 +174,17 @@ export const siteConfig = {
     home: {
       title: 'TejasFinserv — Mutual Fund Distributor Vijayawada',
       description:
-        'AMFI-registered mutual fund distributor (ARN-251896) in Vijayawada. SIP, financial planning, insurance & free calculators. Start investing online.',
+        'AMFI-registered mutual fund distributor (ARN-251896) in Vijayawada. SIP, goal-based investing, health & term insurance and 15+ free calculators. Start investing online.',
     },
     about: {
-      title: 'About TejasFinserv — AMFI Advisor Vijayawada',
+      title: 'About TejasFinserv — Mutual Fund Distributor Vijayawada',
       description:
-        'Meet Phani Rompicharla, AMFI-registered mutual fund distributor (ARN-251896). Trusted financial advisory in Vijayawada, Andhra Pradesh.',
+        'Meet Phani Kishore Rompicharla, AMFI-registered mutual fund distributor (ARN-251896) in Vijayawada, Andhra Pradesh. SIPs, goal-based investing and insurance.',
     },
     financialPlanning: {
-      title: 'Financial Planning Vijayawada — TejasFinserv',
+      title: 'Goal-based Investing Vijayawada — TejasFinserv',
       description:
-        'Goal-based financial planning, retirement strategies, and portfolio reviews tailored to your life and goals in Vijayawada.',
+        'Link your goals (child education, home, retirement) to the right SIP amount and mutual fund schemes, with periodic portfolio reviews in Vijayawada.',
     },
     mutualFunds: {
       title: 'Mutual Funds Vijayawada — 6000+ Schemes',
@@ -199,9 +192,9 @@ export const siteConfig = {
         'Start SIP online with an AMFI-registered distributor. Access 6,000+ mutual fund schemes across 40+ AMCs in Vijayawada.',
     },
     insurance: {
-      title: 'Insurance Advisory — TejasFinserv Vijayawada',
+      title: 'Health, Term & Vehicle Insurance — TejasFinserv Vijayawada',
       description:
-        'Life, health, and business insurance advisory to protect what matters most. Personalized cover in Vijayawada.',
+        'Compare and buy health, term life and vehicle insurance with help from TejasFinserv in Vijayawada. Insurance is the subject matter of solicitation.',
     },
     calculators: {
       title: 'Free Financial Calculators — SIP, SIP Delay, Retirement',

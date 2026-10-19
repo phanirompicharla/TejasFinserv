@@ -71,8 +71,8 @@ export function Footer() {
           <div className="lg:col-span-2">
             <Logo className="w-[48px] h-[48px]" imgClassName="w-full h-full object-contain object-left" />
             <p className="mt-4 text-sm leading-relaxed text-ivory/70">
-              {siteConfig.tagline} — AMFI-registered mutual fund distribution, financial planning,
-              and insurance advisory in Vijayawada, Andhra Pradesh.
+              {siteConfig.tagline} — AMFI-registered mutual fund distribution, goal-based investing support,
+              and health, term &amp; vehicle insurance in Vijayawada, Andhra Pradesh.
             </p>
             <div className="mt-4 flex items-center gap-4">
               <a
@@ -240,6 +240,10 @@ export function Footer() {
 
         <div className="mt-6 space-y-4">
           <p className="text-xs leading-relaxed text-ivory/70">{siteConfig.regulatory.disclaimer}</p>
+          <p className="mt-2 text-xs leading-relaxed text-ivory/60">
+            {siteConfig.regulatory.mfPlatform} {siteConfig.regulatory.insuranceNote}
+            {siteConfig.regulatory.insuranceRegistration ? ` ${siteConfig.regulatory.insuranceRegistration}.` : ''}
+          </p>
           <ArnBadge variant="light" />
           <div className="flex flex-col gap-2 text-xs text-ivory/70 sm:flex-row sm:items-center sm:justify-between">
             <p>{siteConfig.copyright}</p>

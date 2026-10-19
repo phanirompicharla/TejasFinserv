@@ -13,6 +13,7 @@ import { ServiceCard } from '../components/ServiceCard'
 import { StatCounter } from '../components/StatCounter'
 import { Testimonials } from '../components/Testimonials'
 import { globalFaqs } from '../content/faqs'
+import founderImage from '../assets/images/founder.jpg'
 import { tier1Calculators } from '../lib/calculators/registry'
 import { siteConfig } from '../lib/siteConfig'
 import { faqPageSchema, financialServiceSchema, howToSchema, organizationSchema, websiteSchema } from '../schema'
@@ -52,14 +53,33 @@ export function Home() {
             <h2 className="max-w-3xl font-display font-semibold text-navy">Building wealth through trusted relationships</h2>
           </SectionReveal>
           <SectionReveal delay={100}>
-            <p className="mt-8 max-w-3xl text-lg text-muted">
-              TejasFinserv is a dynamic financial services firm committed to helping individuals
-              and businesses achieve their financial goals. With experienced professionals, we offer
-              investments, savings, insurance, and financial planning — leveraging modern tools for
-              real-time insights and data-driven strategies.
-            </p>
-            <div className="mt-8">
-              <Button to="/about">Discover More</Button>
+            <div className="mt-10 grid items-center gap-10 lg:grid-cols-[auto_1fr]">
+              <img
+                src={founderImage}
+                alt={`${siteConfig.advisor.name}, founder of TejasFinserv`}
+                className="mx-auto h-40 w-40 rounded-3xl border-4 border-cream object-cover shadow-xl lg:mx-0"
+                loading="lazy"
+                width="160"
+                height="160"
+              />
+              <div>
+                <p className="text-sm font-semibold uppercase tracking-widest text-brass">Meet the founder</p>
+                <h3 className="mt-1 font-display text-2xl font-semibold text-navy">{siteConfig.advisor.name}</h3>
+                <p className="text-sm font-medium text-muted">
+                  {siteConfig.advisor.credentials} · AMFI-registered Mutual Fund Distributor · {siteConfig.regulatory.arn}
+                </p>
+                <p className="mt-4 max-w-3xl text-lg text-muted">
+                  TejasFinserv is a Vijayawada-based practice built on one idea: <em>assistance with assurance</em>.
+                  When you work with us, you deal directly with Phani: one person who knows your goals, answers
+                  on WhatsApp and explains every SIP, fund and policy in plain language, with no jargon and no pressure.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <Button to="/about">More about us</Button>
+                  <Button href={siteConfig.contact.whatsappUrl} external variant="ghost">
+                    Chat on WhatsApp
+                  </Button>
+                </div>
+              </div>
             </div>
           </SectionReveal>
         </div>
@@ -72,7 +92,7 @@ export function Home() {
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-3">
             <StatCounter value={siteConfig.stats.schemes} suffix="+" label="Mutual Fund Schemes" />
             <StatCounter value={siteConfig.stats.amcs} suffix="+" label="Asset Management Companies" />
-            <StatCounter value={siteConfig.stats.serviceLines} label="Core Service Lines" />
+            <StatCounter value={siteConfig.stats.calculators} suffix="+" label="Free Calculators" />
           </div>
         </div>
       </section>

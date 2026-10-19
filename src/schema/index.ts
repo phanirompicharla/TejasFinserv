@@ -28,7 +28,7 @@ export function financialServiceSchema() {
     '@context': 'https://schema.org',
     '@type': ['FinancialService', 'LocalBusiness'],
     name: siteConfig.name,
-    description: `AMFI-registered mutual fund distributor and financial advisor in Vijayawada, Andhra Pradesh. ${siteConfig.regulatory.arn}.`,
+    description: `AMFI-registered mutual fund distributor and insurance advisor in Vijayawada, Andhra Pradesh. ${siteConfig.regulatory.arn}.`,
     url: siteConfig.baseUrl,
     telephone: siteConfig.contact.phoneTel,
     email: siteConfig.contact.email,
