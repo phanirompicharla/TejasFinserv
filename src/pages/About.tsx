@@ -296,8 +296,9 @@ export function About() {
                     AMFI Registered · {siteConfig.advisor.arn}
                   </div>
                   <h3 className="font-display text-3xl font-semibold text-navy">
-                    Phani Kishore Rompicharla
+                    {siteConfig.advisor.name}
                   </h3>
+                  <p className="text-sm font-medium text-muted">{siteConfig.advisor.credentials}</p>
                   <p className="text-brass font-medium text-base">
                     {siteConfig.advisor.title} · {siteConfig.advisor.location}
                   </p>
