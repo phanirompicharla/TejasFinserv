@@ -128,6 +128,7 @@ export const siteConfig = {
       ],
     },
     { label: 'Insights', path: '/insights' },
+    { label: 'NAV', path: '/nav' },
     { label: 'Contact', path: '/contact' },
   ],
 

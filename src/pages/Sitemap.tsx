@@ -53,6 +53,7 @@ const sitemapData: SitemapSection[] = [
     description: 'Interactive online tools to calculate returns, SIP amounts, and financial goals.',
     links: [
       { label: 'All Calculators Hub', path: '/calculators', desc: 'Browse our complete suite of 18+ free financial calculators.' },
+      { label: 'Mutual Fund NAV Today', path: '/nav', desc: 'Latest NAV of every mutual fund scheme, updated daily from AMFI.' },
       { label: 'SIP Investment Calculator', path: '/calculators/sip', desc: 'Calculate wealth accumulation through monthly SIPs.' },
       { label: 'Step-Up SIP Calculator', path: '/calculators/step-up-sip', desc: 'See how increasing SIP by 5-10% yearly accelerates wealth.' },
       { label: 'Retirement Corpus Calculator', path: '/calculators/retirement', desc: 'Estimate required corpus for your desired retirement lifestyle.' },

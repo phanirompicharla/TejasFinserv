@@ -100,7 +100,8 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://app.tejasfinserv.com"],
+            connectSrc: ["'self'", "https://app.tejasfinserv.com"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             imgSrc: ["'self'", "data:", "https:"],
             fontSrc: ["'self'", "https://fonts.gstatic.com"],
@@ -169,6 +170,10 @@ const staticRoutesMap = {
     '/insights': {
         title: 'Investment Insights & Guides — TejasFinserv',
         description: 'Expert articles on SIP, ELSS, retirement planning, and mutual fund investing for Vijayawada investors.'
+    },
+    '/nav': {
+        title: 'Mutual Fund NAV Today — All Schemes | TejasFinserv',
+        description: 'Latest NAV of every mutual fund scheme in India, updated daily from AMFI. Search, sort and compare. TejasFinserv, ARN-251896.'
     },
     '/faq': {
         title: 'FAQ — Mutual Funds & Investing | TejasFinserv',
@@ -455,6 +460,7 @@ app.get('/sitemap.xml', async (req, res) => {
             { path: '/health-insurance', priority: '0.8', changefreq: 'monthly' },
             { path: '/savings-plans', priority: '0.8', changefreq: 'monthly' },
             { path: '/calculators', priority: '0.9', changefreq: 'monthly' },
+            { path: '/nav', priority: '0.8', changefreq: 'daily' },
             { path: '/calculators/sip', priority: '0.8', changefreq: 'monthly' },
             { path: '/calculators/lumpsum', priority: '0.8', changefreq: 'monthly' },
             { path: '/calculators/step-up-sip', priority: '0.8', changefreq: 'monthly' },

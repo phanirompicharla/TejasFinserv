@@ -23,6 +23,7 @@ const GoalPage = lazy(() => import('./pages/goals/GoalPage').then((m) => ({ defa
 const LegalPage = lazy(() => import('./pages/legal/LegalPage').then((m) => ({ default: m.LegalPage })))
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard').then((m) => ({ default: m.AdminDashboard })))
 const NotFound = lazy(() => import('./pages/NotFound').then((m) => ({ default: m.NotFound })))
+const NavPage = lazy(() => import('./pages/NavPage').then((m) => ({ default: m.NavPage })))
 const Sitemap = lazy(() => import('./pages/Sitemap').then((m) => ({ default: m.Sitemap })))
 
 function PageLoader() {
@@ -57,6 +58,7 @@ export default function App() {
               <Route path="insights" element={<Insights />} />
               <Route path="insights/:slug" element={<InsightPost />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="nav" element={<NavPage />} />
               <Route path="goals/:slug" element={<GoalPage />} />
               <Route path="privacy" element={<LegalPage type="privacy" />} />
               <Route path="terms" element={<LegalPage type="terms" />} />
