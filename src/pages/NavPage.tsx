@@ -3,15 +3,25 @@ import { Link } from 'react-router-dom'
 import { Breadcrumbs } from '../components/Breadcrumbs'
 import { Seo } from '../components/Seo'
 import { breadcrumbSchema, financialServiceSchema } from '../schema'
-import { sampleNavData } from '../data/navData'
-
-const WIDGET_SRC = 'https://app.tejasfinserv.com/nav/widget.js'
+import { sampleNavData, type SchemeNav } from '../data/navData'
 
 type CategoryFilter = 'All' | 'Equity' | 'Debt' | 'Hybrid' | 'ELSS' | 'Index / ETF' | 'Liquid'
 type SortField = 'name' | 'nav' | 'changePercent' | 'date'
 type SortOrder = 'asc' | 'desc'
 
+function mapApiCategory(cat: string): 'Equity' | 'Debt' | 'Hybrid' | 'ELSS' | 'Index / ETF' | 'Liquid' {
+  const c = (cat || '').toLowerCase()
+  if (c.includes('elss')) return 'ELSS'
+  if (c.includes('index') || c.includes('etf')) return 'Index / ETF'
+  if (c.includes('liquid') || c.includes('overnight') || c.includes('money market')) return 'Liquid'
+  if (c.includes('debt') || c.includes('bond') || c.includes('gilt') || c.includes('duration') || c.includes('credit')) return 'Debt'
+  if (c.includes('hybrid') || c.includes('balanced') || c.includes('arbitrage') || c.includes('multi asset')) return 'Hybrid'
+  return 'Equity'
+}
+
 export function NavPage() {
+  const [schemes, setSchemes] = useState<SchemeNav[]>(sampleNavData)
+  const [_isLoadingLive, setIsLoadingLive] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
   const [selectedAmc, setSelectedAmc] = useState<string>('All')
@@ -21,31 +31,54 @@ export function NavPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const pageSize = 12
 
-  // Optional background script attachment for external widget container
+  // Fetch live AMFI scheme feeds directly into single React UI (replaces obsolete external widget)
   useEffect(() => {
-    try {
-      const s = document.createElement('script')
-      s.src = `${WIDGET_SRC}?v=${new Date().toISOString().slice(0, 10)}`
-      s.defer = true
-      document.body.appendChild(s)
-      return () => {
-        s.remove()
+    let isMounted = true
+    const fetchLiveNav = async () => {
+      try {
+        setIsLoadingLive(true)
+        const res = await fetch('https://app.tejasfinserv.com/nav/api?meta=1')
+        if (!res.ok) return
+        const data = await res.json()
+        if (data && Array.isArray(data.schemes) && data.schemes.length > 0) {
+          const liveSchemes: SchemeNav[] = data.schemes.map((s: Record<string, unknown>) => ({
+            code: String(s.code || ''),
+            name: String(s.name || ''),
+            amc: String(s.amc || 'Mutual Fund'),
+            category: mapApiCategory(String(s.category || '')),
+            subCategory: String(s.category || 'Mutual Fund'),
+            plan: s.option === 'IDCW' ? 'IDCW' : 'Growth',
+            nav: typeof s.nav === 'number' ? s.nav : parseFloat(String(s.nav)) || 0,
+            changePercent: typeof s.change_pct === 'number' ? s.change_pct : (s.change ? parseFloat(String(s.change)) : 0),
+            date: String(s.date_label || s.date || 'Today'),
+            riskLevel: 'Moderate',
+          }))
+          if (isMounted) {
+            setSchemes(liveSchemes)
+          }
+        }
+      } catch {
+        // Safe fallback to preloaded sampleNavData
+      } finally {
+        if (isMounted) setIsLoadingLive(false)
       }
-    } catch {
-      // Safe no-op if offline or blocked
+    }
+    fetchLiveNav()
+    return () => {
+      isMounted = false
     }
   }, [])
 
   // Extract unique AMCs
   const amcList = useMemo(() => {
     const set = new Set<string>()
-    sampleNavData.forEach((s) => set.add(s.amc))
+    schemes.forEach((s) => set.add(s.amc))
     return ['All', ...Array.from(set).sort()]
-  }, [])
+  }, [schemes])
 
   // Filter and sort schemes
   const filteredSchemes = useMemo(() => {
-    return sampleNavData.filter((scheme) => {
+    return schemes.filter((scheme) => {
       const matchesSearch =
         searchQuery.trim() === '' ||
         scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -76,7 +109,7 @@ export function NavPage() {
       }
       return sortOrder === 'asc' ? comparison : -comparison
     })
-  }, [searchQuery, selectedCategory, selectedAmc, selectedPlan, sortField, sortOrder])
+  }, [schemes, searchQuery, selectedCategory, selectedAmc, selectedPlan, sortField, sortOrder])
 
   const totalPages = Math.max(1, Math.ceil(filteredSchemes.length / pageSize))
   const safeCurrentPage = Math.min(currentPage, totalPages)
@@ -618,9 +651,6 @@ export function NavPage() {
               </div>
             </div>
           )}
-
-          {/* External Widget Container for backwards compatibility */}
-          <div id="tejas-nav" className="hidden" aria-hidden="true" />
 
           {/* Regulatory Compliance Callout */}
           <div className="mt-12 rounded-2xl border border-brass/30 bg-cream p-6 shadow-sm">
