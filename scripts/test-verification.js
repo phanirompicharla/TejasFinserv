@@ -130,6 +130,69 @@ server.listen(0, '127.0.0.1', async () => {
         const pass12 = t12.statusCode === 400;
         results.push({ name: t12.testName, passed: pass12, details: `Status: ${t12.statusCode} (expected 400)` });
 
+        // Test 13: Homepage JSON-LD Structured Data Validation
+        const t13 = await probe('Homepage has valid Schema.org JSON-LD', '/');
+        const jsonLdMatch = t13.body.match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/i);
+        let parsedJsonLd = null;
+        let hasJsonLd = false;
+        if (jsonLdMatch) {
+            try {
+                parsedJsonLd = JSON.parse(jsonLdMatch[1].trim());
+                hasJsonLd = parsedJsonLd['@context'] === 'https://schema.org';
+            } catch (e) {}
+        }
+        results.push({ name: t13.testName, passed: hasJsonLd, details: `Has valid JSON-LD: ${hasJsonLd}` });
+
+        // Test 14: Organization & FinancialService Schema Node completeness
+        const graph = parsedJsonLd && parsedJsonLd['@graph'] ? parsedJsonLd['@graph'] : [];
+        const orgNode = graph.find(n => {
+            const types = Array.isArray(n['@type']) ? n['@type'] : [n['@type']];
+            return types.includes('Organization') || types.includes('FinancialService') || types.includes('LocalBusiness');
+        });
+        const hasOrgAndService = Boolean(
+            orgNode &&
+            orgNode.name === 'Tejas Finserv' &&
+            orgNode.telephone === '+919490716662' &&
+            orgNode.email === 'phani.rompicharla@gmail.com'
+        );
+        results.push({
+            name: 'Organization / FinancialService schema complete with telephone & email',
+            passed: hasOrgAndService,
+            details: `Found node: ${Boolean(orgNode)}, Types: ${orgNode ? JSON.stringify(orgNode['@type']) : 'none'}`
+        });
+
+        // Test 15: Entity linked via sameAs
+        const sameAsLinks = orgNode && Array.isArray(orgNode.sameAs) ? orgNode.sameAs : [];
+        const hasSameAs = sameAsLinks.length >= 3 && sameAsLinks.some(l => l.includes('linkedin.com'));
+        results.push({
+            name: 'Entity is linked to external profiles via sameAs',
+            passed: hasSameAs,
+            details: `sameAs count: ${sameAsLinks.length}, includes LinkedIn: ${sameAsLinks.some(l => l.includes('linkedin.com'))}`
+        });
+
+        // Test 16: Legal & core pages linked (/terms, /privacy, /disclaimer, /about, /contact)
+        const hasTerms = t13.body.includes('href="/terms"');
+        const hasPrivacy = t13.body.includes('href="/privacy"');
+        const hasDisclaimer = t13.body.includes('href="/disclaimer"');
+        const hasAbout = t13.body.includes('href="/about"');
+        const hasContact = t13.body.includes('href="/contact"');
+        const pass16 = hasTerms && hasPrivacy && hasDisclaimer && hasAbout && hasContact;
+        results.push({
+            name: 'About, contact and legal pages linked (including /terms)',
+            passed: pass16,
+            details: `terms: ${hasTerms}, privacy: ${hasPrivacy}, disclaimer: ${hasDisclaimer}, about: ${hasAbout}, contact: ${hasContact}`
+        });
+
+        // Test 17: Machine-readable contact details (tel: and mailto:)
+        const hasTel = t13.body.includes('href="tel:+919490716662"');
+        const hasMailto = t13.body.includes('href="mailto:phani.rompicharla@gmail.com"');
+        const pass17 = hasTel && hasMailto;
+        results.push({
+            name: 'Contact details are machine-readable (tel: and mailto:)',
+            passed: pass17,
+            details: `tel:+919490716662: ${hasTel}, mailto:phani.rompicharla@gmail.com: ${hasMailto}`
+        });
+
         // Print Summary
         console.log('='.repeat(70));
         console.log('TEST SUITE VERIFICATION RESULTS:');
@@ -142,7 +205,7 @@ server.listen(0, '127.0.0.1', async () => {
             if (!r.passed) allPassed = false;
         }
         console.log('='.repeat(70));
-        console.log(`OVERALL RESULT: ${allPassed ? 'ALL TESTS PASSED (12/12)' : 'SOME TESTS FAILED'}`);
+        console.log(`OVERALL RESULT: ${allPassed ? `ALL TESTS PASSED (${results.filter(r => r.passed).length}/${results.length})` : 'SOME TESTS FAILED'}`);
         console.log('='.repeat(70));
 
     } catch (e) {

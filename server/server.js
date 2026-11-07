@@ -499,6 +499,94 @@ ${info.description || 'Assistance with Assurance — Mutual Fund Distribution & 
 `;
 }
 
+// Helper: Canonical Organization + FinancialService Schema
+function getBaseOrganizationSchema() {
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": ["FinancialService", "LocalBusiness", "Organization"],
+                "@id": "https://tejasfinserv.com/#organization",
+                "name": "Tejas Finserv",
+                "legalName": "Tejas Finserv (ARN-251896)",
+                "alternateName": ["TejasFinserv", "Tejas Financial Services"],
+                "url": "https://tejasfinserv.com",
+                "logo": {
+                    "@type": "ImageObject",
+                    "@id": "https://tejasfinserv.com/#logo",
+                    "url": "https://tejasfinserv.com/logo.webp",
+                    "caption": "Tejas Finserv Logo"
+                },
+                "image": "https://tejasfinserv.com/logo.webp",
+                "description": "AMFI-registered mutual fund distributor (ARN-251896) in Vijayawada, Andhra Pradesh. Goal-based investing, SIP planning, health & term insurance, and mutual fund advisory.",
+                "telephone": "+919490716662",
+                "email": "phani.rompicharla@gmail.com",
+                "priceRange": "₹₹",
+                "currenciesAccepted": "INR",
+                "paymentAccepted": "Net Banking, UPI, NEFT, RTGS, NACH Mandate",
+                "address": {
+                    "@type": "PostalAddress",
+                    "streetAddress": "23-221, Near Old Water Tank, Yanamalakuduru",
+                    "addressLocality": "Vijayawada",
+                    "addressRegion": "Andhra Pradesh",
+                    "postalCode": "520007",
+                    "addressCountry": "IN"
+                },
+                "geo": {
+                    "@type": "GeoCoordinates",
+                    "latitude": 16.487297,
+                    "longitude": 80.662539
+                },
+                "openingHoursSpecification": [
+                    {
+                        "@type": "OpeningHoursSpecification",
+                        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+                        "opens": "09:00",
+                        "closes": "19:00"
+                    }
+                ],
+                "founder": {
+                    "@type": "Person",
+                    "@id": "https://tejasfinserv.com/#founder",
+                    "name": "Phani Kishore Rompicharla",
+                    "jobTitle": "Founder & AMFI-Registered Mutual Fund Distributor",
+                    "sameAs": [
+                        "https://www.linkedin.com/in/phanikishorerompicharla/",
+                        "https://phanisworld.com"
+                    ]
+                },
+                "contactPoint": [
+                    {
+                        "@type": "ContactPoint",
+                        "telephone": "+919490716662",
+                        "contactType": "customer service",
+                        "email": "phani.rompicharla@gmail.com",
+                        "areaServed": "IN",
+                        "availableLanguage": ["English", "Telugu", "Hindi"]
+                    }
+                ],
+                "sameAs": [
+                    "https://www.linkedin.com/company/tejasfinserv/",
+                    "https://www.linkedin.com/in/phanikishorerompicharla/",
+                    "https://phanisworld.com",
+                    "https://whatsapp.com/channel/0029Vb0cvTY0rGiK32jBw62H",
+                    "https://maps.app.goo.gl/7saxjnh6xzKCHm8f8"
+                ]
+            },
+            {
+                "@type": "WebSite",
+                "@id": "https://tejasfinserv.com/#website",
+                "url": "https://tejasfinserv.com",
+                "name": "Tejas Finserv",
+                "alternateName": "TejasFinserv",
+                "publisher": {
+                    "@id": "https://tejasfinserv.com/#organization"
+                }
+            }
+        ]
+    };
+}
+
 // --- HELPER: Server-Side First-Byte SEO & Status Handler ---
 async function serveHtmlWithSEO(req, res) {
     const indexPath = path.join(distPath, 'index.html');
@@ -547,20 +635,36 @@ async function serveHtmlWithSEO(req, res) {
             description = resolution.info.description || description;
             if (resolution.type === 'insight') {
                 ogType = 'article';
+                const baseOrg = getBaseOrganizationSchema();
                 schemaJson = JSON.stringify({
                     "@context": "https://schema.org",
-                    "@type": "BlogPosting",
-                    "headline": resolution.info.title,
-                    "description": description,
-                    "image": imageUrl,
-                    "url": canonicalUrl,
-                    "datePublished": resolution.info.datePublished || new Date().toISOString(),
-                    "author": {
-                        "@type": "Person",
-                        "name": resolution.info.author || "Phani Rompicharla"
-                    }
+                    "@graph": [
+                        baseOrg["@graph"][0],
+                        baseOrg["@graph"][1],
+                        {
+                            "@type": "BlogPosting",
+                            "@id": `${canonicalUrl}#article`,
+                            "headline": resolution.info.title,
+                            "description": description,
+                            "image": imageUrl,
+                            "url": canonicalUrl,
+                            "datePublished": resolution.info.datePublished || new Date().toISOString(),
+                            "author": {
+                                "@type": "Person",
+                                "name": resolution.info.author || "Phani Rompicharla"
+                            },
+                            "publisher": {
+                                "@id": "https://tejasfinserv.com/#organization"
+                            }
+                        }
+                    ]
                 }, null, 2);
             }
+        }
+
+        // Always ensure schemaJson contains canonical Organization + FinancialService
+        if (!schemaJson) {
+            schemaJson = JSON.stringify(getBaseOrganizationSchema(), null, 2);
         }
 
         // 1. Replace <title>
@@ -612,16 +716,14 @@ async function serveHtmlWithSEO(req, res) {
         html = replaceOrInsertMeta(html, 'name', 'twitter:description', description);
         html = replaceOrInsertMeta(html, 'name', 'twitter:image', imageUrl);
 
-        // 6. Inject schema JSON-LD if present
-        if (schemaJson) {
-            const scriptTag = `<script type="application/ld+json">\n${schemaJson}\n</script>`;
-            if (/<!--\s*JSONLD_PLACEHOLDER\s*-->/i.test(html)) {
-                html = html.replace(/<!--\s*JSONLD_PLACEHOLDER\s*-->/i, scriptTag);
-            } else {
-                html = html.replace(/<\/head>/i, `  ${scriptTag}\n</head>`);
-            }
+        // 6. Inject schema JSON-LD
+        const scriptTag = `<script type="application/ld+json">\n${schemaJson}\n</script>`;
+        if (/<!--\s*JSONLD_PLACEHOLDER\s*-->[\s\S]*?<!--\s*\/JSONLD_PLACEHOLDER\s*-->/i.test(html)) {
+            html = html.replace(/<!--\s*JSONLD_PLACEHOLDER\s*-->[\s\S]*?<!--\s*\/JSONLD_PLACEHOLDER\s*-->/i, `<!-- JSONLD_PLACEHOLDER -->\n${scriptTag}\n<!-- /JSONLD_PLACEHOLDER -->`);
+        } else if (/<!--\s*JSONLD_PLACEHOLDER\s*-->/i.test(html)) {
+            html = html.replace(/<!--\s*JSONLD_PLACEHOLDER\s*-->/i, scriptTag);
         } else {
-            html = html.replace(/<!--\s*JSONLD_PLACEHOLDER\s*-->/i, '');
+            html = html.replace(/<\/head>/i, `  ${scriptTag}\n</head>`);
         }
 
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');

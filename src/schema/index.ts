@@ -5,6 +5,8 @@ export function organizationSchema() {
     siteConfig.social.linkedin,
     siteConfig.advisor.linkedinUrl,
     siteConfig.advisor.profileUrl,
+    'https://whatsapp.com/channel/0029Vb0cvTY0rGiK32jBw62H',
+    siteConfig.contact.mapsUrl,
   ].filter(Boolean) as string[]
 
   return {
@@ -48,6 +50,8 @@ export function financialServiceSchema() {
     siteConfig.social.linkedin,
     siteConfig.advisor.linkedinUrl,
     siteConfig.advisor.profileUrl,
+    'https://whatsapp.com/channel/0029Vb0cvTY0rGiK32jBw62H',
+    siteConfig.contact.mapsUrl,
   ].filter(Boolean) as string[]
 
   return {
