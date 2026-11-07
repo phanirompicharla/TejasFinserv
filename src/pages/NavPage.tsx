@@ -5,6 +5,8 @@ import { Seo } from '../components/Seo'
 import { breadcrumbSchema, financialServiceSchema } from '../schema'
 import { sampleNavData, type SchemeNav } from '../data/navData'
 
+const API_BASE = 'https://app.tejasfinserv.com/nav/api'
+
 type CategoryFilter = 'All' | 'Equity' | 'Debt' | 'Hybrid' | 'ELSS' | 'Index / ETF' | 'Liquid'
 type SortField = 'name' | 'nav' | 'changePercent' | 'date'
 type SortOrder = 'asc' | 'desc'
@@ -21,26 +23,87 @@ function mapApiCategory(cat: string): 'Equity' | 'Debt' | 'Hybrid' | 'ELSS' | 'I
 
 export function NavPage() {
   const [schemes, setSchemes] = useState<SchemeNav[]>(sampleNavData)
-  const [_isLoadingLive, setIsLoadingLive] = useState(false)
+  const [amcOptions, setAmcOptions] = useState<string[]>([])
+  const [totalMatching, setTotalMatching] = useState<number>(sampleNavData.length)
+  const [totalPages, setTotalPages] = useState<number>(1)
+  const [navDate, setNavDate] = useState<string>('08 Nov 2026')
+  const [totalDatabaseCount, setTotalDatabaseCount] = useState<number>(9716)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  // Filters & Controls
   const [searchQuery, setSearchQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('All')
   const [selectedAmc, setSelectedAmc] = useState<string>('All')
   const [selectedPlan, setSelectedPlan] = useState<'All' | 'Growth' | 'IDCW'>('All')
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc')
-  const [currentPage, setCurrentPage] = useState(1)
-  const pageSize = 12
+  const [currentPage, setCurrentPage] = useState<number>(1)
 
-  // Fetch live AMFI scheme feeds directly into single React UI (replaces obsolete external widget)
+  // Debounce search input by 350ms
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(searchQuery.trim())
+    }, 350)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
+  // Fetch live AMFI scheme feeds directly from the official API
   useEffect(() => {
     let isMounted = true
+    const controller = new AbortController()
+
     const fetchLiveNav = async () => {
+      setIsLoading(true)
       try {
-        setIsLoadingLive(true)
-        const res = await fetch('https://app.tejasfinserv.com/nav/api?meta=1')
+        const p = new URLSearchParams()
+        if (debouncedQuery) p.set('q', debouncedQuery)
+        if (selectedAmc !== 'All') p.set('amc', selectedAmc)
+        if (selectedCategory !== 'All') p.set('cat', selectedCategory)
+
+        if (selectedPlan === 'Growth') {
+          p.set('opt', 'Growth')
+        } else if (selectedPlan === 'IDCW') {
+          p.set('opt', 'IDCW')
+        } else {
+          p.set('opt', 'All')
+        }
+        p.set('plan', 'All')
+
+        // API sort translation
+        const apiSort = sortField === 'changePercent' ? 'chg' : sortField
+        p.set('sort', apiSort)
+        p.set('dir', sortOrder)
+        p.set('page', String(currentPage))
+
+        // Request metadata on initial load
+        if (amcOptions.length === 0) {
+          p.set('meta', '1')
+        }
+
+        const res = await fetch(`${API_BASE}?${p.toString()}`, { signal: controller.signal })
         if (!res.ok) return
+
         const data = await res.json()
-        if (data && Array.isArray(data.schemes) && data.schemes.length > 0) {
+        if (!isMounted) return
+
+        if (data.amcs && Array.isArray(data.amcs)) {
+          setAmcOptions(data.amcs)
+        }
+        if (data.count) {
+          setTotalDatabaseCount(data.count)
+        }
+        if (data.nav_date) {
+          setNavDate(data.nav_date)
+        }
+        if (typeof data.total === 'number') {
+          setTotalMatching(data.total)
+        }
+        if (typeof data.pages === 'number') {
+          setTotalPages(Math.max(1, data.pages))
+        }
+
+        if (Array.isArray(data.schemes)) {
           const liveSchemes: SchemeNav[] = data.schemes.map((s: Record<string, unknown>) => ({
             code: String(s.code || ''),
             name: String(s.name || ''),
@@ -50,74 +113,44 @@ export function NavPage() {
             plan: s.option === 'IDCW' ? 'IDCW' : 'Growth',
             nav: typeof s.nav === 'number' ? s.nav : parseFloat(String(s.nav)) || 0,
             changePercent: typeof s.change_pct === 'number' ? s.change_pct : (s.change ? parseFloat(String(s.change)) : 0),
-            date: String(s.date_label || s.date || 'Today'),
+            date: String(s.date_label || s.date || navDate),
             riskLevel: 'Moderate',
           }))
-          if (isMounted) {
-            setSchemes(liveSchemes)
-          }
+          setSchemes(liveSchemes)
         }
-      } catch {
-        // Safe fallback to preloaded sampleNavData
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name === 'AbortError') return
+        // Safe offline fallback: filter preloaded sampleNavData
+        const fallback = sampleNavData.filter((scheme) => {
+          const matchQ = !debouncedQuery || scheme.name.toLowerCase().includes(debouncedQuery.toLowerCase())
+          const matchC = selectedCategory === 'All' || scheme.category === selectedCategory
+          const matchA = selectedAmc === 'All' || scheme.amc === selectedAmc
+          return matchQ && matchC && matchA
+        })
+        if (isMounted) {
+          setSchemes(fallback)
+          setTotalMatching(fallback.length)
+          setTotalPages(Math.max(1, Math.ceil(fallback.length / 12)))
+        }
       } finally {
-        if (isMounted) setIsLoadingLive(false)
+        if (isMounted) setIsLoading(false)
       }
     }
+
     fetchLiveNav()
+
     return () => {
       isMounted = false
+      controller.abort()
     }
-  }, [])
+  }, [debouncedQuery, selectedCategory, selectedAmc, selectedPlan, sortField, sortOrder, currentPage, amcOptions.length, navDate])
 
-  // Extract unique AMCs
   const amcList = useMemo(() => {
+    if (amcOptions.length > 0) return ['All', ...amcOptions]
     const set = new Set<string>()
-    schemes.forEach((s) => set.add(s.amc))
+    sampleNavData.forEach((s) => set.add(s.amc))
     return ['All', ...Array.from(set).sort()]
-  }, [schemes])
-
-  // Filter and sort schemes
-  const filteredSchemes = useMemo(() => {
-    return schemes.filter((scheme) => {
-      const matchesSearch =
-        searchQuery.trim() === '' ||
-        scheme.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        scheme.code.includes(searchQuery.trim()) ||
-        scheme.amc.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        scheme.subCategory.toLowerCase().includes(searchQuery.toLowerCase())
-
-      const matchesCategory =
-        selectedCategory === 'All' || scheme.category === selectedCategory
-
-      const matchesAmc =
-        selectedAmc === 'All' || scheme.amc === selectedAmc
-
-      const matchesPlan =
-        selectedPlan === 'All' || scheme.plan === selectedPlan
-
-      return matchesSearch && matchesCategory && matchesAmc && matchesPlan
-    }).sort((a, b) => {
-      let comparison = 0
-      if (sortField === 'name') {
-        comparison = a.name.localeCompare(b.name)
-      } else if (sortField === 'nav') {
-        comparison = a.nav - b.nav
-      } else if (sortField === 'changePercent') {
-        comparison = a.changePercent - b.changePercent
-      } else if (sortField === 'date') {
-        comparison = a.date.localeCompare(b.date)
-      }
-      return sortOrder === 'asc' ? comparison : -comparison
-    })
-  }, [schemes, searchQuery, selectedCategory, selectedAmc, selectedPlan, sortField, sortOrder])
-
-  const totalPages = Math.max(1, Math.ceil(filteredSchemes.length / pageSize))
-  const safeCurrentPage = Math.min(currentPage, totalPages)
-
-  const paginatedSchemes = useMemo(() => {
-    const start = (safeCurrentPage - 1) * pageSize
-    return filteredSchemes.slice(start, start + pageSize)
-  }, [filteredSchemes, safeCurrentPage, pageSize])
+  }, [amcOptions])
 
   const handleSort = (field: SortField) => {
     setCurrentPage(1)
@@ -131,6 +164,7 @@ export function NavPage() {
 
   const clearAllFilters = () => {
     setSearchQuery('')
+    setDebouncedQuery('')
     setSelectedCategory('All')
     setSelectedAmc('All')
     setSelectedPlan('All')
@@ -149,7 +183,7 @@ export function NavPage() {
     <>
       <Seo
         title="Mutual Fund NAV Today — All Schemes | TejasFinserv"
-        description="Latest daily Net Asset Value (NAV) of mutual fund schemes in India, updated from AMFI. Search by fund name, category, or fund house. TejasFinserv, AMFI ARN-251896."
+        description="Latest daily Net Asset Value (NAV) of 9,700+ mutual fund schemes in India, updated daily from AMFI. Search by fund name, category, or fund house. TejasFinserv, AMFI ARN-251896."
         path="/nav"
         jsonLd={[
           breadcrumbSchema([
@@ -175,7 +209,7 @@ export function NavPage() {
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-brass/40 bg-brass/10 px-3 py-1 text-xs font-semibold text-brass">
               <span className="h-1.5 w-1.5 rounded-full bg-brass motion-safe:animate-pulse motion-reduce:animate-none" />
-              Daily AMFI verified feed
+              Live AMFI Feed · {navDate}
             </span>
             <span className="text-xs text-ivory/60">
               AMFI ARN-251896 · Updated daily
@@ -186,25 +220,25 @@ export function NavPage() {
             Mutual Fund NAV Today
           </h1>
           <p className="mt-3 max-w-2xl text-base sm:text-lg text-ivory/80 leading-relaxed font-body">
-            Track daily Net Asset Value across Indian mutual fund schemes.
+            Search, compare, and track real-time Net Asset Values across {totalDatabaseCount.toLocaleString('en-IN')}+ mutual fund schemes in India.
           </p>
 
           {/* Quick Stats Grid */}
           <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
             <div className="rounded-xl border border-ivory/10 bg-ivory/5 p-3.5 backdrop-blur-sm">
               <p className="text-xs text-brass font-semibold">AMCs covered</p>
-              <p className="mt-1 font-display text-2xl font-bold text-ivory">40+ AMCs</p>
+              <p className="mt-1 font-display text-2xl font-bold text-ivory">55 AMCs</p>
               <p className="text-[11px] text-ivory/60">Across India</p>
             </div>
             <div className="rounded-xl border border-ivory/10 bg-ivory/5 p-3.5 backdrop-blur-sm">
               <p className="text-xs text-brass font-semibold">Schemes tracked</p>
-              <p className="mt-1 font-display text-2xl font-bold text-ivory">6,000+</p>
-              <p className="text-[11px] text-ivory/60">Direct and regular</p>
+              <p className="mt-1 font-display text-2xl font-bold text-ivory">{totalDatabaseCount.toLocaleString('en-IN')}+</p>
+              <p className="text-[11px] text-ivory/60">Direct &amp; Regular</p>
             </div>
             <div className="rounded-xl border border-ivory/10 bg-ivory/5 p-3.5 backdrop-blur-sm">
               <p className="text-xs text-brass font-semibold">Data source</p>
               <p className="mt-1 font-display text-2xl font-bold text-ivory">AMFI India</p>
-              <p className="text-[11px] text-ivory/60">End-of-day NAV</p>
+              <p className="text-[11px] text-ivory/60">Official daily feed</p>
             </div>
             <div className="rounded-xl border border-ivory/10 bg-ivory/5 p-3.5 backdrop-blur-sm">
               <p className="text-xs text-brass font-semibold">Advisory licence</p>
@@ -218,7 +252,7 @@ export function NavPage() {
       {/* Main NAV Explorer Section */}
       <section className="section-padding bg-ivory min-h-screen">
         <div className="container-main">
-          {/* Controls Bar: Search + Category Pills */}
+          {/* Single Unified Controls Bar */}
           <div className="rounded-2xl border border-line bg-cream p-5 sm:p-6 shadow-sm">
             {/* Search Input & AMC/Plan Dropdowns */}
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5 items-center">
@@ -240,7 +274,7 @@ export function NavPage() {
                     setSearchQuery(e.target.value)
                     setCurrentPage(1)
                   }}
-                  placeholder="Search scheme name, code (e.g. 122639) or AMC"
+                  placeholder="Type fund name (e.g. Parag Parikh, HDFC, SBI) or AMFI code"
                   className="w-full rounded-xl border border-line bg-ivory/80 py-2.5 pl-10 pr-9 text-sm text-ink placeholder:text-muted/70 transition-colors focus:border-brass focus:bg-white focus:outline-none focus:ring-1 focus:ring-brass"
                 />
                 {searchQuery && (
@@ -274,7 +308,7 @@ export function NavPage() {
                   }}
                   className="w-full rounded-xl border border-line bg-ivory/80 py-2.5 px-3 text-sm text-ink transition-colors focus:border-brass focus:bg-white focus:outline-none focus:ring-1 focus:ring-brass"
                 >
-                  <option value="All">All fund houses</option>
+                  <option value="All">All fund houses ({amcList.length > 1 ? `${amcList.length - 1} AMCs` : 'All'})</option>
                   {amcList.filter((a) => a !== 'All').map((amc) => (
                     <option key={amc} value={amc}>
                       {amc}
@@ -297,7 +331,7 @@ export function NavPage() {
                   }}
                   className="w-full rounded-xl border border-line bg-ivory/80 py-2.5 px-3 text-sm text-ink transition-colors focus:border-brass focus:bg-white focus:outline-none focus:ring-1 focus:ring-brass"
                 >
-                  <option value="All">All plans (growth &amp; IDCW)</option>
+                  <option value="All">All options (Growth &amp; IDCW)</option>
                   <option value="Growth">Growth option</option>
                   <option value="IDCW">IDCW option</option>
                 </select>
@@ -366,7 +400,7 @@ export function NavPage() {
                 )}
                 {selectedPlan !== 'All' && (
                   <span className="rounded-md bg-ivory px-2 py-0.5 border border-line font-medium text-ink">
-                    Plan: {selectedPlan}
+                    Option: {selectedPlan}
                   </span>
                 )}
               </div>
@@ -376,9 +410,13 @@ export function NavPage() {
           {/* Results Summary Bar */}
           <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-muted px-1">
             <p>
-              Showing <strong className="text-ink">{filteredSchemes.length}</strong> schemes
+              Showing <strong className="text-ink">{schemes.length}</strong> of{' '}
+              <strong className="text-ink">{totalMatching.toLocaleString('en-IN')}</strong> schemes
               {selectedCategory !== 'All' && ` in ${selectedCategory}`}
               {selectedAmc !== 'All' && ` from ${selectedAmc}`}
+              {isLoading && (
+                <span className="ml-2 text-brass font-medium">Updating...</span>
+              )}
             </p>
             <div className="flex items-center gap-3">
               <span className="text-xs text-muted">Sort:</span>
@@ -407,7 +445,7 @@ export function NavPage() {
           </div>
 
           {/* Empty State */}
-          {filteredSchemes.length === 0 && (
+          {!isLoading && schemes.length === 0 && (
             <div className="mt-8 rounded-2xl border border-line bg-cream p-12 text-center">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-navy/5 text-navy">
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -429,8 +467,8 @@ export function NavPage() {
           )}
 
           {/* Desktop & Tablet Table View */}
-          {filteredSchemes.length > 0 && (
-            <div className="mt-4 hidden md:block overflow-hidden rounded-2xl border border-line bg-cream shadow-sm">
+          {schemes.length > 0 && (
+            <div className={`mt-4 hidden md:block overflow-hidden rounded-2xl border border-line bg-cream shadow-sm transition-opacity ${isLoading ? 'opacity-70' : 'opacity-100'}`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm" aria-label="Mutual Fund NAV Table">
                   <thead>
@@ -483,11 +521,11 @@ export function NavPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-line/70">
-                    {paginatedSchemes.map((scheme) => {
+                    {schemes.map((scheme) => {
                       const isPositive = scheme.changePercent >= 0
                       return (
                         <tr
-                          key={scheme.code}
+                          key={`${scheme.code}-${scheme.name}`}
                           className="group transition-colors hover:bg-ivory/80"
                         >
                           {/* Scheme Name & AMC */}
@@ -517,7 +555,7 @@ export function NavPage() {
                           {/* NAV */}
                           <td className="py-4 px-3 text-right">
                             <span className="font-mono text-base font-bold text-navy">
-                              ₹{scheme.nav.toFixed(2)}
+                              ₹{scheme.nav.toFixed(4)}
                             </span>
                           </td>
 
@@ -558,13 +596,13 @@ export function NavPage() {
           )}
 
           {/* Mobile Card List View (< 768px) */}
-          {filteredSchemes.length > 0 && (
-            <div className="mt-4 grid grid-cols-1 gap-3.5 md:hidden">
-              {paginatedSchemes.map((scheme) => {
+          {schemes.length > 0 && (
+            <div className={`mt-4 grid grid-cols-1 gap-3.5 md:hidden transition-opacity ${isLoading ? 'opacity-70' : 'opacity-100'}`}>
+              {schemes.map((scheme) => {
                 const isPositive = scheme.changePercent >= 0
                 return (
                   <div
-                    key={scheme.code}
+                    key={`mobile-${scheme.code}-${scheme.name}`}
                     className="rounded-2xl border border-line bg-cream p-4 shadow-sm hover:border-brass/40 transition-colors"
                   >
                     <div className="flex items-start justify-between gap-2">
@@ -593,7 +631,7 @@ export function NavPage() {
                     <div className="mt-3.5 pt-3 border-t border-line/60 flex items-center justify-between">
                       <div>
                         <p className="text-[10px] text-muted font-semibold">Latest NAV</p>
-                        <p className="font-mono text-lg font-bold text-navy">₹{scheme.nav.toFixed(2)}</p>
+                        <p className="font-mono text-lg font-bold text-navy">₹{scheme.nav.toFixed(4)}</p>
                         <p className="text-[10px] text-muted font-mono">{scheme.date}</p>
                       </div>
 
@@ -614,36 +652,55 @@ export function NavPage() {
           {totalPages > 1 && (
             <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-line pt-6">
               <p className="text-xs text-muted">
-                Page <strong className="text-ink">{safeCurrentPage}</strong> of{' '}
+                Page <strong className="text-ink">{currentPage}</strong> of{' '}
                 <strong className="text-ink">{totalPages}</strong>
               </p>
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
-                  disabled={safeCurrentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  onClick={() => {
+                    setCurrentPage((p) => Math.max(1, p - 1))
+                    window.scrollTo({ top: 400, behavior: 'smooth' })
+                  }}
                   className="rounded-lg border border-line bg-cream px-3 py-1.5 text-xs font-semibold text-ink disabled:opacity-40 disabled:pointer-events-none hover:border-brass active:scale-95 transition-colors transition-transform"
                 >
                   Previous
                 </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <button
-                    key={page}
-                    type="button"
-                    onClick={() => setCurrentPage(page)}
-                    className={`h-8 w-8 rounded-lg text-xs font-semibold active:scale-95 transition-colors transition-transform ${
-                      safeCurrentPage === page
-                        ? 'bg-navy text-ivory'
-                        : 'border border-line bg-cream text-muted hover:border-brass hover:text-ink'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+                
+                {/* Adaptive Page Numbers */}
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  let p = i + 1
+                  if (totalPages > 5 && currentPage > 3) {
+                    p = currentPage - 2 + i
+                    if (p > totalPages) p = totalPages - (4 - i)
+                  }
+                  return (
+                    <button
+                      key={p}
+                      type="button"
+                      onClick={() => {
+                        setCurrentPage(p)
+                        window.scrollTo({ top: 400, behavior: 'smooth' })
+                      }}
+                      className={`h-8 w-8 rounded-lg text-xs font-semibold active:scale-95 transition-colors transition-transform ${
+                        currentPage === p
+                          ? 'bg-navy text-ivory'
+                          : 'border border-line bg-cream text-muted hover:border-brass hover:text-ink'
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                })}
+
                 <button
                   type="button"
-                  disabled={safeCurrentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  onClick={() => {
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                    window.scrollTo({ top: 400, behavior: 'smooth' })
+                  }}
                   className="rounded-lg border border-line bg-cream px-3 py-1.5 text-xs font-semibold text-ink disabled:opacity-40 disabled:pointer-events-none hover:border-brass active:scale-95 transition-colors transition-transform"
                 >
                   Next
@@ -665,7 +722,7 @@ export function NavPage() {
                   AMFI regulatory disclosure and information
                 </h4>
                 <p className="mt-1 text-xs text-muted leading-relaxed">
-                  Net Asset Value (NAV) figures displayed are sourced from official AMFI daily data feeds and published for investor educational and reference purposes. Net Asset Values fluctuate in accordance with underlying portfolio movements. Mutual Fund investments are subject to market risks; please read all scheme-related documents carefully before investing. TejasFinserv is an AMFI-registered Mutual Fund Distributor bearing ARN-251896.
+                  Net Asset Value (NAV) figures displayed are sourced directly from official AMFI daily data feeds and published for investor educational and reference purposes. Net Asset Values fluctuate in accordance with underlying portfolio movements. Mutual Fund investments are subject to market risks; please read all scheme-related documents carefully before investing. TejasFinserv is an AMFI-registered Mutual Fund Distributor bearing ARN-251896.
                 </p>
                 <div className="mt-3 flex flex-wrap gap-4 text-xs font-semibold">
                   <a
