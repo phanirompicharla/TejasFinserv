@@ -2,7 +2,7 @@ import { siteConfig } from '../lib/siteConfig'
 import { Button } from '../components/Button'
 import { SectionReveal } from '../components/SectionReveal'
 import { Seo } from '../components/Seo'
-import { organizationSchema, personSchema } from '../schema'
+import { aboutPageSchema, organizationSchema, personSchema, breadcrumbSchema } from '../schema'
 import founderImage from '../assets/images/founder.jpg'
 
 const approachSteps = [
@@ -77,7 +77,12 @@ export function About() {
         title={siteConfig.seo.about.title}
         description={siteConfig.seo.about.description}
         path="/about"
-        jsonLd={[organizationSchema(), personSchema()]}
+        jsonLd={[
+          aboutPageSchema(),
+          organizationSchema(),
+          personSchema(),
+          breadcrumbSchema([{ name: 'Home', path: '/' }, { name: 'About', path: '/about' }])
+        ]}
       />
 
       {/* Hero strip */}

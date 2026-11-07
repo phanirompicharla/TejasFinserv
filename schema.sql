@@ -37,6 +37,24 @@ CREATE TABLE IF NOT EXISTS client_reviews (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS admin_login_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    admin_id INT NULL,
+    username VARCHAR(50),
+    ip_address VARCHAR(255),
+    user_agent VARCHAR(255),
+    status ENUM('SUCCESS', 'FAILURE') NOT NULL,
+    attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS site_settings (
+    setting_key VARCHAR(50) PRIMARY KEY,
+    setting_value VARCHAR(255)
+);
+
+INSERT IGNORE INTO site_settings (setting_key, setting_value)
+VALUES ('coming_soon', 'false');
+
 -- Insert a default admin user (username: admin, password: password)
 -- NOTE: You should change this password immediately in production!
 INSERT IGNORE INTO admins (username, password_hash) VALUES ('admin', '$2b$10$Ld649l/t3gF29gTj8GvzWOr/BxhdnxhBSW2QqcbFRpsfGPZjPMVeG');

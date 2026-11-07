@@ -27,17 +27,11 @@ function startEmergencyServer(error) {
     try {
         const server = http.createServer((req, res) => {
             res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
-            res.end(`
-CRITICAL STARTUP ERROR
-======================
-The Node.js application failed to start.
-
-Error Details:
-${error.stack || error}
-
-Time: ${new Date().toISOString()}
-Check 'server_startup.log' for more info.
-            `.trim());
+            const isProd = process.env.NODE_ENV === 'production';
+            const clientMsg = isProd
+                ? 'Temporary Service Disruption: The service is currently restarting. Please try again shortly.'
+                : `CRITICAL STARTUP ERROR\n======================\n${error.stack || error}\n\nTime: ${new Date().toISOString()}`;
+            res.end(clientMsg);
         });
 
         server.listen(port, () => {

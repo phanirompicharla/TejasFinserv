@@ -4,6 +4,7 @@ import cors from 'cors';
 import db from './config/db.js';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import helmet from 'helmet';
 import bcrypt from 'bcryptjs';
@@ -17,12 +18,16 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enforce secure JWT_SECRET or fallback safely to prevent Hostinger startup crashes if not defined in .env
+// Enforce JWT_SECRET strictly from environment variable (.env)
 const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET && process.env.NODE_ENV === 'production') {
-    console.warn('WARNING: JWT_SECRET environment variable is not set in production. Using secure application fallback.');
+if (!JWT_SECRET) {
+    if (process.env.NODE_ENV !== 'test') {
+        console.error('FATAL: JWT_SECRET environment variable is missing.');
+        console.error('Please define JWT_SECRET in your .env file or hosting environment variables.');
+        process.exit(1);
+    }
 }
-const SECRET_KEY = JWT_SECRET || 'TejasFinserv_Super_Secure_Prod_Fallback_Secret_2026_!#@%*';
+const SECRET_KEY = JWT_SECRET || 'test-fallback-secret-for-offline-unit-tests-only';
 
 // 1. Strict Login Brute-Force Rate Limiter (Max 5 failed attempts per 15 minutes)
 const loginLimiter = rateLimit({
@@ -33,89 +38,118 @@ const loginLimiter = rateLimit({
     legacyHeaders: false,
 });
 
-// 2. Public API Spam/DoS Rate Limiter (Max 20 requests per 10 minutes per IP)
+// 2. Public API Spam/DoS Rate Limiter (Max 25 requests per 10 minutes per IP)
 const apiLimiter = rateLimit({
     windowMs: 10 * 60 * 1000,
-    max: 20,
-    message: { error: 'Too many requests from this IP. Please slow down.' }
+    max: 25,
+    message: { error: 'Too many requests from this IP. Please slow down.' },
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 
-// Database Startup Migrations
-(async () => {
-    try {
-        await db.query('ALTER TABLE insights ADD COLUMN description TEXT NULL');
-        console.log('Migrated: description column added to insights');
-    } catch (e) {}
-    try {
-        await db.query('ALTER TABLE insights ADD COLUMN read_time VARCHAR(50) NULL');
-        console.log('Migrated: read_time column added to insights');
-    } catch (e) {}
-    try {
-        await db.query('ALTER TABLE insights ADD COLUMN tags VARCHAR(255) NULL');
-        console.log('Migrated: tags column added to insights');
-    } catch (e) {}
-    try {
-        await db.query('ALTER TABLE insights ADD COLUMN author VARCHAR(100) NULL');
-        console.log('Migrated: author column added to insights');
-    } catch (e) {}
-    try {
-        await db.query("ALTER TABLE client_reviews MODIFY COLUMN status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending'");
-        console.log('Migrated: status ENUM updated in client_reviews');
-    } catch (e) {}
-    try {
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS admin_login_logs (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                admin_id INT NULL,
-                username VARCHAR(50),
-                ip_address VARCHAR(255),
-                user_agent VARCHAR(255),
-                status ENUM('SUCCESS', 'FAILURE') NOT NULL,
-                attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        `);
-        console.log('Migrated: admin_login_logs table checked/created');
-    } catch (e) {
-        console.error('Error migrating admin_login_logs table:', e);
-    }
-    try {
-        await db.query(`
-            CREATE TABLE IF NOT EXISTS site_settings (
-                setting_key VARCHAR(50) PRIMARY KEY,
-                setting_value VARCHAR(255)
-            )
-        `);
-        await db.query(`
-            INSERT IGNORE INTO site_settings (setting_key, setting_value)
-            VALUES ('coming_soon', 'true')
-        `);
-        console.log('Migrated: site_settings table checked/created with default coming_soon=true');
-    } catch (e) {
-        console.error('Error migrating site_settings table:', e);
-    }
-})();
+// 3. General Read API Rate Limiter
+const readLimiter = rateLimit({
+    windowMs: 5 * 60 * 1000,
+    max: 150,
+    message: { error: 'Too many read requests. Please try again later.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
-// Security Middleware with Helmet + HSTS
+// Security Middleware with Helmet + HSTS + CSP
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://app.tejasfinserv.com"],
-            connectSrc: ["'self'", "https://app.tejasfinserv.com"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            imgSrc: ["'self'", "data:", "https:"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            scriptSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://app.tejasfinserv.com",
+                "https://www.googletagmanager.com",
+                "https://*.googletagmanager.com",
+                "https://*.google-analytics.com"
+            ],
+            connectSrc: [
+                "'self'",
+                "https://app.tejasfinserv.com",
+                "https://www.google-analytics.com",
+                "https://region1.google-analytics.com",
+                "https://*.google-analytics.com",
+                "https://*.analytics.google.com",
+                "https://*.googletagmanager.com",
+                "https://*.google.com",
+                "https://*.google.co.in"
+            ],
+            styleSrc: [
+                "'self'",
+                "'unsafe-inline'",
+                "https://fonts.googleapis.com"
+            ],
+            imgSrc: [
+                "'self'",
+                "data:",
+                "blob:",
+                "https:",
+                "https://*.google.com",
+                "https://*.google.co.in",
+                "https://*.gstatic.com",
+                "https://*.googleapis.com"
+            ],
+            fontSrc: [
+                "'self'",
+                "https://fonts.gstatic.com",
+                "data:"
+            ],
+            frameSrc: [
+                "'self'",
+                "https://www.google.com",
+                "https://*.google.com",
+                "https://www.google.co.in",
+                "https://*.google.co.in",
+                "https://maps.google.com",
+                "https://maps.google.co.in",
+                "https://*.googleapis.com",
+                "https://*.googletagmanager.com",
+                "https://flow.assetplus.in",
+                "https://app.tejasfinserv.com"
+            ],
+            childSrc: [
+                "'self'",
+                "https://www.google.com",
+                "https://*.google.com",
+                "https://www.google.co.in",
+                "https://*.google.co.in",
+                "https://maps.google.com",
+                "https://maps.google.co.in",
+                "https://*.googleapis.com",
+                "https://flow.assetplus.in",
+                "https://app.tejasfinserv.com"
+            ],
+            frameAncestors: ["'self'"],
+            baseUri: ["'self'"]
         }
     },
     hsts: {
         maxAge: 31536000, // 1 Year
         includeSubDomains: true,
         preload: true
+    },
+    referrerPolicy: {
+        policy: 'strict-origin-when-cross-origin'
     }
 }));
+
+// Additional defense-in-depth headers
+app.use((req, res, next) => {
+    res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self "https://www.google.com" "https://maps.google.com" "https://www.google.co.in")');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    next();
+});
+
 app.set('trust proxy', 1);
 
 const distPath = path.join(__dirname, '../dist');
+const publicPath = path.join(__dirname, '../public');
 
 app.use(cors({
     origin: [
@@ -127,7 +161,8 @@ app.use(cors({
     credentials: true
 }));
 
-app.use(express.json());
+// Request size limits to prevent request flooding DoS
+app.use(express.json({ limit: '100kb' }));
 
 // --- SEO META DATA MAPS ---
 const staticRoutesMap = {
@@ -138,6 +173,10 @@ const staticRoutesMap = {
     '/about': {
         title: 'About TejasFinserv — AMFI Advisor Vijayawada',
         description: 'Meet Phani Rompicharla, AMFI-registered mutual fund distributor (ARN-251896). Trusted financial advisory in Vijayawada, Andhra Pradesh.'
+    },
+    '/services': {
+        title: 'Services — Mutual Funds, Insurance & Planning | TejasFinserv',
+        description: 'AMFI-registered mutual fund distribution, pure protection term insurance, family mediclaim, and goal planning in Vijayawada.'
     },
     '/financial-planning': {
         title: 'Financial Planning Vijayawada — TejasFinserv',
@@ -194,6 +233,14 @@ const staticRoutesMap = {
     '/disclaimer': {
         title: 'Disclaimer — TejasFinserv',
         description: 'Important disclaimers regarding mutual fund investments and website information.'
+    },
+    '/legal': {
+        title: 'Regulatory Disclaimers & Disclosures — TejasFinserv',
+        description: 'AMFI ARN-251896 regulatory disclosures, SEBI compliance, and investor charters.'
+    },
+    '/sitemap': {
+        title: 'Sitemap — TejasFinserv',
+        description: 'Comprehensive directory of all pages, financial calculators, and resources on TejasFinserv.'
     }
 };
 
@@ -258,17 +305,230 @@ const staticCalculatorsMap = {
     'income-tax': { title: 'Income Tax Calculator | TejasFinserv', description: 'Compare tax liability under the New vs Old tax regimes for salaried individuals.' }
 };
 
-// --- HELPER: Server-Side First-Byte SEO Meta Injection ---
+const validGoalSlugs = new Set(['retirement', 'child-education', 'tax-saving', 'wealth-creation']);
+
+// Permanently removed resources map (RFC 9110 HTTP 410 Gone)
+const permanentlyRemovedRoutes = new Set([
+    '/legacy-app',
+    '/old-portal',
+    '/v1/mutual-funds'
+]);
+
+// Helper: Determine if a clean path is a valid recognized route
+async function getRouteResolution(cleanPath) {
+    if (permanentlyRemovedRoutes.has(cleanPath)) {
+        return { status: 410, isGone: true };
+    }
+
+    if (staticRoutesMap[cleanPath] !== undefined) {
+        return { status: 200, type: 'static', info: staticRoutesMap[cleanPath] };
+    }
+
+    if (cleanPath.startsWith('/calculators/')) {
+        const slug = cleanPath.split('/')[2];
+        if (staticCalculatorsMap[slug]) {
+            return { status: 200, type: 'calculator', slug, info: staticCalculatorsMap[slug] };
+        }
+    }
+
+    if (cleanPath.startsWith('/goals/')) {
+        const slug = cleanPath.split('/')[2];
+        if (validGoalSlugs.has(slug)) {
+            const goalName = slug.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+            return {
+                status: 200,
+                type: 'goal',
+                slug,
+                info: {
+                    title: `${goalName} Planning — TejasFinserv Vijayawada`,
+                    description: `Plan your ${goalName.toLowerCase()} with disciplined mutual fund SIPs and goal-based advisory from TejasFinserv.`
+                }
+            };
+        }
+    }
+
+    if (cleanPath.startsWith('/insights/')) {
+        const slug = cleanPath.split('/')[2];
+        if (staticInsightsMap[slug]) {
+            return { status: 200, type: 'insight', slug, info: staticInsightsMap[slug] };
+        }
+        try {
+            const [rows] = await db.query('SELECT title, description, content, author, published_at FROM insights WHERE slug = ? OR id = ? LIMIT 1', [slug, slug]);
+            if (rows && rows.length > 0) {
+                return {
+                    status: 200,
+                    type: 'insight',
+                    slug,
+                    info: {
+                        title: `${rows[0].title} | TejasFinserv`,
+                        description: rows[0].description || (rows[0].content ? rows[0].content.substring(0, 160) : rows[0].title),
+                        author: rows[0].author || 'Phani Rompicharla',
+                        content: rows[0].content,
+                        datePublished: rows[0].published_at
+                    }
+                };
+            }
+        } catch (dbErr) {
+            // DB fallback
+        }
+    }
+
+    if (cleanPath === '/admin' || cleanPath.startsWith('/admin/')) {
+        return {
+            status: 200,
+            type: 'admin',
+            info: { title: 'Admin Dashboard | TejasFinserv', description: 'Administrative console for TejasFinserv.' }
+        };
+    }
+
+    return { status: 404, isNotFound: true };
+}
+
+// --- HELPER: Markdown Representation for Content Negotiation (Phase 13) ---
+function generateMarkdownResponse(cleanPath, resolution) {
+    if (resolution.status === 410) {
+        return `# 410 Gone
+
+This resource has been permanently removed from Tejas Finserv.
+
+[Return to Homepage](https://tejasfinserv.com/)
+`;
+    }
+
+    if (resolution.status === 404) {
+        return `# 404 Page Not Found
+
+The requested URL \`${cleanPath}\` does not exist on Tejas Finserv.
+
+## Helpful Links
+- [Homepage](https://tejasfinserv.com/)
+- [Mutual Fund NAV Today](https://tejasfinserv.com/nav)
+- [Financial Calculators](https://tejasfinserv.com/calculators)
+- [Contact Advisor](https://tejasfinserv.com/contact)
+`;
+    }
+
+    if (cleanPath === '' || cleanPath === '/') {
+        return `# Tejas Finserv
+
+> Assistance with Assurance — AMFI-Registered Mutual Fund Distributor (ARN-251896) in Vijayawada, Andhra Pradesh.
+
+## Overview
+Tejas Finserv helps families and individuals across India invest with clarity and purpose. Led by engineer and educator Phani Kishore Rompicharla, the firm provides goal-aligned mutual fund distribution, life term insurance, family health coverage, and 15+ financial calculators.
+
+## Key Services
+- **Mutual Funds Distribution**: 6,000+ schemes across 40+ Asset Management Companies (SBI, HDFC, ICICI Prudential, Nippon India, Kotak, Axis, Parag Parikh, Mirae Asset, etc.).
+- **Goal-Based Financial Planning**: Tailored roadmaps for Retirement, Children's Higher Education, Home Purchase, and Wealth Creation.
+- **Insurance Advisory**: Pure term insurance and family mediclaim protection.
+- **Daily Mutual Fund NAV Tracker**: End-of-day NAV figures sourced directly from AMFI.
+- **15+ Financial Calculators**: SIP, Lumpsum, Step-Up SIP, SWP, Retirement, and EMI tools.
+
+## Contact Information
+- **Advisor**: Phani Kishore Rompicharla (ARN-251896)
+- **Address**: 23-221, Near Old Water Tank, Yanamalakuduru, Vijayawada – 520007, Andhra Pradesh, India
+- **Phone / WhatsApp**: +91 94907 16662
+- **Email**: phani.rompicharla@gmail.com
+- **Website**: https://tejasfinserv.com/
+- **Start Investing**: https://flow.assetplus.in/client_onboarding/?advisor=6313983220391d0009f3de64
+
+## Regulatory Disclosures
+TejasFinserv is an AMFI-registered Mutual Fund Distributor (ARN-251896). Mutual fund investments are subject to market risks; please read all scheme-related documents carefully before investing.
+`;
+    }
+
+    if (cleanPath === '/about') {
+        return `# About Tejas Finserv & Phani Kishore Rompicharla
+
+> AMFI-Registered Mutual Fund Distributor (ARN-251896) · Vijayawada, Andhra Pradesh
+
+## Philosophy & Background
+Tejas Finserv was founded by Phani Kishore Rompicharla (B.Tech, M.Tech, (Ph.D), LMCSI), an engineer and educator by profession. The firm was built on the premise that while modern investing has become digital and accessible, investors still need calm, conflict-free human guidance to avoid emotional mistakes during market cycles.
+
+## Core Commitments
+1. **Goal-First Alignment**: Every rupee invested is mapped to a specific life objective.
+2. **Transparent Distribution**: Zero jargon, full visibility on scheme TERs, portfolio overlaps, and risk metrics.
+3. **Continuous Investor Education**: Active investor awareness and disciplined habit building.
+
+## Contact
+- Address: 23-221, Near Old Water Tank, Yanamalakuduru, Vijayawada – 520007
+- Phone: +91 94907 16662
+- LinkedIn: https://www.linkedin.com/company/tejasfinserv/
+`;
+    }
+
+    if (cleanPath === '/nav') {
+        return `# Mutual Fund NAV Today — All Schemes | Tejas Finserv
+
+Daily Net Asset Value (NAV) of open-ended mutual fund schemes in India, synchronized daily from the Association of Mutual Funds in India (AMFI).
+
+## Scheme Categories Covered
+- **Equity**: Large Cap, Mid Cap, Small Cap, Flexi Cap, Multi Cap.
+- **ELSS**: Section 80C Tax-Saving Funds with 3-year lock-in.
+- **Hybrid**: Balanced Advantage, Aggressive Hybrid, Multi-Asset Allocation.
+- **Debt & Liquid**: Liquid Funds, Overnight Funds, Corporate Bond Funds.
+- **Index & ETFs**: Nifty 50, Sensex, and Next 50 index trackers.
+
+Visit https://tejasfinserv.com/nav to filter and search across 6,000+ schemes.
+`;
+    }
+
+    if (cleanPath === '/calculators') {
+        return `# Free Financial Calculators — Tejas Finserv
+
+Plan investments and quantify compounding returns with 15+ live online calculators:
+- [SIP Calculator](https://tejasfinserv.com/calculators/sip)
+- [Lumpsum Calculator](https://tejasfinserv.com/calculators/lumpsum)
+- [Step-Up SIP Calculator](https://tejasfinserv.com/calculators/step-up-sip)
+- [Goal SIP Calculator](https://tejasfinserv.com/calculators/goal-sip)
+- [SWP Calculator](https://tejasfinserv.com/calculators/swp)
+- [Retirement Calculator](https://tejasfinserv.com/calculators/retirement)
+- [SIP Delay Calculator](https://tejasfinserv.com/calculators/sip-delay)
+- [EMI Calculator](https://tejasfinserv.com/calculators/emi)
+`;
+    }
+
+    // Default structured markdown for other valid pages
+    const info = resolution.info || {};
+    return `# ${info.title || 'Tejas Finserv'}
+
+${info.description || 'Assistance with Assurance — Mutual Fund Distribution & Financial Advisory in Vijayawada.'}
+
+- Canonical URL: https://tejasfinserv.com${cleanPath}
+- AMFI Registration: ARN-251896
+- Contact: phani.rompicharla@gmail.com | +91 94907 16662
+`;
+}
+
+// --- HELPER: Server-Side First-Byte SEO & Status Handler ---
 async function serveHtmlWithSEO(req, res) {
     const indexPath = path.join(distPath, 'index.html');
     if (!fs.existsSync(indexPath)) {
         return res.status(500).send('Frontend build missing. Run npm run build.');
     }
 
+    const reqPath = req.path || '/';
+    const cleanPath = reqPath === '/' ? '' : reqPath.replace(/\/$/, '');
+    const resolution = await getRouteResolution(cleanPath);
+
+    // Phase 14: RFC 8288 Link Headers
+    const linkHeaders = [
+        '</llms.txt>; rel="describedby"; type="text/plain"',
+        '</.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"',
+        `<https://tejasfinserv.com${cleanPath === '' ? '/' : cleanPath}>; rel="alternate"; type="text/markdown"`
+    ];
+    res.setHeader('Link', linkHeaders.join(', '));
+    res.setHeader('Vary', 'Accept');
+
+    // Phase 13: Markdown Content Negotiation
+    const acceptHeader = req.headers['accept'] || '';
+    if (acceptHeader.includes('text/markdown')) {
+        res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+        const markdown = generateMarkdownResponse(cleanPath, resolution);
+        return res.status(resolution.status).send(markdown);
+    }
+
     try {
         let html = await fs.promises.readFile(indexPath, 'utf-8');
-        const reqPath = req.path || '/';
-        const cleanPath = reqPath === '/' ? '' : reqPath.replace(/\/$/, '');
         let canonicalUrl = `https://tejasfinserv.com${cleanPath === '' ? '/' : cleanPath}`;
         let title = 'TejasFinserv — Mutual Funds, Financial Planning & Insurance in Vijayawada';
         let description = 'AMFI-registered mutual fund distributor (ARN-251896) in Vijayawada. SIP, financial planning, insurance & free calculators. Start investing online.';
@@ -276,74 +536,31 @@ async function serveHtmlWithSEO(req, res) {
         let ogType = 'website';
         let schemaJson = null;
 
-        if (cleanPath.startsWith('/insights/') && cleanPath.length > 10) {
-            const slug = cleanPath.split('/')[2];
-            try {
-                const [rows] = await db.query('SELECT title, slug, content, description, image_url, author, published_at FROM insights WHERE slug = ? OR id = ? LIMIT 1', [slug, slug]);
-                if (rows && rows.length > 0) {
-                    const post = rows[0];
-                    title = `${post.title} | TejasFinserv`;
-                    description = post.description || (post.content ? post.content.substring(0, 160).replace(/\s+/g, ' ') : '') || post.title;
-                    canonicalUrl = `https://tejasfinserv.com/insights/${post.slug || post.id}`;
-                    if (post.image_url) {
-                        imageUrl = post.image_url.startsWith('http') ? post.image_url : `https://tejasfinserv.com${post.image_url.startsWith('/') ? '' : '/'}${post.image_url}`;
+        if (resolution.status === 410) {
+            title = '410 Gone: Resource Permanently Removed | TejasFinserv';
+            description = 'The requested resource has been permanently removed.';
+        } else if (resolution.status === 404) {
+            title = '404: Page Not Found | TejasFinserv';
+            description = 'The page you are looking for does not exist on TejasFinserv.';
+        } else if (resolution.info) {
+            title = resolution.info.title || title;
+            description = resolution.info.description || description;
+            if (resolution.type === 'insight') {
+                ogType = 'article';
+                schemaJson = JSON.stringify({
+                    "@context": "https://schema.org",
+                    "@type": "BlogPosting",
+                    "headline": resolution.info.title,
+                    "description": description,
+                    "image": imageUrl,
+                    "url": canonicalUrl,
+                    "datePublished": resolution.info.datePublished || new Date().toISOString(),
+                    "author": {
+                        "@type": "Person",
+                        "name": resolution.info.author || "Phani Rompicharla"
                     }
-                    ogType = 'article';
-                    schemaJson = JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "BlogPosting",
-                        "headline": post.title,
-                        "description": description,
-                        "image": imageUrl,
-                        "url": canonicalUrl,
-                        "datePublished": post.published_at ? new Date(post.published_at).toISOString() : new Date().toISOString(),
-                        "author": {
-                            "@type": "Person",
-                            "name": post.author || "Phani Rompicharla"
-                        }
-                    }, null, 2);
-                } else if (staticInsightsMap[slug]) {
-                    const sp = staticInsightsMap[slug];
-                    title = `${sp.title} | TejasFinserv`;
-                    description = sp.description;
-                    canonicalUrl = `https://tejasfinserv.com/insights/${sp.slug}`;
-                    ogType = 'article';
-                    schemaJson = JSON.stringify({
-                        "@context": "https://schema.org",
-                        "@type": "BlogPosting",
-                        "headline": sp.title,
-                        "description": sp.description,
-                        "image": imageUrl,
-                        "url": canonicalUrl,
-                        "datePublished": sp.datePublished || new Date().toISOString().split('T')[0],
-                        "author": {
-                            "@type": "Person",
-                            "name": sp.author || "Phani Rompicharla"
-                        }
-                    }, null, 2);
-                }
-            } catch (dbErr) {
-                console.error('SEO DB Fetch Error for insights:', dbErr);
-                if (staticInsightsMap[slug]) {
-                    const sp = staticInsightsMap[slug];
-                    title = `${sp.title} | TejasFinserv`;
-                    description = sp.description;
-                    canonicalUrl = `https://tejasfinserv.com/insights/${sp.slug}`;
-                    ogType = 'article';
-                }
+                }, null, 2);
             }
-        } else if (cleanPath.startsWith('/calculators/') && cleanPath.length > 13) {
-            const calcSlug = cleanPath.split('/')[2];
-            if (staticCalculatorsMap[calcSlug]) {
-                const calc = staticCalculatorsMap[calcSlug];
-                title = calc.title;
-                description = calc.description;
-                title = `${calcSlug.toUpperCase().replace(/-/g, ' ')} Calculator | TejasFinserv`;
-                description = `Plan your investments easily with our free online ${calcSlug.replace(/-/g, ' ')} calculator.`;
-            }
-        } else if (staticRoutesMap[cleanPath]) {
-            title = staticRoutesMap[cleanPath].title;
-            description = staticRoutesMap[cleanPath].description;
         }
 
         // 1. Replace <title>
@@ -356,7 +573,12 @@ async function serveHtmlWithSEO(req, res) {
             html = html.replace(/<\/head>/i, `  <meta name="description" content="${description.replace(/"/g, '&quot;')}" />\n</head>`);
         }
 
-        // 3. Replace canonical URL or CANONICAL_PLACEHOLDER
+        // 3. Robots meta tag for 404 / 410
+        if (resolution.status === 404 || resolution.status === 410) {
+            html = html.replace(/<\/head>/i, `  <meta name="robots" content="noindex, follow" />\n</head>`);
+        }
+
+        // 4. Canonical link
         if (/<link\s+rel=["']canonical["'][\s\S]*?>/i.test(html)) {
             html = html.replace(/<link\s+rel=["']canonical["'][\s\S]*?>/i, `<link rel="canonical" href="${canonicalUrl}" />`);
         } else if (/<!--\s*CANONICAL_PLACEHOLDER\s*-->/i.test(html)) {
@@ -365,7 +587,7 @@ async function serveHtmlWithSEO(req, res) {
             html = html.replace(/<\/head>/i, `  <link rel="canonical" href="${canonicalUrl}" />\n</head>`);
         }
 
-        // 4. Replace or insert OpenGraph & Twitter tags
+        // 5. Replace or insert OpenGraph & Twitter tags
         const replaceOrInsertMeta = (htmlStr, attrName, attrValue, contentValue) => {
             const regex = new RegExp(`<meta\\s+[^>]*?${attrName}=["']${attrValue}["'][^>]*?>`, 'i');
             const newTag = `<meta ${attrName}="${attrValue}" content="${contentValue.replace(/"/g, '&quot;')}" />`;
@@ -390,7 +612,7 @@ async function serveHtmlWithSEO(req, res) {
         html = replaceOrInsertMeta(html, 'name', 'twitter:description', description);
         html = replaceOrInsertMeta(html, 'name', 'twitter:image', imageUrl);
 
-        // 5. Inject schema JSON-LD if present
+        // 6. Inject schema JSON-LD if present
         if (schemaJson) {
             const scriptTag = `<script type="application/ld+json">\n${schemaJson}\n</script>`;
             if (/<!--\s*JSONLD_PLACEHOLDER\s*-->/i.test(html)) {
@@ -403,43 +625,47 @@ async function serveHtmlWithSEO(req, res) {
         }
 
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-        res.send(html);
+        return res.status(resolution.status).send(html);
     } catch (err) {
         console.error('serveHtmlWithSEO Error:', err);
-        res.sendFile(indexPath);
+        return res.status(resolution.status || 500).sendFile(indexPath);
     }
 }
 
-// Dynamic Robots.txt Route (Must run BEFORE express.static)
+// Phase 12: Well-formed llms.txt Route (Precedes static/SPA fallbacks)
+app.get('/llms.txt', (req, res) => {
+    const llmsFile = path.join(publicPath, 'llms.txt');
+    if (fs.existsSync(llmsFile)) {
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        return res.sendFile(llmsFile);
+    }
+    res.status(404).send('llms.txt not found');
+});
+
+// Phase 16: MCP Server Card Route (Precedes static/SPA fallbacks)
+app.get('/.well-known/mcp/server-card.json', (req, res) => {
+    const cardFile = path.join(publicPath, '.well-known/mcp/server-card.json');
+    if (fs.existsSync(cardFile)) {
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        try {
+            const data = JSON.parse(fs.readFileSync(cardFile, 'utf-8'));
+            return res.json(data);
+        } catch {
+            return res.sendFile(cardFile, { dotfiles: 'allow' });
+        }
+    }
+    res.status(404).json({ error: 'MCP server card not found' });
+});
+
+// Phase 5: Dynamic Robots.txt Route with Content-Signal (Must run BEFORE express.static)
 app.get('/robots.txt', (req, res) => {
-    const robotsContent = `User-agent: *
-Allow: /
-
-# Allow AI/LLM crawlers to access the site for specialized search and AI answers
-User-agent: GPTBot
-Allow: /
-
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: FacebookBot
-Allow: /
-
-Sitemap: https://tejasfinserv.com/sitemap.xml
-`;
-    res.setHeader('Content-Type', 'text/plain');
+    const robotsFile = path.join(publicPath, 'robots.txt');
+    if (fs.existsSync(robotsFile)) {
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        return res.sendFile(robotsFile);
+    }
+    const robotsContent = `Content-Signal: search=yes, ai-train=no\n\nUser-agent: *\nAllow: /\n\nSitemap: https://tejasfinserv.com/sitemap.xml\n`;
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     res.send(robotsContent);
 });
 
@@ -453,6 +679,7 @@ app.get('/sitemap.xml', async (req, res) => {
         const staticSitemapRoutes = [
             { path: '', priority: '1.0', changefreq: 'weekly' },
             { path: '/about', priority: '0.9', changefreq: 'monthly' },
+            { path: '/services', priority: '0.9', changefreq: 'monthly' },
             { path: '/financial-planning', priority: '0.8', changefreq: 'monthly' },
             { path: '/mutual-funds', priority: '0.9', changefreq: 'weekly' },
             { path: '/insurance', priority: '0.8', changefreq: 'monthly' },
@@ -460,7 +687,7 @@ app.get('/sitemap.xml', async (req, res) => {
             { path: '/health-insurance', priority: '0.8', changefreq: 'monthly' },
             { path: '/savings-plans', priority: '0.8', changefreq: 'monthly' },
             { path: '/calculators', priority: '0.9', changefreq: 'monthly' },
-            { path: '/nav', priority: '0.8', changefreq: 'daily' },
+            { path: '/nav', priority: '0.9', changefreq: 'daily' },
             { path: '/calculators/sip', priority: '0.8', changefreq: 'monthly' },
             { path: '/calculators/lumpsum', priority: '0.8', changefreq: 'monthly' },
             { path: '/calculators/step-up-sip', priority: '0.8', changefreq: 'monthly' },
@@ -489,7 +716,8 @@ app.get('/sitemap.xml', async (req, res) => {
             { path: '/goals/wealth-creation', priority: '0.7', changefreq: 'monthly' },
             { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
             { path: '/terms', priority: '0.3', changefreq: 'yearly' },
-            { path: '/disclaimer', priority: '0.3', changefreq: 'yearly' }
+            { path: '/disclaimer', priority: '0.3', changefreq: 'yearly' },
+            { path: '/sitemap', priority: '0.5', changefreq: 'monthly' }
         ];
 
         for (const r of staticSitemapRoutes) {
@@ -546,7 +774,7 @@ app.get('/sitemap.xml', async (req, res) => {
         }
 
         xml += '</urlset>';
-        res.setHeader('Content-Type', 'application/xml');
+        res.setHeader('Content-Type', 'application/xml; charset=utf-8');
         res.send(xml);
     } catch (error) {
         console.error('Error generating sitemap:', error);
@@ -554,6 +782,7 @@ app.get('/sitemap.xml', async (req, res) => {
     }
 });
 
+// Static assets
 app.use(express.static(distPath, {
     index: false,
     setHeaders: (res, filePath) => {
@@ -640,7 +869,8 @@ app.get('/api/admin/login-logs', authenticateToken, async (req, res) => {
         const [rows] = await db.query('SELECT * FROM admin_login_logs ORDER BY attempted_at DESC LIMIT 200');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Admin login logs error:', error);
+        res.status(500).json({ error: 'Failed to retrieve login logs' });
     }
 });
 
@@ -683,58 +913,70 @@ app.get('/api/admin/contacts', authenticateToken, async (req, res) => {
         const [rows] = await db.query('SELECT * FROM contact_messages ORDER BY created_at DESC');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Admin contacts error:', error);
+        res.status(500).json({ error: 'Failed to retrieve contacts' });
     }
 });
 
 app.delete('/api/admin/contacts/:id', authenticateToken, async (req, res) => {
     try {
-        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-        await db.query('DELETE FROM contact_messages WHERE id = ?', [req.params.id]);
+        const id = parseInt(req.params.id, 10);
+        if (!Number.isInteger(id) || id <= 0) {
+            return res.status(400).json({ error: 'Valid positive numeric ID required' });
+        }
+        await db.query('DELETE FROM contact_messages WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Admin delete contact error:', error);
+        res.status(500).json({ error: 'Failed to delete contact' });
     }
 });
 
 // --- INSIGHTS API ---
-app.get('/api/insights', async (req, res) => {
+app.get('/api/insights', readLimiter, async (req, res) => {
     try {
         const [rows] = await db.query('SELECT id, title, slug, content, image_url, description, read_time, tags, author, published_at, updated_at FROM insights ORDER BY published_at DESC');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Insights error:', error);
+        res.status(500).json({ error: 'Failed to retrieve insights' });
     }
 });
 
-app.get('/api/insights/:slug', async (req, res) => {
+app.get('/api/insights/:slug', readLimiter, async (req, res) => {
     try {
-        const [rows] = await db.query('SELECT * FROM insights WHERE slug = ?', [req.params.slug]);
+        const slug = String(req.params.slug).trim();
+        const [rows] = await db.query('SELECT * FROM insights WHERE slug = ?', [slug]);
         if (rows.length === 0) return res.status(404).json({ error: 'Insight not found' });
         res.json(rows[0]);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Insight fetch error:', error);
+        res.status(500).json({ error: 'Failed to retrieve insight' });
     }
 });
 
 app.post('/api/admin/insights', authenticateToken, async (req, res) => {
     try {
         const { title, slug, content, image_url, description, read_time, tags, author } = req.body;
+        if (!title || !content || typeof title !== 'string' || typeof content !== 'string') {
+            return res.status(400).json({ error: 'Title and content are required' });
+        }
+        const safeSlug = slug ? String(slug).toLowerCase().trim().replace(/[^a-z0-9-]/g, '-') : title.toLowerCase().trim().replace(/[^a-z0-9-]/g, '-');
         const [result] = await db.query(
             'INSERT INTO insights (title, slug, content, image_url, description, read_time, tags, author) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [title, slug || title.toLowerCase().replace(/ /g, '-'), content, image_url || null, description || null, read_time || null, tags || null, author || null]
+            [title.trim(), safeSlug, content, image_url || null, description || null, read_time || null, tags || null, author || null]
         );
         res.json({ success: true, id: result.insertId });
     } catch (error) {
         console.error('Error adding insight:', error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'Failed to add insight' });
     }
 });
 
 app.put('/api/admin/insights/:id', authenticateToken, async (req, res) => {
     try {
-        const { id } = req.params;
-        if (isNaN(id)) return res.status(400).json({ error: 'Invalid ID' });
+        const id = parseInt(req.params.id, 10);
+        if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Valid positive numeric ID required' });
         const { title, slug, content, image_url, description, read_time, tags, author } = req.body;
         await db.query(
             'UPDATE insights SET title=?, slug=?, content=?, image_url=?, description=?, read_time=?, tags=?, author=? WHERE id=?',
@@ -742,17 +984,20 @@ app.put('/api/admin/insights/:id', authenticateToken, async (req, res) => {
         );
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error updating insight:', error);
+        res.status(500).json({ error: 'Failed to update insight' });
     }
 });
 
 app.delete('/api/admin/insights/:id', authenticateToken, async (req, res) => {
     try {
-        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-        await db.query('DELETE FROM insights WHERE id = ?', [req.params.id]);
+        const id = parseInt(req.params.id, 10);
+        if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Valid positive numeric ID required' });
+        await db.query('DELETE FROM insights WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error deleting insight:', error);
+        res.status(500).json({ error: 'Failed to delete insight' });
     }
 });
 
@@ -770,7 +1015,6 @@ app.post('/api/reviews', apiLimiter, async (req, res) => {
             return res.status(400).json({ error: 'Invalid input length.' });
         }
 
-        // Sanitize and escape HTML entities before saving
         name = validator.escape(name.trim());
         city = validator.escape(city.trim());
         review_text = validator.escape(review_text.trim());
@@ -786,12 +1030,13 @@ app.post('/api/reviews', apiLimiter, async (req, res) => {
     }
 });
 
-app.get('/api/reviews', async (req, res) => {
+app.get('/api/reviews', readLimiter, async (req, res) => {
     try {
         const [rows] = await db.query('SELECT name, city, review_text, created_at FROM client_reviews WHERE status = "approved" ORDER BY created_at DESC');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Reviews get error:', error);
+        res.status(500).json({ error: 'Failed to retrieve reviews' });
     }
 });
 
@@ -800,42 +1045,49 @@ app.get('/api/admin/reviews', authenticateToken, async (req, res) => {
         const [rows] = await db.query('SELECT * FROM client_reviews ORDER BY created_at DESC');
         res.json(rows);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Admin reviews error:', error);
+        res.status(500).json({ error: 'Failed to retrieve reviews' });
     }
 });
 
 app.put('/api/admin/reviews/:id/approve', authenticateToken, async (req, res) => {
     try {
-        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-        await db.query('UPDATE client_reviews SET status = "approved" WHERE id = ?', [req.params.id]);
+        const id = parseInt(req.params.id, 10);
+        if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Valid ID required' });
+        await db.query('UPDATE client_reviews SET status = "approved" WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error approving review:', error);
+        res.status(500).json({ error: 'Failed to approve review' });
     }
 });
 
 app.put('/api/admin/reviews/:id/reject', authenticateToken, async (req, res) => {
     try {
-        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-        await db.query('UPDATE client_reviews SET status = "rejected" WHERE id = ?', [req.params.id]);
+        const id = parseInt(req.params.id, 10);
+        if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Valid ID required' });
+        await db.query('UPDATE client_reviews SET status = "rejected" WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error rejecting review:', error);
+        res.status(500).json({ error: 'Failed to reject review' });
     }
 });
 
 app.delete('/api/admin/reviews/:id', authenticateToken, async (req, res) => {
     try {
-        if (isNaN(req.params.id)) return res.status(400).json({ error: 'Invalid ID' });
-        await db.query('DELETE FROM client_reviews WHERE id = ?', [req.params.id]);
+        const id = parseInt(req.params.id, 10);
+        if (!Number.isInteger(id) || id <= 0) return res.status(400).json({ error: 'Valid ID required' });
+        await db.query('DELETE FROM client_reviews WHERE id = ?', [id]);
         res.json({ success: true });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error deleting review:', error);
+        res.status(500).json({ error: 'Failed to delete review' });
     }
 });
 
-// --- SITE SETTINGS API (Coming Soon Toggle) ---
-app.get('/api/settings/status', async (req, res) => {
+// --- SITE SETTINGS API ---
+app.get('/api/settings/status', readLimiter, async (req, res) => {
     try {
         const [rows] = await db.query('SELECT setting_value FROM site_settings WHERE setting_key = "coming_soon"');
         const isComingSoon = rows.length > 0 && rows[0].setting_value === 'true';
@@ -856,11 +1108,12 @@ app.put('/api/admin/settings/coming-soon', authenticateToken, async (req, res) =
         `, [value, value]);
         res.json({ success: true, coming_soon: coming_soon });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error('Error saving site settings:', error);
+        res.status(500).json({ error: 'Failed to update site settings' });
     }
 });
 
-// --- SPA ROUTING & SERVER-SIDE SEO INJECTION ---
+// --- SPA ROUTING, CONTENT NEGOTIATION & PROPER 404/410 CODES ---
 app.get('/', serveHtmlWithSEO);
 app.get(/.*/, (req, res) => {
     if (req.url.startsWith('/api/')) {

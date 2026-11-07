@@ -1,37 +1,36 @@
-# TejasFinserv
+# Tejas Finserv
 
-> AMFI-registered Mutual Fund Distributor (ARN-251896) in Vijayawada, Andhra Pradesh, India.
+> Assistance with Assurance — AMFI-registered Mutual Fund Distributor (ARN-251896) based in Vijayawada, Andhra Pradesh, India.
 
-TejasFinserv provides mutual fund distribution, financial planning, and insurance advisory for individuals and businesses. Tagline: Assistance with Assurance.
+Tejas Finserv is an AMFI-accredited mutual fund distribution and financial planning advisory firm founded by Phani Kishore Rompicharla. The firm provides goal-based investment planning, mutual fund distribution across 40+ Asset Management Companies (AMCs) and 6,000+ schemes, pure protection term insurance, comprehensive health insurance, and 15+ free financial calculators.
 
-## Founder
-- Phani Rompicharla, Founder & Mutual Fund Distributor (ARN-251896)
-
-## Contact
-- Address: 23-221, Near Old Water Tank, Yanamalakuduru, Vijayawada – 520007, Andhra Pradesh, India
-- Email: phani.rompicharla@gmail.com
-- Phone: +91 94907 16662
-- Website: https://tejasfinserv.com
+## About
+- [About Us](https://tejasfinserv.com/about): Background on founder Phani Kishore Rompicharla, engineering and advisory credentials, AMFI regulatory accreditation (ARN-251896), and client stewardship philosophy.
 
 ## Services
-- Mutual fund distribution (5,000+ schemes, 40+ AMCs)
-- Financial planning (retirement, goals, cash flow)
-- Insurance advisory (life, health, business)
-- Free financial calculators (SIP, retirement, EMI, SWP, and more)
+- [Mutual Funds Distribution](https://tejasfinserv.com/mutual-funds): Access 6,000+ mutual fund schemes across 40+ AMCs in India, including Equity, Debt, Hybrid, and ELSS Tax-Saving funds.
+- [Goal-Based Financial Planning](https://tejasfinserv.com/financial-planning): Personalized roadmaps for retirement, children's education, home purchase, and wealth preservation.
+- [Insurance Advisory](https://tejasfinserv.com/insurance): Life term insurance, family mediclaim/health insurance, and motor insurance advisory.
+- [Mutual Fund NAV Today](https://tejasfinserv.com/nav): Latest daily Net Asset Value (NAV) of every open-ended mutual fund scheme in India, updated daily from AMFI.
+- [Financial Calculators](https://tejasfinserv.com/calculators): 15+ free financial planning calculators covering SIP, Lumpsum, Retirement, Step-Up SIP, SWP, EMI, and SIP Delay.
 
-## Key Pages
-- Home: https://tejasfinserv.com/
-- About: https://tejasfinserv.com/about
-- Calculators: https://tejasfinserv.com/calculators
-- Mutual Funds: https://tejasfinserv.com/mutual-funds
-- Financial Planning: https://tejasfinserv.com/financial-planning
-- Insurance: https://tejasfinserv.com/insurance
-- Insights: https://tejasfinserv.com/insights
-- FAQ: https://tejasfinserv.com/faq
-- Contact: https://tejasfinserv.com/contact
+## Important Pages
+- [Home](https://tejasfinserv.com/): Official website homepage with interactive SIP simulator, services overview, client FAQs, and compliance badges.
+- [Contact Us](https://tejasfinserv.com/contact): Direct office location in Vijayawada, telephone, WhatsApp link, and investor inquiry form.
+- [Frequently Asked Questions (FAQ)](https://tejasfinserv.com/faq): Clear answers regarding AMFI registration, SIP safety, tax deductions under 80C, and starting an account.
+- [Investment Insights](https://tejasfinserv.com/insights): In-depth educational articles on mutual funds, market risks, SIP delay impact, and retirement planning.
+- [Privacy Policy](https://tejasfinserv.com/privacy): How Tejas Finserv collects, uses, and safeguards personal client data.
+- [Terms of Use](https://tejasfinserv.com/terms): Terms, conditions, and disclaimers governing the use of the website and services.
+- [Regulatory Disclaimers](https://tejasfinserv.com/disclaimer): Statutory AMFI, SEBI, and IRDAI compliance notes and mutual fund risk disclosures.
+- [XML Sitemap](https://tejasfinserv.com/sitemap.xml): Complete machine-readable XML sitemap index.
+- [HTML Sitemap](https://tejasfinserv.com/sitemap): Directory of all public website pages and calculators.
 
-## Onboarding
-- Start investing: https://flow.assetplus.in/client_onboarding/?advisor=6313983220391d0009f3de64
+## Contact Information
+- Address: 23-221, Near Old Water Tank, Yanamalakuduru, Vijayawada – 520007, Andhra Pradesh, India
+- Phone: +91 94907 16662
+- Email: phani.rompicharla@gmail.com
+- AMFI ARN: ARN-251896
+- Website: https://tejasfinserv.com
 
-## Regulatory
-TejasFinserv is an AMFI-registered Mutual Fund Distributor (ARN-251896). Mutual Fund investments are subject to market risks, read all scheme related documents carefully. Past performance is not indicative of future returns.
+## Client Onboarding
+- [Start Investing Online](https://flow.assetplus.in/client_onboarding/?advisor=6313983220391d0009f3de64): Official paperless KYC onboarding portal.

@@ -1,0 +1,37 @@
+{
+  "name": "Tejas Finserv Website Resources",
+  "version": "1.0.0",
+  "description": "Official public website resources, mutual fund NAV data, financial calculators, and entity information for Tejas Finserv (AMFI ARN-251896).",
+  "url": "https://tejasfinserv.com",
+  "contact": {
+    "name": "Phani Kishore Rompicharla",
+    "email": "phani.rompicharla@gmail.com",
+    "phone": "+91 94907 16662"
+  },
+  "capabilities": {
+    "resources": true,
+    "tools": false,
+    "prompts": false
+  },
+  "resources": [
+    {
+      "name": "LLMs Document",
+      "uri": "https://tejasfinserv.com/llms.txt",
+      "mimeType": "text/plain",
+      "description": "Structured overview of Tejas Finserv services, founder credentials, and key URLs for LLM agents."
+    },
+    {
+      "name": "XML Sitemap",
+      "uri": "https://tejasfinserv.com/sitemap.xml",
+      "mimeType": "application/xml",
+      "description": "Full machine-readable sitemap of all public routes and calculators."
+    },
+    {
+      "name": "Mutual Fund NAV Today",
+      "uri": "https://tejasfinserv.com/nav",
+      "mimeType": "text/html",
+      "description": "Daily AMFI-updated Net Asset Values across 6,000+ mutual fund schemes."
+    }
+  ]
+}
+

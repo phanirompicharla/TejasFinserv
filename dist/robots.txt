@@ -1,7 +1,10 @@
+# Declares website content usage signals for search and AI systems
+Content-Signal: search=yes, ai-train=no
+
 User-agent: *
 Allow: /
 
-# Allow AI/LLM crawlers to access the site for specialized search and AI answers
+# Allow AI/LLM crawlers for search and real-time answers
 User-agent: GPTBot
 Allow: /
 

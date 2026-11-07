@@ -1,0 +1,1 @@
+import{t as e}from"./vendor-react-BBFAY1g4.js";var t=e(),n=`D:/tejasfinserv/src/components/AnswerCallout.tsx`;function r({children:e,className:r=``}){return(0,t.jsxDEV)(`div`,{className:`border-l-4 border-brass bg-cream px-6 py-5 text-muted speakable-answer ${r}`,children:e},void 0,!1,{fileName:n,lineNumber:10,columnNumber:5},this)}export{r as t};

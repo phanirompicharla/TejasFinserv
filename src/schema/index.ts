@@ -1,13 +1,20 @@
 import { siteConfig } from '../lib/siteConfig'
 
 export function organizationSchema() {
+  const verifiedSameAs = [
+    siteConfig.social.linkedin,
+    siteConfig.advisor.linkedinUrl,
+    siteConfig.advisor.profileUrl,
+  ].filter(Boolean) as string[]
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: siteConfig.name,
+    legalName: `${siteConfig.name} (${siteConfig.regulatory.arn})`,
     url: siteConfig.baseUrl,
     logo: `${siteConfig.baseUrl}/logo.webp`,
-    description: `${siteConfig.name} — ${siteConfig.tagline}. AMFI-registered Mutual Fund Distributor ${siteConfig.regulatory.arn}.`,
+    description: `${siteConfig.name} — ${siteConfig.tagline}. AMFI-registered Mutual Fund Distributor (${siteConfig.regulatory.arn}) based in Vijayawada, Andhra Pradesh.`,
     telephone: siteConfig.contact.phoneTel,
     email: siteConfig.contact.email,
     address: {
@@ -18,12 +25,31 @@ export function organizationSchema() {
       addressRegion: 'Andhra Pradesh',
       addressCountry: 'IN',
     },
-    founder: { '@type': 'Person', name: siteConfig.advisor.name },
-    sameAs: Object.values(siteConfig.social).filter(Boolean),
+    founder: {
+      '@type': 'Person',
+      name: siteConfig.advisor.name,
+      jobTitle: siteConfig.advisor.title,
+      sameAs: [siteConfig.advisor.linkedinUrl, siteConfig.advisor.profileUrl].filter(Boolean),
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: siteConfig.contact.phoneTel,
+      contactType: 'customer service',
+      email: siteConfig.contact.email,
+      areaServed: 'IN',
+      availableLanguage: ['English', 'Telugu', 'Hindi'],
+    },
+    sameAs: verifiedSameAs,
   }
 }
 
 export function financialServiceSchema() {
+  const verifiedSameAs = [
+    siteConfig.social.linkedin,
+    siteConfig.advisor.linkedinUrl,
+    siteConfig.advisor.profileUrl,
+  ].filter(Boolean) as string[]
+
   return {
     '@context': 'https://schema.org',
     '@type': ['FinancialService', 'LocalBusiness'],
@@ -43,6 +69,7 @@ export function financialServiceSchema() {
     geo: { '@type': 'GeoCoordinates', latitude: 16.5193, longitude: 80.6305 },
     areaServed: [{ '@type': 'City', name: 'Vijayawada' }, { '@type': 'State', name: 'Andhra Pradesh' }],
     priceRange: '$$',
+    sameAs: verifiedSameAs,
   }
 }
 
@@ -55,8 +82,47 @@ export function personSchema() {
     worksFor: { '@type': 'Organization', name: siteConfig.name },
     email: siteConfig.contact.email,
     telephone: siteConfig.contact.phoneTel,
-    address: { '@type': 'PostalAddress', addressLocality: 'Vijayawada', addressRegion: 'Andhra Pradesh', addressCountry: 'IN' },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: 'Vijayawada',
+      addressRegion: 'Andhra Pradesh',
+      addressCountry: 'IN',
+    },
+    sameAs: [siteConfig.advisor.linkedinUrl, siteConfig.advisor.profileUrl].filter(Boolean),
     description: `AMFI-registered Mutual Fund Distributor (${siteConfig.regulatory.arn}) serving investors in Vijayawada and Andhra Pradesh.`,
+  }
+}
+
+export function aboutPageSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: `About ${siteConfig.name} — AMFI Registered Advisor in Vijayawada`,
+    url: `${siteConfig.baseUrl}/about`,
+    mainEntity: organizationSchema(),
+  }
+}
+
+export function contactPageSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ContactPage',
+    name: `Contact ${siteConfig.name} — Vijayawada`,
+    url: `${siteConfig.baseUrl}/contact`,
+    mainEntity: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      telephone: siteConfig.contact.phoneTel,
+      email: siteConfig.contact.email,
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '23-221, Near Old Water Tank, Yanamalakuduru',
+        addressLocality: 'Vijayawada',
+        postalCode: '520007',
+        addressRegion: 'Andhra Pradesh',
+        addressCountry: 'IN',
+      },
+    },
   }
 }
 
@@ -101,7 +167,7 @@ export function howToSchema(name: string, description: string, steps: string[]) 
   }
 }
 
-export function breadcrumbSchema(items: { name: string; path: string }[]) {
+export function breadcrumbSchema(items: { name: string; path?: string }[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -109,7 +175,7 @@ export function breadcrumbSchema(items: { name: string; path: string }[]) {
       '@type': 'ListItem',
       position: i + 1,
       name: item.name,
-      item: `${siteConfig.baseUrl}${item.path}`,
+      item: item.path ? `${siteConfig.baseUrl}${item.path}` : `${siteConfig.baseUrl}/`,
     })),
   }
 }
@@ -135,7 +201,11 @@ export function articleSchema(title: string, description: string, slug: string, 
     datePublished,
     dateModified: datePublished,
     author: { '@type': 'Person', name: author },
-    publisher: { '@type': 'Organization', name: siteConfig.name, logo: { '@type': 'ImageObject', url: `${siteConfig.baseUrl}/logo.webp` } },
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      logo: { '@type': 'ImageObject', url: `${siteConfig.baseUrl}/logo.webp` },
+    },
     mainEntityOfPage: `${siteConfig.baseUrl}/insights/${slug}`,
   }
 }

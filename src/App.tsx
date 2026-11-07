@@ -63,6 +63,7 @@ export default function App() {
               <Route path="privacy" element={<LegalPage type="privacy" />} />
               <Route path="terms" element={<LegalPage type="terms" />} />
               <Route path="disclaimer" element={<LegalPage type="disclaimer" />} />
+              <Route path="legal" element={<LegalPage type="disclaimer" />} />
               <Route path="contact" element={<Contact />} />
               <Route path="sitemap" element={<Sitemap />} />
               <Route path="*" element={<NotFound />} />

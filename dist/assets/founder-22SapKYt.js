@@ -1,0 +1,1 @@
+var e=`/assets/founder-Cat4si05.jpg`;export{e as t};

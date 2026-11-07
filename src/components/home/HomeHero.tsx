@@ -21,6 +21,7 @@ export function HomeHero({ onDiscover: _onDiscover }: HomeHeroProps) {
               {siteConfig.tagline} · Vijayawada
             </p>
             <h1 className="hero-reveal hero-reveal-2 font-display text-[clamp(2.4rem,5vw,4.2rem)] font-semibold leading-[1.05]">
+              <span className="sr-only">Tejas Finserv — Mutual Funds, SIP &amp; Financial Planning in Vijayawada. </span>
               <span className="hero-headline-line">
                 An investment in <span className="text-brass">knowledge</span>
               </span>{' '}
